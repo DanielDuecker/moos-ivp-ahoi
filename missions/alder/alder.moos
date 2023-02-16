@@ -17,22 +17,22 @@ ProcessConfig = ANTLER
 {
   MSBetweenLaunches = 200
 
-  Run = MOOSDB		@ NewConsole = false
-  Run = uSimMarine	@ NewConsole = false
+  Run = MOOSDB        @ NewConsole = false
+  Run = uSimMarineV22	@ NewConsole = false
   Run = pNodeReporter	@ NewConsole = false
-  Run = pMarinePID	@ NewConsole = false
+  Run = pMarinePID    @ NewConsole = false
   Run = pMarineViewer	@ NewConsole = false
-  Run = uProcessWatch   @ NewConsole = false
-  Run = pHelmIvP	@ NewConsole = false
-  Run = pOdometry	@ NewConsole = false
+  Run = uProcessWatch @ NewConsole = false
+  Run = pHelmIvP      @ NewConsole = false
+  //Run = pOdometry     @ NewConsole = false
 }
 
 //------------------------------------------
-// uSimMarine config block
+// uSimMarineV22 config block
 
-ProcessConfig = uSimMarine
+ProcessConfig = uSimMarineV22
 {
-  AppTick	= 10
+  AppTick	  = 10
   CommsTick	= 10
 
   START_X       = 0
@@ -84,9 +84,9 @@ ProcessConfig = pHelmIvP
 }
 
 //------------------------------------------
-// pMarinePID config block
+// pMarinePIDV22 config block
 
-ProcessConfig = pMarinePID
+ProcessConfig = pMarinePIDV22
 {
   AppTick    = 20
   CommsTick  = 20
