@@ -20,11 +20,13 @@ ProcessConfig = ANTLER
   Run = MOOSDB        @ NewConsole = false
   Run = uSimMarineV22	@ NewConsole = false
   Run = pNodeReporter	@ NewConsole = false
-  Run = pMarinePID    @ NewConsole = false
+  Run = pMarinePIDV22    @ NewConsole = false
   Run = pMarineViewer	@ NewConsole = false
   Run = uProcessWatch @ NewConsole = false
   Run = pHelmIvP      @ NewConsole = false
-  //Run = pOdometry     @ NewConsole = false
+  Run = pOdometry     @ NewConsole = true
+
+  Run = pLogger @ NewConsole = false
 }
 
 //------------------------------------------
@@ -71,7 +73,7 @@ ProcessConfig = pHelmIvP
   AppTick    = 4
   CommsTick  = 4
 
-  Behaviors  = alder.bhv
+  Behaviors  = alder_mod.bhv
   Verbose    = quiet
   Domain     = course:0:359:360
   Domain     = speed:0:4:21
@@ -157,3 +159,12 @@ ProcessConfig = pNodeReporter
   CommsTick	= 2
   VESSEL_TYPE   = KAYAK
 }
+
+ ProcessConfig = pLogger
+ {
+   AppTick   = 8
+   CommsTick = 8
+
+   AsyncLog = true
+   WildCardLogging = true
+ }
