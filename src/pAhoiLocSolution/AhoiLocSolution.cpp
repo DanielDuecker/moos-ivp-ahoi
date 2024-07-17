@@ -143,6 +143,23 @@ void AhoiLocSolution::registerVariables() {
   Register("RANGE_MEASUREMENT1", 0);
   Register("RANGE_MEASUREMENT2", 0);
   Register("RANGE_MEASUREMENT3", 0);
+
+  Register("ANCHOR0_POS_X", 0);
+  Register("ANCHOR0_POS_Y", 0);
+  Register("ANCHOR0_POS_Z", 0);
+  
+  Register("ANCHOR1_POS_X", 0);
+  Register("ANCHOR1_POS_Y", 0);
+  Register("ANCHOR1_POS_Z", 0);
+  
+  Register("ANCHOR2_POS_X", 0);
+  Register("ANCHOR2_POS_Y", 0);
+  Register("ANCHOR2_POS_Z", 0);
+  
+  Register("ANCHOR3_POS_X", 0);
+  Register("ANCHOR3_POS_Y", 0);
+  Register("ANCHOR3_POS_Z", 0);
+  
 }
 
 //------------------------------------------------------------

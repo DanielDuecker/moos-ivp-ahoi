@@ -1,6 +1,6 @@
 /************************************************************/
 /*    NAME: Daniel Duecker                                  */
-/*    ORGN: MIT, Cambridge MA                               */
+/*    ORGN: MIT, Cambridge MA // TU Munich, Germany         */
 /*    FILE: AhoiRangeSim.h                                  */
 /*    DATE: July 2024                                       */
 /************************************************************/
@@ -26,14 +26,17 @@ class AhoiRangeSim : public AppCastingMOOSApp
 
  protected: // Standard AppCastingMOOSApp function to overload 
    bool buildReport();
-   
+
  protected:
    void registerVariables();
-   void publishRangeMeasurements();
 
  private:
-   double m_nav_x, m_nav_y, m_nav_z;
+   void calculateRanges();
+
+ private: // State variables
+   double m_mobile_x, m_mobile_y, m_mobile_z;
    std::vector<arma::vec> m_anchor_nodes; // Positions of the anchor nodes in 3D space
+   std::vector<double> m_ranges; // Range measurements to anchor nodes
 };
 
 #endif 
