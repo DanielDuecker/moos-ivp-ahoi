@@ -48,7 +48,7 @@ class AhoiInterface():
                             payload=bytearray(),
                             dsn=self.self.dsn)
         
-        print(f"[Base with ID {self.my_id}] sent range poll to ID {dst_msg} sqn {self.dsn} ...")
+        print(f"\n[Base with ID {self.my_id}] sent range poll to ID {dst_msg} sqn {self.dsn} ...")
     
     def trigger_pos_range_poll(self, dst_modem_id):
         self.dsn += 1 # increase packet sequence
@@ -59,7 +59,7 @@ class AhoiInterface():
                             type=0x7A,              # type for ranging+pos poll [own]
                             payload=bytearray(),
                             dsn=self.dsn)
-        print(f"[Base with ID {self.my_id}] sent range poll to ID {dst_modem_id} sqn {self.dsn} ...")
+        print(f"\n[Base with ID {self.my_id}] sent range poll to ID {dst_modem_id} sqn {self.dsn} ...")
     
 
 
@@ -77,9 +77,10 @@ class AhoiInterface():
                               dst=poll_src,
                               type=0x7D,            # temp using Ben's type for position 
                               status=0, 
-                              payload=position)     # transmit anchor position (type 0x7D)
+                              payload=position, # transmit anchor position (type 0x7D)
+                              dsn=dsn_poll)     
             
-            print(f"[Anchor ID {self.my_id}] Received poll seq_num {dsn_poll} from Anchot ID {poll_src} - reply my position: {my_position_x}, {my_position_y}")
+            print(f"[Anchor ID {self.my_id}] to poll {dsn_poll} from Anchor ID {poll_src} - reply my position: {my_position_x}, {my_position_y}")
 
 
     def rangingPosCallbackAck(self, pkt):
@@ -90,7 +91,7 @@ class AhoiInterface():
             position_x = int.from_bytes(pkt.payload[0:2], 'big', signed=True) * 1e-2
             position_y = int.from_bytes(pkt.payload[2:4], 'big', signed=True) * 1e-2
             
-            print(f"[Anchor ID {self.my_id}] Received reply to my poll {dsn_poll} from ANCHOR ID {ack_src}: Received position: {position_x}, {position_y}")
+            print(f"[Anchor ID {self.my_id}] POS-ACK to my poll {dsn_poll} from ANCHOR ID {ack_src}: Received position: {position_x}, {position_y}")
 
 
 
@@ -99,7 +100,7 @@ class AhoiInterface():
         # baseline ranging using the modem's HW auto ranging ACK
         # check if we have received a ranging ack
         if pkt.header.type == 0x7F and pkt.header.len > 0:
-            src = pkt.header.src
+            ack_src = pkt.header.src
             dsn = pkt.header.dsn
 
             tof = 0
@@ -107,18 +108,18 @@ class AhoiInterface():
                 tof = tof * 256 + pkt.payload[i]
             distance = tof * 1e-6 * self.speed_of_sound
 
-            print(f"[Anchor ID {self.my_id}] Received auto-TOF from Anchor ID {src} | TODO/Check DSN {dsn}| - measured distance {distance}")
+            print(f"[Anchor ID {self.my_id}] TOF-ACK to with dsn {dsn} from ANCHOR ID {ack_src}: - measured distance {distance}")
 
 def main():
-    
+    counter = 0
     try:
         my_base = AhoiInterface(my_id=87,dev="/dev/ttyAMA0")
-        my_base = AhoiInterface(my_id=0,dev="/dev/ttyUSB1")
+        #my_base = AhoiInterface(my_id=0,dev="/dev/ttyUSB1")
         while(True):
             # --- If your are base, comment in the following
-            my_base.trigger_pos_range_poll(dst_modem_id=87)
+            #my_base.trigger_pos_range_poll(dst_modem_id=87)
             if(counter % 10 == 0):
-                print(f"[Counter {counter}] Still alive... ")
+                print(f"\n[Counter {counter}] Still alive... ")
 
             # --- for HW-auto range test    
             # my_base.trigger_range_poll()
