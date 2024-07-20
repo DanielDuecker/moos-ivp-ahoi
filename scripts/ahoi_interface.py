@@ -13,16 +13,16 @@ import time
 from ahoi.modem.modem import Modem
 
 class AhoiInterface():
-    def __init__(self, dev="/dev/ttyAMA0"):
+    def __init__(self, my_id, dev="/dev/ttyAMA0"):
         self.myModem = Modem()
         self.myModem.connect(dev)
         print(f"\n Starting ahoi interface...")
         
-        print(f"Reading ID from modem HW ...")
-        self.my_hw_id = self.myModem.id()
-        print(f"found ID {self.my_hw_id} ...")
-        self.my_id = self.my_hw_id      # id of this modem 
-        print(f"[Anchor ID {self.my_hw_id}] Ready!")
+        # print(f"Reading ID from modem HW ...")
+        # self.my_hw_id = self.myModem.id(id=2)
+        # print(f"found ID {self.my_hw_id} ...")
+        self.my_id = my_id #self.my_hw_id      # id of this modem 
+        print(f"[Anchor ID {self.my_id}] Ready!")
 
 
         self.dsn = 0 # init packet counter
@@ -42,6 +42,9 @@ class AhoiInterface():
         self.myModem.addRxCallback(self.rangingPosCallbackAck)
 
         self.myModem.receive(thread=True)
+    
+    def get_id(self):
+        return self.my_id
 
     def trigger_range_poll(self):
         self.dsn += 1 # increase packet sequence
@@ -119,16 +122,18 @@ class AhoiInterface():
 def main():
     counter = 0
     try:
-        #my_base = AhoiInterface(my_id=87,dev="/dev/ttyAMA0")
-        my_base = AhoiInterface(dev="/dev/ttyUSB1")
+        my_modem = AhoiInterface(my_id=2, dev="/dev/ttyAMA0")
+        #my_modem = AhoiInterface(my_id=0, dev="/dev/ttyUSB1")
         while(True):
-            # --- If your are base, comment in the following
-            my_base.trigger_pos_range_poll(dst_modem_id=87)
+            # base has id=0
+            if my_modem.get_id == 0:
+                my_modem.trigger_pos_range_poll(dst_modem_id=2)
+
             if(counter % 10 == 0):
                 print(f"\n[Counter {counter}] Still alive... ")
 
             # --- for HW-auto range test    
-            # my_base.trigger_range_poll()
+            # my_modem.trigger_range_poll()
 
             counter += 1
             time.sleep(1)
