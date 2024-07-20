@@ -116,7 +116,8 @@ class AhoiInterface():
         # check if we have received a ranging ack
         #
         # Filters for own send ranging-polls
-        if pkt.header.type == 0x7F and pkt.header.len > 0 and pkt.header.src == self.my_id:
+        if pkt.header.type == 0x7F and pkt.header.len > 0 and pkt.header.dst == self.my_id:
+            #print(f"dst = {pkt.header.dst}")
             ack_src = pkt.header.src
             dsn = pkt.header.dsn
 
