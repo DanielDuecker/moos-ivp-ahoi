@@ -13,12 +13,11 @@ import time
 from ahoi.modem.modem import Modem
 
 class AhoiInterface():
-    def __init__(self, my_id, base_id, dev="/dev/ttyUSB0"):
+    def __init__(self, my_id, dev="/dev/ttyUSB0"):
         self.myModem = Modem()
         self.myModem.connect(dev)
 
         self.my_id = my_id      # id of this modem 
-        self.base_id = base_id  # id of the (mobile) base modem
 
         self.dsn = 0 # init packet counter
         
@@ -42,7 +41,7 @@ class AhoiInterface():
         self.dsn += 1 # increase packet sequence
         dst_msg = 255 # 255 = broadcast
         
-        self.myModem.send(src=self.base_id,
+        self.myModem.send(src=self.my_id,
                             dst=dst_msg,#self.anchor_ids[self.i],
                             status=2,               # status 2 trigger HW-range-ACK
                             type=0x00,              # type for ranging poll - that is auto-replied by the receipent
@@ -54,7 +53,7 @@ class AhoiInterface():
     def trigger_pos_range_poll(self, dst_modem_id):
         self.dsn += 1 # increase packet sequence
 
-        self.myModem.send(src=self.base_id,
+        self.myModem.send(src=self.my_id,
                             dst=dst_modem_id,       # id of destination modem
                             status=2,
                             type=0x7A,              # type for ranging+pos poll [own]
@@ -66,7 +65,7 @@ class AhoiInterface():
 
     def rangingPosCallbackPoll(self, pkt):
         if pkt.header.type == 0x7A and pkt.header.dst == self.my_id: # if poll for range+pos is received
-            src = pkt.header.src # read source id
+            poll_src = pkt.header.src # read source id
             dsn_poll = pkt.header.dsn # read packet sequence number from poll
 
             time.sleep(1)  # wait before sending position, ranging ACK is sent before
@@ -75,30 +74,29 @@ class AhoiInterface():
             position = my_position_x.to_bytes(2, 'big', signed=True) + my_position_y.to_bytes(2, 'big', signed=True)
 
             self.myModem.send(src=self.my_id,
-                              dst=self.base_id,
+                              dst=poll_src,
                               type=0x7D,            # temp using Ben's type for position 
                               status=0, 
                               payload=position)     # transmit anchor position (type 0x7D)
             
-            print(f"[Anchor ID {self.my_id}] Received poll seq_num {dsn_poll} from Anchot ID {src} - reply my position: {my_position_x}, {my_position_y}")
+            print(f"[Anchor ID {self.my_id}] Received poll seq_num {dsn_poll} from Anchot ID {poll_src} - reply my position: {my_position_x}, {my_position_y}")
 
 
     def rangingPosCallbackAck(self, pkt):
         if pkt.header.type == 0x7D and pkt.header.len > 0 and pkt.header.dst == self.my_id: # if poll for range+pos is received
-            src = pkt.header.src # read source id
+            ack_src = pkt.header.src # read source id
             dsn_poll = pkt.header.dsn # read packet sequence number from poll
 
             position_x = int.from_bytes(pkt.payload[0:2], 'big', signed=True) * 1e-2
             position_y = int.from_bytes(pkt.payload[2:4], 'big', signed=True) * 1e-2
             
-            print(f"[Anchor ID {self.my_id}] Received reply to my poll {dsn_poll} from ANCHOR ID{src}: Received position: {position_x}, {position_y}")
-
-
+            print(f"[Anchor ID {self.my_id}] Received reply to my poll {dsn_poll} from ANCHOR ID {ack_src}: Received position: {position_x}, {position_y}")
 
 
 
 
     def rangingCallback(self, pkt):
+        # baseline ranging using the modem's HW auto ranging ACK
         # check if we have received a ranging ack
         if pkt.header.type == 0x7F and pkt.header.len > 0:
             src = pkt.header.src
@@ -114,12 +112,20 @@ class AhoiInterface():
 def main():
     
     try:
-        my_base  = AhoiInterface(base_id=87,my_id=0,dev="/dev/ttyUSB1")
+        my_base = AhoiInterface(my_id=87,dev="/dev/ttyAMA0")
+        my_base = AhoiInterface(my_id=0,dev="/dev/ttyUSB1")
         while(True):
-            #my_base.trigger_range_poll()
-            
-            #print("still alive...")my_base.trigger_pos_range_poll(dst_modem_id=87)
+            # --- If your are base, comment in the following
+            my_base.trigger_pos_range_poll(dst_modem_id=87)
+            if(counter % 10 == 0):
+                print(f"[Counter {counter}] Still alive... ")
+
+            # --- for HW-auto range test    
+            # my_base.trigger_range_poll()
+
+            counter += 1
             time.sleep(1)
+
 
     except KeyboardInterrupt:
         pass
