@@ -9,19 +9,25 @@ Feature:
 
 """
 import numpy as np
+import json
 import time
 from ahoi.modem.modem import Modem
 
 class AhoiInterface():
-    def __init__(self, my_id, dev="/dev/ttyAMA0"):
-        self.myModem = Modem()
-        self.myModem.connect(dev)
+    def __init__(self, config, dev="/dev/ttyAMA0"):
         print(f"\nStarting ahoi interface...")
+    
+        print("reading config file...")
+        connect_device = config['dev']
+        self.my_id = config['modem_id']
+        print(f"dev={connect_device}")
+        print(f"modem_id={self.my_id}")
+        print("\n")
         
-        # print(f"Reading ID from modem HW ...")
-        # self.my_hw_id = self.myModem.id(id=2)
-        # print(f"found ID {self.my_hw_id} ...")
-        self.my_id = my_id #self.my_hw_id      # id of this modem 
+        self.myModem = Modem()
+        self.myModem.connect(connect_device)
+        self.myModem.id(id=self.my_id)      
+
         print(f"[Anchor ID {self.my_id}] Ready!")
 
 
@@ -31,7 +37,7 @@ class AhoiInterface():
         SPEED_OF_SOUND = 1500 
         self.speed_of_sound = SPEED_OF_SOUND # in m/s
 
-        self.anchor_ids = np.array([1])
+        #self.anchor_ids = np.array([1])
 
         # debug echoing of transmitted and received packages
         # self.myModem.setTxEcho(True)
@@ -131,15 +137,22 @@ class AhoiInterface():
 
             print(f"[Anchor ID {self.my_id}, tof_rate {success_rate_tof:.2f}]] TOF-ACK to with dsn {dsn} from ANCHOR ID {ack_src}: - measured distance {distance}")
 
-def main():
+
+def load_config(config_file='modem_config.json'):
+    with open(config_file, 'r') as file:
+        config = json.load(file)
+    return config
+
+
+if __name__ == '__main__':
+    modem_config = load_config(config_file='modem_config.json')
     counter = 0
     try:
-        my_modem = AhoiInterface(my_id=None, dev="/dev/ttyAMA0")
-        #my_modem = AhoiInterface(my_id=0, dev="/dev/ttyUSB1")
+        my_modem = AhoiInterface(modem_config)
         while(True):
-            # base has id=0
-            if my_modem.get_id() == 0:
-                my_modem.trigger_pos_range_poll(dst_modem_id=1)
+            
+            if my_modem.get_id() == 0: # mobile base has id=0
+                my_modem.trigger_pos_range_poll(dst_modem_id=2)
 
             if(counter % 10 == 0):
                 print(f"\n[Counter {counter}] Still alive... ")
@@ -153,7 +166,3 @@ def main():
 
     except KeyboardInterrupt:
         pass
-
-
-if __name__ == '__main__':
-    main()
