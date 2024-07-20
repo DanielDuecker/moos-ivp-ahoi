@@ -13,11 +13,17 @@ import time
 from ahoi.modem.modem import Modem
 
 class AhoiInterface():
-    def __init__(self, my_id, dev="/dev/ttyUSB0"):
+    def __init__(self, dev="/dev/ttyAMA0"):
         self.myModem = Modem()
         self.myModem.connect(dev)
+        print(f"\n Starting ahoi interface...")
+        
+        print(f"Reading ID from modem HW ...")
+        self.my_hw_id = self.myModem.id()
+        print(f"found ID {self.my_hw_id} ...")
+        self.my_id = self.my_hw_id      # id of this modem 
+        print(f"[Anchor ID {self.my_hw_id}] Ready!")
 
-        self.my_id = my_id      # id of this modem 
 
         self.dsn = 0 # init packet counter
         
@@ -113,11 +119,11 @@ class AhoiInterface():
 def main():
     counter = 0
     try:
-        my_base = AhoiInterface(my_id=87,dev="/dev/ttyAMA0")
-        #my_base = AhoiInterface(my_id=0,dev="/dev/ttyUSB1")
+        #my_base = AhoiInterface(my_id=87,dev="/dev/ttyAMA0")
+        my_base = AhoiInterface(dev="/dev/ttyUSB1")
         while(True):
             # --- If your are base, comment in the following
-            #my_base.trigger_pos_range_poll(dst_modem_id=87)
+            my_base.trigger_pos_range_poll(dst_modem_id=87)
             if(counter % 10 == 0):
                 print(f"\n[Counter {counter}] Still alive... ")
 
