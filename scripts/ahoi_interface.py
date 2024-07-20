@@ -16,7 +16,7 @@ class AhoiInterface():
     def __init__(self, my_id, dev="/dev/ttyAMA0"):
         self.myModem = Modem()
         self.myModem.connect(dev)
-        print(f"\n Starting ahoi interface...")
+        print(f"\nStarting ahoi interface...")
         
         # print(f"Reading ID from modem HW ...")
         # self.my_hw_id = self.myModem.id(id=2)
@@ -42,6 +42,9 @@ class AhoiInterface():
         self.myModem.addRxCallback(self.rangingPosCallbackAck)
 
         self.myModem.receive(thread=True)
+
+        self._success_rate_tof_counter = 0
+        self._success_rate_pos_counter = 0
     
     def get_id(self):
         return self.my_id
@@ -77,7 +80,7 @@ class AhoiInterface():
             poll_src = pkt.header.src # read source id
             dsn_poll = pkt.header.dsn # read packet sequence number from poll
 
-            time.sleep(1)  # wait before sending position, ranging ACK is sent before
+            time.sleep(0.5)  # wait before sending position, ranging ACK is sent before
             my_position_x = 42 + int(np.random.rand()*10)
             my_position_y = 84
             position = my_position_x.to_bytes(2, 'big', signed=True) + my_position_y.to_bytes(2, 'big', signed=True)
@@ -99,8 +102,11 @@ class AhoiInterface():
 
             position_x = int.from_bytes(pkt.payload[0:2], 'big', signed=True) * 1e-2
             position_y = int.from_bytes(pkt.payload[2:4], 'big', signed=True) * 1e-2
+
+            self._success_rate_pos_counter +=1
+            success_rate_pos = self._success_rate_pos_counter / dsn_poll
             
-            print(f"[Anchor ID {self.my_id}] POS-ACK to my poll {dsn_poll} from ANCHOR ID {ack_src}: Received position: {position_x}, {position_y}")
+            print(f"[Anchor ID {self.my_id}, pos_rate {success_rate_pos:.2f}] POS-ACK to my poll {dsn_poll} from ANCHOR ID {ack_src}: Received position: {position_x}, {position_y}")
 
 
 
@@ -117,7 +123,10 @@ class AhoiInterface():
                 tof = tof * 256 + pkt.payload[i]
             distance = tof * 1e-6 * self.speed_of_sound
 
-            print(f"[Anchor ID {self.my_id}] TOF-ACK to with dsn {dsn} from ANCHOR ID {ack_src}: - measured distance {distance}")
+            self._success_rate_tof_counter +=1
+            success_rate_tof = self._success_rate_tof_counter / dsn
+
+            print(f"[Anchor ID {self.my_id}, tof_rate {success_rate_tof:.2f}]] TOF-ACK to with dsn {dsn} from ANCHOR ID {ack_src}: - measured distance {distance}")
 
 def main():
     counter = 0
@@ -126,7 +135,7 @@ def main():
         #my_modem = AhoiInterface(my_id=0, dev="/dev/ttyUSB1")
         while(True):
             # base has id=0
-            if my_modem.get_id == 0:
+            if my_modem.get_id() == 0:
                 my_modem.trigger_pos_range_poll(dst_modem_id=2)
 
             if(counter % 10 == 0):
