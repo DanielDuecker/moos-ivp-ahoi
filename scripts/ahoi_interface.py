@@ -114,7 +114,9 @@ class AhoiInterface():
     def rangingCallback(self, pkt):
         # baseline ranging using the modem's HW auto ranging ACK
         # check if we have received a ranging ack
-        if pkt.header.type == 0x7F and pkt.header.len > 0:
+        #
+        # Filters for own send ranging-polls
+        if pkt.header.type == 0x7F and pkt.header.len > 0 and pkt.header.src == self.my_id:
             ack_src = pkt.header.src
             dsn = pkt.header.dsn
 
@@ -131,12 +133,12 @@ class AhoiInterface():
 def main():
     counter = 0
     try:
-        my_modem = AhoiInterface(my_id=2, dev="/dev/ttyAMA0")
+        my_modem = AhoiInterface(my_id=None, dev="/dev/ttyAMA0")
         #my_modem = AhoiInterface(my_id=0, dev="/dev/ttyUSB1")
         while(True):
             # base has id=0
             if my_modem.get_id() == 0:
-                my_modem.trigger_pos_range_poll(dst_modem_id=2)
+                my_modem.trigger_pos_range_poll(dst_modem_id=1)
 
             if(counter % 10 == 0):
                 print(f"\n[Counter {counter}] Still alive... ")
@@ -145,7 +147,7 @@ def main():
             # my_modem.trigger_range_poll()
 
             counter += 1
-            time.sleep(1)
+            time.sleep(1.5)
 
 
     except KeyboardInterrupt:
