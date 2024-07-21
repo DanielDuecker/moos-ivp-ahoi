@@ -1,0 +1,11 @@
+## ahoi modem getting started
+
+1. double check branch - currently, ahoi_loc
+2. git submodule update --init --recursive
+3. export PYTHONPATH=${PYTHONPATH}:~/src/moos/moos-ivp-ahoi/srcripts/ahoi_pylib/lib
+4. add modem_config.json to /moos-ivp-ahoi/srcripts/
+
+{
+    "modem_id": 0,
+    "dev": "/dev/ttyUSB1"
+}
