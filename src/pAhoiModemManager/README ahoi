@@ -1,0 +1,28 @@
+
+# AHOI Modem Getting Started
+
+## Steps to Get Started
+
+1. **Double Check Branch**  
+   Ensure you are on the correct branch. Currently, the branch is `ahoi_loc`.
+
+2. **Update Submodules**  
+   Run the following command to initialize and update the submodules:
+   ```sh
+   git submodule update --init --recursive
+   ```
+
+3. **Set PYTHONPATH**  
+   Export the `PYTHONPATH` to include the AHOI Python library:
+   ```sh
+   export PYTHONPATH=${PYTHONPATH}:~/src/moos/moos-ivp-ahoi/scripts/ahoi_pylib/lib
+   ```
+
+4. **Add Configuration File**  
+   Create and add the `modem_config.json` file to the `/moos-ivp-ahoi/scripts/` directory with the following content:
+   ```json
+   {
+       "modem_id": 0,
+       "dev": "/dev/ttyUSB1"
+   }
+   ```

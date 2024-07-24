@@ -27,8 +27,8 @@ ProcessConfig = ANTLER
   Run = pHelmIvP      @ NewConsole = false
   Run = pOdometry     @ NewConsole = false
   
-  Run = pAhoiModemManager @ NewConsole = true
-  
+  Run = pAhoiLocSolution @ NewConsole = false
+  Run = pAhoiRangeSim @ NewConsole = false
   
 
   //Run = pLogger @ NewConsole = false
@@ -174,8 +174,14 @@ ProcessConfig = pNodeReporter
    WildCardLogging = true
  }
 
- ProcessConfig = pAhoiModemManager
- {
-    AppTick	= 4
-    CommsTick	= 4
- }
+ ProcessConfig = pAhoiLocSolution
+{
+  AppTick       = 10
+  CommsTick     = 10
+}
+
+ProcessConfig = pAhoiRangeSim
+{
+  AppTick       = 10
+  CommsTick     = 10
+}

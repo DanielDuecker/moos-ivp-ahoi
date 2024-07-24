@@ -22,6 +22,7 @@ ADD_SUBDIRECTORY(pOdometry)
 
 ADD_SUBDIRECTORY(pAhoiLocSolution)
 ADD_SUBDIRECTORY(pAhoiRangeSim)
+ADD_SUBDIRECTORY(pAhoiModemManager)
 
 ##############################################################################
 #                           END of CMakeLists.txt
