@@ -181,7 +181,7 @@ if __name__ == '__main__':
                     my_modem.trigger_pos_range_poll(dst_modem_id=poll_id)
                     time.sleep(1.5)
             else:
-                my_modem.sim_own_position(noise=True)
+                my_modem.sim_own_position(noisy=True)
                 time.sleep(1)
             
             if(counter % 10 == 0):
