@@ -62,4 +62,3 @@ echo "If experiencing issues, verify permissions for Serial Port"
 
 # Run program
 python3 pyAhoiModemManager.py
-

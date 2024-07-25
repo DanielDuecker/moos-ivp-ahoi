@@ -14,12 +14,13 @@ import time
 from ahoi.modem.modem import Modem
 
 class AhoiInterface():
-    def __init__(self, config, dev="/dev/ttyAMA0"):
+    def __init__(self, node_config, enviro_config,  debug_prints=True):
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         print(f"\nStarting ahoi interface...")
     
         print("reading config file...")
-        connect_device = config['dev']
-        self.my_id = config['modem_id']
+        connect_device = node_config['dev'] # dev="/dev/ttyAMA0"
+        self.my_id = node_config['modem_id']
         print(f"dev={connect_device}")
         print(f"modem_id={self.my_id}")
         print("\n")
@@ -28,29 +29,30 @@ class AhoiInterface():
         self.myModem.connect(connect_device)
         self.myModem.id(id=self.my_id)      
 
-        print(f"[Anchor ID {self.my_id}] Ready!")
-
-
-        self.dsn = 0 # init packet counter
-        
-
-        SPEED_OF_SOUND = 1500 
-        self.speed_of_sound = SPEED_OF_SOUND # in m/s
-
-        #self.anchor_ids = np.array([1])
-
-        # debug echoing of transmitted and received packages
-        # self.myModem.setTxEcho(True)
-        # self.myModem.setRxEcho(True)
-
         self.myModem.addRxCallback(self.rangingCallback) # Add a function to be called on rx pkt
         self.myModem.addRxCallback(self.rangingPosCallbackPoll) # Add a function to be called on rx pkt
         self.myModem.addRxCallback(self.rangingPosCallbackAck)
 
+        print(f"[Anchor ID {self.my_id}] Ready!")
+
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+        self.debug_mode = debug_prints
+        
+
+        self.dsn = 0 # init packet counter
+        
+        self.speed_of_sound = enviro_config["speed_of_sound"] # in m/s
+
+ 
         self.myModem.receive(thread=True)
 
         self._success_rate_tof_counter = 0
         self._success_rate_pos_counter = 0
+        
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+        self.my_position_x = 0
+        self.my_position_y = 0
+        self.my_position_z = 0
     
     def get_id(self):
         return self.my_id
@@ -65,8 +67,8 @@ class AhoiInterface():
                             type=0x00,              # type for ranging poll - that is auto-replied by the receipent
                             payload=bytearray(),
                             dsn=self.self.dsn)
-        
-        print(f"\n[Base with ID {self.my_id}] sent range poll to ID {dst_msg} sqn {self.dsn} ...")
+        if self.debug_mode:
+            print(f"\n[Base with ID {self.my_id}] sent range poll to ID {dst_msg} sqn {self.dsn} ...")
     
     def trigger_pos_range_poll(self, dst_modem_id):
         self.dsn += 1 # increase packet sequence
@@ -77,7 +79,8 @@ class AhoiInterface():
                             type=0x7A,              # type for ranging+pos poll [own]
                             payload=bytearray(),
                             dsn=self.dsn)
-        print(f"\n[Base with ID {self.my_id}] sent range poll to ID {dst_modem_id} sqn {self.dsn} ...")
+        if self.debug_mode:
+            print(f"\n[Base with ID {self.my_id}] sent range poll to ID {dst_modem_id} sqn {self.dsn} ...")
     
 
 
@@ -87,9 +90,8 @@ class AhoiInterface():
             dsn_poll = pkt.header.dsn # read packet sequence number from poll
 
             time.sleep(0.5)  # wait before sending position, ranging ACK is sent before
-            my_position_x = 42 + int(np.random.rand()*10)
-            my_position_y = 84
-            position = my_position_x.to_bytes(2, 'big', signed=True) + my_position_y.to_bytes(2, 'big', signed=True)
+
+            position = self.my_position_x.to_bytes(2, 'big', signed=True) + self.my_position_y.to_bytes(2, 'big', signed=True)
 
             self.myModem.send(src=self.my_id,
                               dst=poll_src,
@@ -97,8 +99,8 @@ class AhoiInterface():
                               status=0, 
                               payload=position, # transmit anchor position (type 0x7D)
                               dsn=dsn_poll)     
-            
-            print(f"[Anchor ID {self.my_id}] to poll {dsn_poll} from Anchor ID {poll_src} - reply my position: {my_position_x}, {my_position_y}")
+            if self.debug_mode:
+                print(f"[Anchor ID {self.my_id}] to poll {dsn_poll} from Anchor ID {poll_src} - reply my position: {my_position_x}, {my_position_y}")
 
 
     def rangingPosCallbackAck(self, pkt):
@@ -112,7 +114,26 @@ class AhoiInterface():
             self._success_rate_pos_counter +=1
             success_rate_pos = self._success_rate_pos_counter / dsn_poll
             
-            print(f"[Anchor ID {self.my_id}, pos_rate {success_rate_pos:.2f}] POS-ACK to my poll {dsn_poll} from ANCHOR ID {ack_src}: Received position: {position_x}, {position_y}")
+            if self.debug_mode:
+                print(f"[Anchor ID {self.my_id}, pos_rate {success_rate_pos:.2f}] POS-ACK to my poll {dsn_poll} from ANCHOR ID {ack_src}: Received position: {position_x}, {position_y}")
+
+
+    def sim_own_position(self, x=42, y=84, z=1, noisy=True):
+        
+        self.my_position_x = x
+        self.my_position_y = y
+        self.my_position_z = z
+        if noisy:
+            self.my_position_x += int(np.random.rand()*10)
+        
+
+        return True
+
+    def set_own_position(self, x, y, z):
+        # to be used by eg. Heron to set own position known from GPS
+        self.my_position_x = x
+        self.my_position_y = y
+        self.my_position_z = z
 
 
 
@@ -135,7 +156,8 @@ class AhoiInterface():
             self._success_rate_tof_counter +=1
             success_rate_tof = self._success_rate_tof_counter / dsn
 
-            print(f"[Anchor ID {self.my_id}, tof_rate {success_rate_tof:.2f}]] TOF-ACK to with dsn {dsn} from ANCHOR ID {ack_src}: - measured distance {distance}")
+            if self.debug_mode:
+                print(f"[Anchor ID {self.my_id}, tof_rate {success_rate_tof:.2f}]] TOF-ACK to with dsn {dsn} from ANCHOR ID {ack_src}: - measured distance {distance}")
 
 
 def load_config(config_file='modem_config.json'):
@@ -145,23 +167,27 @@ def load_config(config_file='modem_config.json'):
 
 
 if __name__ == '__main__':
-    modem_config = load_config(config_file='modem_config.json')
+    node_config = load_config(config_file='modem_config.json')
+    enviro_config = load_config(config_file='enviro_config.json')
+    modem_id_list = (1,42,46)
     counter = 0
     try:
-        my_modem = AhoiInterface(modem_config)
+        my_modem = AhoiInterface(node_config, enviro_config)
         while(True):
             
+            
             if my_modem.get_id() == 0: # mobile base has id=0
-                my_modem.trigger_pos_range_poll(dst_modem_id=2)
-
+                for poll_id in modem_id_list:
+                    my_modem.trigger_pos_range_poll(dst_modem_id=poll_id)
+                    time.sleep(1.5)
+            else:
+                my_modem.sim_own_position(noise=True)
+                time.sleep(1)
+            
             if(counter % 10 == 0):
                 print(f"\n[Counter {counter}] Still alive... ")
 
-            # --- for HW-auto range test    
-            # my_modem.trigger_range_poll()
-
-            counter += 1
-            time.sleep(1.5)
+            counter+=1
 
 
     except KeyboardInterrupt:
