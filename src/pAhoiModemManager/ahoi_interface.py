@@ -100,7 +100,7 @@ class AhoiInterface():
                               payload=position, # transmit anchor position (type 0x7D)
                               dsn=dsn_poll)     
             if self.debug_mode:
-                print(f"[Anchor ID {self.my_id}] to poll {dsn_poll} from Anchor ID {poll_src} - reply my position: {my_position_x}, {my_position_y}")
+                print(f"[Anchor ID {self.my_id}] to poll {dsn_poll} from Anchor ID {poll_src} - reply my position: {self.my_position_x}, {self.my_position_y}")
 
 
     def rangingPosCallbackAck(self, pkt):
@@ -108,14 +108,14 @@ class AhoiInterface():
             ack_src = pkt.header.src # read source id
             dsn_poll = pkt.header.dsn # read packet sequence number from poll
 
-            position_x = int.from_bytes(pkt.payload[0:2], 'big', signed=True) * 1e-2
-            position_y = int.from_bytes(pkt.payload[2:4], 'big', signed=True) * 1e-2
+            rec_position_x = int.from_bytes(pkt.payload[0:2], 'big', signed=True) * 1e-2
+            rec_position_y = int.from_bytes(pkt.payload[2:4], 'big', signed=True) * 1e-2
 
             self._success_rate_pos_counter +=1
             success_rate_pos = self._success_rate_pos_counter / dsn_poll
             
             if self.debug_mode:
-                print(f"[Anchor ID {self.my_id}, pos_rate {success_rate_pos:.2f}] POS-ACK to my poll {dsn_poll} from ANCHOR ID {ack_src}: Received position: {position_x}, {position_y}")
+                print(f"[Anchor ID {self.my_id}, pos_rate {success_rate_pos:.2f}] POS-ACK to my poll {dsn_poll} from ANCHOR ID {ack_src}: Received position: {rec_position_x}, {rec_position_y}")
 
 
     def sim_own_position(self, x=42, y=84, z=1, noisy=True):
