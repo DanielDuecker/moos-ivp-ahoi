@@ -78,6 +78,8 @@ class pyAhoiModemManager(object):
 
     def iterate(self):
         # Reads and renders (print and Notify) packet
+        self.ahoi_interface.set_own_position(x=self.my_pos_x, y=self.my_pos_y, z=None)
+        print(f"set my ASV-MOOS position x={self.my_pos_x}, y={self.my_pos_y}")
         packet = "Moin Ahoi" 
         if len(str(packet)) >= 2:
             self.mooscomms.notify("AHOI_ITERATE_TEST", str(packet), pymoos.time())

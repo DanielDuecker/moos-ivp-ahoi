@@ -68,7 +68,7 @@ class AhoiInterface():
                             payload=bytearray(),
                             dsn=self.self.dsn)
         if self.debug_mode:
-            print(f"\n[Base with ID {self.my_id}] sent range poll to ID {dst_msg} sqn {self.dsn} ...")
+            print(f"\n[Base_ID_{self.my_id}] sent range poll to ID {dst_msg} sqn {self.dsn} ...") # TODO dsn max 255
     
     def trigger_pos_range_poll(self, dst_modem_id):
         self.dsn += 1 # increase packet sequence
@@ -80,7 +80,7 @@ class AhoiInterface():
                             payload=bytearray(),
                             dsn=self.dsn)
         if self.debug_mode:
-            print(f"\n[Base with ID {self.my_id}] sent range poll to ID {dst_modem_id} sqn {self.dsn} ...")
+            print(f"\n[Base_ID_{self.my_id}] sent range poll to ID {dst_modem_id} sqn {self.dsn} ...") # TODO dsn max 255
     
 
 
@@ -100,7 +100,7 @@ class AhoiInterface():
                               payload=position, # transmit anchor position (type 0x7D)
                               dsn=dsn_poll)     
             if self.debug_mode:
-                print(f"[Anchor ID {self.my_id}] to poll {dsn_poll} from Anchor ID {poll_src} - reply my position: {self.my_position_x}, {self.my_position_y}")
+                print(f"[Anchor_ID_{self.my_id}] poll {dsn_poll} by ID_{poll_src} -> my pos {self.my_position_x}, {self.my_position_y}")
 
 
     def rangingPosCallbackAck(self, pkt):
@@ -115,7 +115,7 @@ class AhoiInterface():
             success_rate_pos = self._success_rate_pos_counter / dsn_poll
             
             if self.debug_mode:
-                print(f"[Anchor ID {self.my_id}, pos_rate {success_rate_pos:.2f}] POS-ACK to my poll {dsn_poll} from ANCHOR ID {ack_src}: Received position: {rec_position_x}, {rec_position_y}")
+                print(f"[Anchor_ID_{self.my_id}, pos_rate {success_rate_pos:.2f}] POS-ACK to my poll {dsn_poll} from ANCHOR ID {ack_src}: Received position: {rec_position_x}, {rec_position_y}")
 
 
     def sim_own_position(self, x=42, y=84, z=1, noisy=True):
@@ -169,7 +169,7 @@ def load_config(config_file='modem_config.json'):
 if __name__ == '__main__':
     node_config = load_config(config_file='modem_config.json')
     enviro_config = load_config(config_file='enviro_config.json')
-    modem_id_list = (10,46,42)
+    modem_id_list = (6,2,9)
     counter = 0
     try:
         my_modem = AhoiInterface(node_config, enviro_config)
