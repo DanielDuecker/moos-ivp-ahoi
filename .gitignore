@@ -57,6 +57,8 @@ lib/
 *~
 
 # ahoi config files
-modem_config.json
+local_modem_config.json
 .vscode
 .venv
+
+__pycache__/

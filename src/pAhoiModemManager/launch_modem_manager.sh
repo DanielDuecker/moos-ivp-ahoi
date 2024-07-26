@@ -1,4 +1,4 @@
-#!/bin/bash
+!/bin/bash
 
 # FUNCTIONALITY: driver dependency, log file folder creation, log file management (& deletion),  run program
 
@@ -58,7 +58,7 @@
 # fi
 
 # Known issue communicated to user 
-echo "If experiencing issues, verify permissions for Serial Port"
+#echo "If experiencing issues, verify permissions for Serial Port"
 
 # Run program
 python3 pyAhoiModemManager.py

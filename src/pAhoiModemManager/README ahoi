@@ -15,11 +15,11 @@
 3. **Set PYTHONPATH**  
    Export the `PYTHONPATH` to include the AHOI Python library:
    ```sh
-   export PYTHONPATH=${PYTHONPATH}:~/src/moos/moos-ivp-ahoi/scripts/ahoi_pylib/lib
+   export PYTHONPATH=${PYTHONPATH}:~/path/to/moos-ivp-ahoi/scripts/ahoi_pylib/lib
    ```
 
 4. **Add Configuration File**  
-   Create and add the `modem_config.json` file to the `/moos-ivp-ahoi/scripts/` directory with the following content:
+   Create and add the `local_modem_config.json` file to corresponding directory with the following content:
    ```json
    {
        "modem_id": 0,

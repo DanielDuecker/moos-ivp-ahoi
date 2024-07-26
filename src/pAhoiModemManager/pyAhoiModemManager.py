@@ -5,7 +5,7 @@ import time
 from ahoi_interface import AhoiInterface, load_config
 
 class pyAhoiModemManager(object):
-    def __init__(self, config_file='modem_config.json'):
+    def __init__(self, modem_config_file='local_modem_config.json', enviro_config_file='enviro_config.json'):
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         ###parameters###
         self.moos_app_name = 'pyAhoiModemManager'
@@ -31,8 +31,9 @@ class pyAhoiModemManager(object):
 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-        self.config = load_config(config_file)
-        self.ahoi_interface = AhoiInterface(self.config)
+        self.node_config = load_config(modem_config_file)
+        self.enviro_config = load_config(enviro_config_file)
+        self.ahoi_interface = AhoiInterface(node_config=self.node_config, enviro_config=self.enviro_config)
 
 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -69,22 +70,26 @@ class pyAhoiModemManager(object):
         while True:
             if self.moos_connected:
                 self.iterate()
-                #self.comms.yield_(1)  # Sleep for 1 second
-                dst_modem_id = 42
-                self.ahoi_interface.trigger_pos_range_poll(dst_modem_id)
+                #self.mooscomms.yield_(1)  # Sleep for 1 second
+                #dst_modem_id = 42
+                #self.ahoi_interface.trigger_pos_range_poll(dst_modem_id)
                 #self.ahoi_interface.trigger_range_poll()
-                time.sleep(1.5)
+                #time.sleep(1.5)
              
 
     def iterate(self):
+        rate = 10
         # Reads and renders (print and Notify) packet
-        self.ahoi_interface.set_own_position(x=self.my_pos_x, y=self.my_pos_y, z=None)
-        print(f"set my ASV-MOOS position x={self.my_pos_x}, y={self.my_pos_y}")
-        packet = "Moin Ahoi" 
-        if len(str(packet)) >= 2:
-            self.mooscomms.notify("AHOI_ITERATE_TEST", str(packet), pymoos.time())
-            print(packet)
-            print("\n")
+        if self.ahoi_interface.set_own_position(x=self.my_pos_x, y=self.my_pos_y):
+            print(f"[AhoiModemManager] set my ASV-MOOS position x={self.my_pos_x:.2f}, y={self.my_pos_y:.2f}")
+
+        # packet = "Moin Ahoi" 
+        # if len(str(packet)) >= 2:
+        #     self.mooscomms.notify("AHOI_ITERATE_TEST", str(packet), pymoos.time())
+        #     print(packet)
+        #     print("\n")
+        time.sleep(1/rate)
+
 
 
         

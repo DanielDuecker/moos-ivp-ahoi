@@ -118,22 +118,25 @@ class AhoiInterface():
                 print(f"[Anchor_ID_{self.my_id}, pos_rate {success_rate_pos:.2f}] POS-ACK to my poll {dsn_poll} from ANCHOR ID {ack_src}: Received position: {rec_position_x}, {rec_position_y}")
 
 
-    def sim_own_position(self, x=42, y=84, z=1, noisy=True):
+    def sim_own_position(self, x=42, y=84, noisy=True):
         
         self.my_position_x = x
         self.my_position_y = y
-        self.my_position_z = z
         if noisy:
             self.my_position_x += int(np.random.rand()*10)
         
 
         return True
 
-    def set_own_position(self, x, y, z):
+    def set_own_position(self, x, y):
         # to be used by eg. Heron to set own position known from GPS
-        self.my_position_x = x
-        self.my_position_y = y
-        self.my_position_z = z
+        if x != None and y != None:
+            self.my_position_x = x
+            self.my_position_y = y
+            return True
+        else:
+            return False
+
 
 
 
@@ -160,14 +163,14 @@ class AhoiInterface():
                 print(f"[Anchor ID {self.my_id}, tof_rate {success_rate_tof:.2f}] TOF-ACK to with dsn {dsn} from ANCHOR ID {ack_src}: - measured distance {distance}")
 
 
-def load_config(config_file='modem_config.json'):
+def load_config(config_file='local_modem_config.json'):
     with open(config_file, 'r') as file:
         config = json.load(file)
     return config
 
 
 if __name__ == '__main__':
-    node_config = load_config(config_file='modem_config.json')
+    node_config = load_config(config_file='local_modem_config.json')
     enviro_config = load_config(config_file='enviro_config.json')
     modem_id_list = (6,2,9)
     counter = 0
