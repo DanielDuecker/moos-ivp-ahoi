@@ -157,7 +157,7 @@ class AhoiInterface():
             success_rate_tof = self._success_rate_tof_counter / dsn
 
             if self.debug_mode:
-                print(f"[Anchor ID {self.my_id}, tof_rate {success_rate_tof:.2f}]] TOF-ACK to with dsn {dsn} from ANCHOR ID {ack_src}: - measured distance {distance}")
+                print(f"[Anchor ID {self.my_id}, tof_rate {success_rate_tof:.2f}] TOF-ACK to with dsn {dsn} from ANCHOR ID {ack_src}: - measured distance {distance}")
 
 
 def load_config(config_file='modem_config.json'):
@@ -169,7 +169,7 @@ def load_config(config_file='modem_config.json'):
 if __name__ == '__main__':
     node_config = load_config(config_file='modem_config.json')
     enviro_config = load_config(config_file='enviro_config.json')
-    modem_id_list = (1,42,46)
+    modem_id_list = (10,46,42)
     counter = 0
     try:
         my_modem = AhoiInterface(node_config, enviro_config)
