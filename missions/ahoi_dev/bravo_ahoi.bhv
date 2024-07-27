@@ -1,6 +1,6 @@
 //--------    FILE: bravo_ahoi.bhv   -------------
 
-initialize   DEPLOY = false
+initialize   DEPLOY = true // for auto start
 initialize   RETURN = false
 initialize   MODE = LOITERING
 initialize   LOITER_REGION = EAST
