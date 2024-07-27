@@ -117,7 +117,7 @@ class AhoiInterface():
                               payload=position, # transmit anchor position (type 0x7D)
                               dsn=dsn_poll)     
             if self.debug_mode:
-                print(f"[Anchor_ID_{self.my_id}] poll {dsn_poll} by ID_{poll_src} -> my pos {self.my_position_x/100}m, {self.my_position_y/100}")
+                print(f"[Anchor_ID_{self.my_id}] poll {dsn_poll} by ID_{poll_src} -> my pos {self.my_position_x}, {self.my_position_y}")
 
 
     def rangingPosCallbackAck(self, pkt):

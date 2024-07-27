@@ -61,28 +61,20 @@ class pyAhoiModemManager(object):
     
 
     def run(self):
+        counter = 0
+        rate = 10
         while True:
             if self.moos_connected:
                 self.iterate()
-                #self.mooscomms.yield_(1)  # Sleep for 1 second
-
-             
+                if counter%100 == 0:
+                    print(f"[pyAhoiModemManager] still alive ... since {(counter/rate/60):.1f}min")
+                time.sleep(1/rate)
+                #self.mooscomms.yield_(1)  # Sleep for 1 seconds
 
     def iterate(self):
-        rate = 10
-        # Reads and renders (print and Notify) packet
-        if self.ahoi_interface.set_own_position(x_m=self.my_pos_x, y_m=self.my_pos_y):
-            print(f"[AhoiModemManager] set my ASV-MOOS position x={self.my_pos_x:.2f}, y={self.my_pos_y:.2f}")
-
-        # packet = "Moin Ahoi" 
-        # if len(str(packet)) >= 2:
-        #     self.mooscomms.notify("AHOI_ITERATE_TEST", str(packet), pymoos.time())
-        #     print(packet)
-        #     print("\n")
-        time.sleep(1/rate)
-
-
-
+        self.ahoi_interface.set_own_position(x_m=self.my_pos_x, y_m=self.my_pos_y)
+            #print(f"[AhoiModemManager] set my ASV-MOOS position x={self.my_pos_x:.2f}, y={self.my_pos_y:.2f}")
+        
         
 if __name__ == '__main__':
     app = pyAhoiModemManager()
