@@ -11,7 +11,7 @@ class pyAhoiModemManager(object):
         self.moos_app_name = 'pyAhoiModemManager'
         self.time_warp = 1
         self.server_host = 'localhost'
-        self.server_port = 9000 # for oak, since config setting is not setup yet
+        self.server_port = 9000 
         
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
@@ -41,16 +41,12 @@ class pyAhoiModemManager(object):
         self.my_pos_y = None
 
 
-
-
     def on_connect(self):
         ''' On connection to MOOSDB, register for desired MOOS variables (allows for * regex) e.g. register('variable', 'community', 'interval')
         self.mooscomms.register('NODE_*_PING','NODE_*',0) '''
         self.moos_connected = True
 
         print("Connected to MOOSDB")
-        #self.mooscomms.register('TRIGGER_RANGE', 0)
-        #self.mooscomms.register('TRIGGER_POS_RANGE', 0)
         self.mooscomms.register('NAV_X', 0)
         self.mooscomms.register('NAV_Y', 0)
         return True
@@ -61,8 +57,6 @@ class pyAhoiModemManager(object):
                 self.my_pos_x = msg.double()
             elif msg.key() == 'NAV_Y':
                 self.my_pos_y = msg.double()
-                #dst_modem_id = int(msg.string())
-                #self.ahoi_interface.trigger_pos_range_poll(dst_modem_id)
         return True
     
 
@@ -71,16 +65,13 @@ class pyAhoiModemManager(object):
             if self.moos_connected:
                 self.iterate()
                 #self.mooscomms.yield_(1)  # Sleep for 1 second
-                #dst_modem_id = 42
-                #self.ahoi_interface.trigger_pos_range_poll(dst_modem_id)
-                #self.ahoi_interface.trigger_range_poll()
-                #time.sleep(1.5)
+
              
 
     def iterate(self):
         rate = 10
         # Reads and renders (print and Notify) packet
-        if self.ahoi_interface.set_own_position(x=self.my_pos_x, y=self.my_pos_y):
+        if self.ahoi_interface.set_own_position(x_m=self.my_pos_x, y_m=self.my_pos_y):
             print(f"[AhoiModemManager] set my ASV-MOOS position x={self.my_pos_x:.2f}, y={self.my_pos_y:.2f}")
 
         # packet = "Moin Ahoi" 

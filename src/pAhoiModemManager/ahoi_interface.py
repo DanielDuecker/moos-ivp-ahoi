@@ -42,6 +42,7 @@ class AhoiInterface():
         self.dsn = 0 # init packet counter
         
         self.speed_of_sound = enviro_config["speed_of_sound"] # in m/s
+        
 
  
         self.myModem.receive(thread=True)
@@ -50,9 +51,12 @@ class AhoiInterface():
         self._success_rate_pos_counter = 0
         
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-        self.my_position_x = 0
-        self.my_position_y = 0
-        self.my_position_z = 0
+        self.pos_bytelength = 2
+        self.transmit_unit = 'cm' # round to [--] for acoustic transmission
+
+        self.my_position_x = 0 
+        self.my_position_y = 0 
+        self.my_position_z = 0 
     
     def get_id(self):
         return self.my_id
@@ -90,8 +94,21 @@ class AhoiInterface():
             dsn_poll = pkt.header.dsn # read packet sequence number from poll
 
             time.sleep(0.5)  # wait before sending position, ranging ACK is sent before
+            
+            if self.transmit_unit == 'cm':
+                my_position_x_int = int(self.my_position_x * 100)
+                my_position_y_int = int(self.my_position_y * 100)
+            else:
+                my_position_x_int = int(self.my_position_x)
+                my_position_y_int = int(self.my_position_y)
 
-            position = self.my_position_x.to_bytes(2, 'big', signed=True) + self.my_position_y.to_bytes(2, 'big', signed=True)
+            # Ensure they fit into 2 bytes
+            if not (-32768 <= my_position_x_int <= 32767):
+                raise ValueError("my_position_x is out of range for 2 bytes.")
+            if not (-32768 <= my_position_y_int <= 32767):
+                raise ValueError("my_position_y is out of range for 2 bytes.")
+
+            position = my_position_x_int.to_bytes(self.pos_bytelength, 'big', signed=True) + my_position_y_int.to_bytes(self.pos_bytelength, 'big', signed=True)
 
             self.myModem.send(src=self.my_id,
                               dst=poll_src,
@@ -100,7 +117,7 @@ class AhoiInterface():
                               payload=position, # transmit anchor position (type 0x7D)
                               dsn=dsn_poll)     
             if self.debug_mode:
-                print(f"[Anchor_ID_{self.my_id}] poll {dsn_poll} by ID_{poll_src} -> my pos {self.my_position_x}, {self.my_position_y}")
+                print(f"[Anchor_ID_{self.my_id}] poll {dsn_poll} by ID_{poll_src} -> my pos {self.my_position_x/100}m, {self.my_position_y/100}")
 
 
     def rangingPosCallbackAck(self, pkt):
@@ -108,31 +125,38 @@ class AhoiInterface():
             ack_src = pkt.header.src # read source id
             dsn_poll = pkt.header.dsn # read packet sequence number from poll
 
-            rec_position_x = int.from_bytes(pkt.payload[0:2], 'big', signed=True) * 1e-2
-            rec_position_y = int.from_bytes(pkt.payload[2:4], 'big', signed=True) * 1e-2
+            rec_position_x_int = int.from_bytes(pkt.payload[0:self.pos_bytelength], 'big', signed=True) * 1e-2
+            rec_position_y_int = int.from_bytes(pkt.payload[self.pos_bytelength:2*self.pos_bytelength], 'big', signed=True) * 1e-2
+
+            if self.transmit_unit == 'cm':
+                rec_position_x = rec_position_x_int / 100
+                rec_position_y = rec_position_y_int / 100
+            else:
+                rec_position_x = rec_position_x_int
+                rec_position_y = rec_position_y_int
 
             self._success_rate_pos_counter +=1
             success_rate_pos = self._success_rate_pos_counter / dsn_poll
             
             if self.debug_mode:
-                print(f"[Anchor_ID_{self.my_id}, pos_rate {success_rate_pos:.2f}] POS-ACK to my poll {dsn_poll} from ANCHOR ID {ack_src}: Received position: {rec_position_x}, {rec_position_y}")
+                print(f"[Anchor_ID_{self.my_id}, pos_rate {success_rate_pos:.2f}] POS-ACK to my poll {dsn_poll} from ANCHOR ID {ack_src}: Rec pos {rec_position_x}, {rec_position_y}")
 
 
-    def sim_own_position(self, x=42, y=84, noisy=True):
+    def sim_own_position(self, x_m=42, y_m=84, noisy=True):
         
-        self.my_position_x = x
-        self.my_position_y = y
+        self.my_position_x = x_m
+        self.my_position_y = y_m
         if noisy:
             self.my_position_x += int(np.random.rand()*10)
         
 
         return True
 
-    def set_own_position(self, x, y):
+    def set_own_position(self, x_m, y_m):
         # to be used by eg. Heron to set own position known from GPS
-        if x != None and y != None:
-            self.my_position_x = x
-            self.my_position_y = y
+        if x_m != None and y_m != None:
+            self.my_position_x = x_m
+            self.my_position_y = y_m
             return True
         else:
             return False
@@ -160,7 +184,7 @@ class AhoiInterface():
             success_rate_tof = self._success_rate_tof_counter / dsn
 
             if self.debug_mode:
-                print(f"[Anchor ID {self.my_id}, tof_rate {success_rate_tof:.2f}] TOF-ACK to with dsn {dsn} from ANCHOR ID {ack_src}: - measured distance {distance}")
+                print(f"[Anchor ID {self.my_id}, tof_rate {success_rate_tof:.2f}] TOF-ACK to with dsn {dsn} from ANCHOR ID {ack_src}: - measured distance {distance:.2f}")
 
 
 def load_config(config_file='local_modem_config.json'):
@@ -172,7 +196,7 @@ def load_config(config_file='local_modem_config.json'):
 if __name__ == '__main__':
     node_config = load_config(config_file='local_modem_config.json')
     enviro_config = load_config(config_file='enviro_config.json')
-    modem_id_list = (6,2,9)
+    modem_id_list = (6,2)
     counter = 0
     try:
         my_modem = AhoiInterface(node_config, enviro_config)

@@ -2,7 +2,6 @@
 
 import pymoos
 import time
-import json
 from ahoi_interface import AhoiInterface, load_config
 
 class AhoiModemManager:
