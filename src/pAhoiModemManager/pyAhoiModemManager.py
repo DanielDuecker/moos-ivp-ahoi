@@ -70,6 +70,7 @@ class pyAhoiModemManager(object):
                     print(f"[pyAhoiModemManager] still alive ... since {(counter/rate/60):.1f}min")
                 time.sleep(1/rate)
                 #self.mooscomms.yield_(1)  # Sleep for 1 seconds
+                counter+=1
 
     def iterate(self):
         self.ahoi_interface.set_own_position(x_m=self.my_pos_x, y_m=self.my_pos_y)
