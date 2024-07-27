@@ -1,0 +1,7 @@
+# << Generated with "generators/generator_set1_configs.py 17820" >>
+abe, 35.09, -3.09, 214, yellow
+ben, 43.81, -28.55, 166, red
+cal, 32.36, -14.47, 82, dodger_blue
+deb, 30.70, -3.50, 183, green
+eve, 33.53, -8.81, 318, purple
+fin, 39.53, -0.81, 318, orange

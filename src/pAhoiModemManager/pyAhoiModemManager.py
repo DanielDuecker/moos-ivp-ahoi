@@ -11,7 +11,7 @@ class pyAhoiModemManager(object):
         self.moos_app_name = 'pyAhoiModemManager'
         self.time_warp = 1
         self.server_host = 'localhost'
-        self.server_port = 9000 
+        self.server_port = 9001 
         
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
@@ -74,7 +74,8 @@ class pyAhoiModemManager(object):
 
     def iterate(self):
         self.ahoi_interface.set_own_position(x_m=self.my_pos_x, y_m=self.my_pos_y)
-            #print(f"[AhoiModemManager] set my ASV-MOOS position x={self.my_pos_x:.2f}, y={self.my_pos_y:.2f}")
+        # if self.my_pos_x is not None and self.my_pos_y is not None:
+        #     print(f"[AhoiModemManager] set my ASV-MOOS position x={self.my_pos_x:.2f}, y={self.my_pos_y:.2f}")
         
         
 if __name__ == '__main__':

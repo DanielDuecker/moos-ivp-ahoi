@@ -1,0 +1,4 @@
+mdmcd() {
+python3 -m mdm -d $1 -o "${1}_json" -i /Users/raymondturrisi/moos/moos-ivp-pavlab/missions_rt/convoy_baseline/mdm/mw_ix.cfg -t json --moos --topic_mapping /Users/raymondturrisi/moos/moos-ivp-pavlab/missions_rt/convoy_baseline/mdm/mw_moos_topic_mapping.cfg
+}
+
