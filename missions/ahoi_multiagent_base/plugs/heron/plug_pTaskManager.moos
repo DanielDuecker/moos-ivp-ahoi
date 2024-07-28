@@ -1,0 +1,11 @@
+//------------------------------------------
+// pTaskManager config block
+
+ProcessConfig = pTaskManager
+{
+  AppTick   = 4
+  CommsTick = 4
+
+	max_appcast_events = 20
+	//ignore_msg = CONVOY_STAT_RECAP_ALLY
+}

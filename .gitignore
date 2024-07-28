@@ -55,3 +55,10 @@ lib/
 # Temp files (emacs, etc)
 *#
 *~
+
+# ahoi config files
+local_modem_config.json
+.vscode
+.venv
+
+__pycache__/

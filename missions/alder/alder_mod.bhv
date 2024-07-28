@@ -1,4 +1,4 @@
-//--------    FILE: alder.bhv   -------------
+//--------    FILE: alder_mod.bhv   -------------
 
 initialize   DEPLOY = false
 initialize   RETURN = false

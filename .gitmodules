@@ -1,0 +1,3 @@
+[submodule "scripts/ahoi_pylib"]
+	path = scripts/ahoi_pylib
+	url = https://collaborating.tuhh.de/e-24/public/ahoi/pylib.git
