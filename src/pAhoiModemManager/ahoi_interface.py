@@ -136,9 +136,8 @@ class AhoiInterface():
                 rec_position_y = rec_position_y_int
 
             self._success_rate_pos_counter +=1
-            success_rate_pos = self._success_rate_pos_counter / dsn_poll
-            
-            if self.debug_mode:
+            if self.debug_mode and dsn_poll !=0:
+                success_rate_pos = self._success_rate_pos_counter / dsn_poll 
                 print(f"[Anchor_ID_{self.my_id}, pos_rate {success_rate_pos:.2f}] POS-ACK to my poll {dsn_poll} from ANCHOR ID {ack_src}: Rec pos {rec_position_x}, {rec_position_y}")
 
 
@@ -196,7 +195,7 @@ def load_config(config_file='local_modem_config.json'):
 if __name__ == '__main__':
     node_config = load_config(config_file='local_modem_config.json')
     enviro_config = load_config(config_file='enviro_config.json')
-    modem_id_list = (6,2)
+    modem_id_list = (2,6,9)
     counter = 0
     try:
         my_modem = AhoiInterface(node_config, enviro_config)

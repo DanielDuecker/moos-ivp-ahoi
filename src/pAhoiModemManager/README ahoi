@@ -4,7 +4,7 @@
 ## Steps to Get Started
 
 1. **Double Check Branch**  
-   Ensure you are on the correct branch. Currently, the branch is `ahoi_loc`.
+   Ensure you are on the correct branch.
 
 2. **Update Submodules**  
    Run the following command to initialize and update the submodules:
@@ -23,6 +23,24 @@
    ```json
    {
        "modem_id": 0,
-       "dev": "/dev/ttyUSB1"
+       "dev": "/dev/ttyUSB0"
    }
    ```
+5. **Install pymoos**
+
+   Go to [https://github.com/msis/python-moos](https://github.com/msis/python-moos)
+
+   Clone the repository:
+   ```sh
+      git clone https://github.com/msis/python-moos.git python-moos
+   ```
+   Build and install python-moos:
+   ```sh
+   cd python-moos
+   python setup.py build
+   python setup.py install
+   ```
+
+
+
+
