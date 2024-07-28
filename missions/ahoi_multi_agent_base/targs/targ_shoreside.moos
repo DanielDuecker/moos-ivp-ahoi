@@ -238,7 +238,7 @@ ProcessConfig = pLogger
   CommsTick     = 10
   
   File          = LOG_SHORESIDE
-  PATH          = ./logs/240727-1927D-DUMB-FACT/
+  PATH          = ./logs/240727-2023I-FOND-TURN/
   SyncLog       = true @ 0.2
   AsyncLog      = true
   FileTimeStamp = true

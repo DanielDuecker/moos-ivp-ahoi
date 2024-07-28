@@ -131,7 +131,7 @@ ProcessConfig = pLogger
   CommsTick = 5
   
   File          = LOG_BEN
-  PATH	        = ./logs/240727-1927D-DUMB-FACT/
+  PATH	        = ./logs/240727-2023I-FOND-TURN/
   AsyncLog 	    = true
   FileTimeStamp = true
 
@@ -416,7 +416,6 @@ ProcessConfig = uFldNodeBroker
   bridge = src=NODE_REPORT_LOCAL,  alias=NODE_REPORT
   bridge = src=QUIT_MISSION
   bridge = src=AGENT_INFO
-
 	bridge = src=NODE_MESSAGE_LOCAL, alias=NODE_MESSAGE
 	}
 

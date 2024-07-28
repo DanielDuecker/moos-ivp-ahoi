@@ -1,6 +1,6 @@
 ServerHost = localhost
-ServerPort = 9019
-Community  = fin
+ServerPort = 9014
+Community  = abe
 
 MOOSTimeWarp = 10
 
@@ -106,7 +106,7 @@ ProcessConfig = pShare
   AppTick    = 2
   CommsTick  = 2
 
-  input = route =  localhost:9219
+  input = route =  localhost:9214
 }
 
 
@@ -130,8 +130,8 @@ ProcessConfig = pLogger
   AppTick 	= 5
   CommsTick = 5
   
-  File          = LOG_FIN
-  PATH	        = ./logs/240727-1927D-DUMB-FACT/
+  File          = LOG_ABE
+  PATH	        = ./logs/240727-2023I-FOND-TURN/
   AsyncLog 	    = true
   FileTimeStamp = true
 
@@ -252,7 +252,7 @@ ProcessConfig = uSimMarineV22
   AppTick   = 10
   CommsTick = 10
 
-  start_pos = x=39.53,y=-0.81,heading=318
+  start_pos = x=35.09,y=-3.09,heading=214
   prefix    = NAV
 	
 	thrust_map = 100:2
@@ -361,7 +361,7 @@ ProcessConfig = pHelmIvP
 	park_on_allstop = false
 	
         ok_skew   = any
-        behaviors = targs/targ_fin.bhv  
+        behaviors = targs/targ_abe.bhv  
         verbose   = terse
         domain    = course:0:359:360
         domain    = speed:0:2.0:21
@@ -379,7 +379,7 @@ ProcessConfig = pNodeReporter
 	app_logging = off
 
 	//platform_group  = blue_team
-	platform_color  = orange
+	platform_color  = yellow
   platform_type   = kayak
 //  platform_length = 2
   terse_reports   = true
@@ -416,7 +416,6 @@ ProcessConfig = uFldNodeBroker
   bridge = src=NODE_REPORT_LOCAL,  alias=NODE_REPORT
   bridge = src=QUIT_MISSION
   bridge = src=AGENT_INFO
-
 	bridge = src=NODE_MESSAGE_LOCAL, alias=NODE_MESSAGE
 	}
 

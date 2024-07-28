@@ -61,4 +61,8 @@ local_modem_config.json
 .vscode
 .venv
 
+debug_*.txt
+missions/ahoi_multiagent_base/logs/
+missions/ahoi_multiagent_base/targs/
+
 __pycache__/
