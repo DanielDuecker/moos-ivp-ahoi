@@ -182,7 +182,8 @@ class AhoiInterface():
             self._success_rate_tof_counter +=1
             success_rate_tof = self._success_rate_tof_counter / dsn
 
-            if self.debug_mode:
+            if self.debug_mode and dsn !=0:
+                success_rate_tof = self._success_rate_tof_counter / dsn
                 print(f"[Anchor ID {self.my_id}, tof_rate {success_rate_tof:.2f}] TOF-ACK to with dsn {dsn} from ANCHOR ID {ack_src}: - measured distance {distance:.2f}")
 
 
