@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
 
 import pymoos
+import argparse
+import os
 import time
 from ahoi_interface import AhoiInterface, load_config
 
 class pyAhoiModemManager(object):
-    def __init__(self, modem_config_file='local_modem_config.json', enviro_config_file='enviro_config.json'):
+    def __init__(self, server_host, server_port, modem_config_file='local_modem_config.json', enviro_config_file='enviro_config.json'):
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         ###parameters###
         self.moos_app_name = 'pyAhoiModemManager'
         self.time_warp = 1
-        self.server_host = 'localhost'
-        self.server_port = 9001 
+        self.server_host = server_host #'localhost'
+        self.server_port = server_port #9001 
         
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
@@ -79,6 +81,14 @@ class pyAhoiModemManager(object):
         
         
 if __name__ == '__main__':
-    app = pyAhoiModemManager()
-    app.run()
+    parser = argparse.ArgumentParser(description='pyAhoiModemManager runner')
+    parser.add_argument('--server_host', required=True, help='Server host address')
+    parser.add_argument('--server_port', type=int, required=True, help='Server port')
+    parser.add_argument('--modem_config_file', default='local_modem_config.json', help='Path to the modem config file')
+    parser.add_argument('--enviro_config_file', default='enviro_config.json', help='Path to the environment config file')
     
+    args = parser.parse_args()
+
+    # Arguments are passed directly as they are already correctly referenced in the launch.sh
+    app = pyAhoiModemManager(args.server_host, args.server_port, args.modem_config_file, args.enviro_config_file)
+    app.run()

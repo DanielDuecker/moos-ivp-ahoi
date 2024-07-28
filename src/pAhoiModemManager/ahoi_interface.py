@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Simple python interface to ahoi-modems based on Ben Hupkas code
+Simple python interface to ahoi-modems
 
 Feature:
  - trigger range measurement
