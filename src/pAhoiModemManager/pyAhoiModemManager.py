@@ -39,7 +39,7 @@ class pyAhoiModemManager(object):
         #     self.my_dof = 3
         # else:
         #     self.my_dof = 2
-
+        self.node_config = load_config(modem_config_file)
         self.enviro_config = load_config(enviro_config_file)
         self.ahoi_interface = AhoiInterface(node_config=self.node_config, enviro_config=self.enviro_config)
 
@@ -85,7 +85,7 @@ class pyAhoiModemManager(object):
                 counter+=1
 
     def iterate(self):
-        self.ahoi_interface.my_anchor.update_pos(x_m=self.my_moos_pos_x, y_m=self.my_moos_pos_y, seq=None)
+        self.ahoi_interface.my_anchor.update_pos(new_pos_x=self.my_moos_pos_x, new_pos_y=self.my_moos_pos_y, seq=None)
         # if self.my_pos_x is not None and self.my_pos_y is not None:
         #     print(f"[AhoiModemManager] set my ASV-MOOS position x={self.my_pos_x:.2f}, y={self.my_pos_y:.2f}")
         

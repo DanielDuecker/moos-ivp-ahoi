@@ -166,7 +166,7 @@ class AhoiInterface():
             self.remote_anchors[anchor_id].update_range(seq=seq_of_poll, new_range=distance) # update range for corresponding anchor
 
             if self.debug_mode:
-                print(f"[Mobile Base ID {self.my_id}] TOF-ACK to poll_seq {seq_of_poll} from ANCHOR ID {anchor_id}: -  distance {distance:.2f}m")
+                print(f"[Base ID {self.my_id}] TOF-ACK to poll_seq {seq_of_poll} from ANCHOR ID {anchor_id}: -  distance {distance:.2f}m")
 
 
 
@@ -197,24 +197,7 @@ class AhoiInterface():
             self.remote_anchors[anchor_id].update_pos(seq=seq_of_poll, new_pos_x=rec_position_x, new_pos_y=rec_position_y) 
 
             if self.debug_mode :
-                print(f"[Anchor_ID_{self.my_id}] POS-ACK to my poll {seq_of_poll} from ANCHOR ID {anchor_id}: Rec pos {rec_position_x}m, {rec_position_y}m")
-
-    
-    # def set_own_position(self, x_m=42, y_m=84, z_m=0, fake_pos_add_noise=False):
-    #     # to be used by eg. Heron to set own position known from GPS
-    #     if x_m != None and y_m != None and z_m != None:
-    #         self.my_position_x = x_m
-    #         self.my_position_y = y_m
-    #         self.my_position_z = z_m
-
-    #         if fake_pos_add_noise:
-    #             self.my_position_x += int(np.random.rand()*10)
-
-    #         return True
-    #     else:
-    #         print(f"[ahoi_interface | set own position] any of x/y/z_m = None")
-    #         return False
-
+                print(f"[Base ID {self.my_id}] POS-ACK to my poll {seq_of_poll} from ANCHOR ID {anchor_id}: Rec pos {rec_position_x}m, {rec_position_y}m")
 
 
 class AnchorModel():
