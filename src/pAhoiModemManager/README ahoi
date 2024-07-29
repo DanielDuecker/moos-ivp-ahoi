@@ -22,8 +22,10 @@
    Create and add the `local_modem_config.json` file to corresponding directory with the following content:
    ```json
    {
-       "modem_id": 0,
-       "dev": "/dev/ttyUSB0"
+      "type":"Anchor",
+      "vehicle": "ASV",
+      "modem_id": 0,
+      "dev": "/dev/ttyAMA0"
    }
    ```
 5. **Install pymoos**
@@ -40,7 +42,3 @@
    python setup.py build
    python setup.py install
    ```
-
-
-
-

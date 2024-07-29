@@ -2,6 +2,7 @@
 
 import pymoos
 import argparse
+import os
 import time
 from ahoi_interface import AhoiInterface, load_config
 
@@ -32,22 +33,22 @@ class pyAhoiModemManager(object):
 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-        # self.node_config = load_config(modem_config_file)
-        # self.my_type = self.node_config['type']         # Anchor vs Mobile-Base
-        # self.my_vehicle = self.node_config['vehicle']   # AUV (3D) vs ASV (2D)
-        # if self.my_vehicle == "AUV":
-        #     self.my_dof = 3
-        # else:
-        #     self.my_dof = 2
+        self.node_config = load_config(modem_config_file)
+        self.my_type = self.node_config['type']         # Anchor vs Mobile-Base
+        self.my_vehicle = self.node_config['vehicle']   # AUV (3D) vs ASV (2D)
+        if self.my_vehicle == "AUV":
+            self.my_dof = 3
+        else:
+            self.my_dof = 2
 
         self.enviro_config = load_config(enviro_config_file)
         self.ahoi_interface = AhoiInterface(node_config=self.node_config, enviro_config=self.enviro_config)
 
 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-        self.my_moos_pos_x = None
-        self.my_moos_pos_y = None
-        self.my_moos_pos_z = None
+        self.my_pos_x = None
+        self.my_pos_y = None
+        self.my_pos_z = None
 
 
     def on_connect(self):
@@ -64,11 +65,11 @@ class pyAhoiModemManager(object):
     def on_new_mail(self):
         for msg in self.mooscomms.fetch():
             if msg.key() == 'NAV_X':
-                self.my_moos_pos_x = msg.double()
+                self.my_pos_x = msg.double()
             elif msg.key() == 'NAV_Y':
-                self.my_moos_pos_y = msg.double()
+                self.my_pos_y = msg.double()
             elif msg.key() == 'NAV_Z':
-                self.my_moos_pos_z = msg.double()
+                self.my_pos_z = msg.double()
         return True
     
 
@@ -85,7 +86,7 @@ class pyAhoiModemManager(object):
                 counter+=1
 
     def iterate(self):
-        self.ahoi_interface.my_anchor.update_pos(x_m=self.my_moos_pos_x, y_m=self.my_moos_pos_y, seq=None)
+        self.ahoi_interface.set_own_position(x_m=self.my_pos_x, y_m=self.my_pos_y, z_m=self.my_pos_z)
         # if self.my_pos_x is not None and self.my_pos_y is not None:
         #     print(f"[AhoiModemManager] set my ASV-MOOS position x={self.my_pos_x:.2f}, y={self.my_pos_y:.2f}")
         
