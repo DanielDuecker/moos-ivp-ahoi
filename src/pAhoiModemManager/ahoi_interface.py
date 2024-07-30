@@ -12,10 +12,10 @@ from collections import deque
 from ahoi.modem.modem import Modem
 
 class AhoiInterface():
-    def __init__(self, node_config, enviro_config, anchor_id_list=None, debug_prints=False):
+    def __init__(self, node_config_file, enviro_config_file, anchor_id_list=None, debug_prints=False):
 
-        node_config = self.load_config(config_file=node_config)
-        enviro_config = self.load_config(config_file=enviro_config)
+        node_config = self.load_config(config_file=node_config_file)
+        enviro_config = self.load_config(config_file=enviro_config_file)
 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         print(f"\nStarting ahoi interface...")
@@ -47,8 +47,11 @@ class AhoiInterface():
 
         if i_am == "Mobile-Base":
             # Initialize the anchor objects and store them in a dictionary
-            self.remote_anchors = {anchor_id: AnchorModel(anchor_id) for anchor_id in anchor_id_list}
-        
+            try:
+                self.remote_anchors = {anchor_id: AnchorModel(anchor_id) for anchor_id in anchor_id_list}
+            except:
+                print(f"[ahoi_interace] i_am {i_am} and need list of remote anchors - only have anchor_id_list = {anchor_id_list}")
+                
         elif i_am == "Anchor":
             self.my_anchor = AnchorModel(self.my_id)
         
@@ -261,7 +264,7 @@ if __name__ == '__main__':
     counter = 0
     try:
         # type (anchor/base) and ID are set via config file
-        my_modem = AhoiInterface(node_config='local_modem_config.json', enviro_config='enviro_config.json', anchor_id_list=(2,6,9),debug_prints=True)
+        my_modem = AhoiInterface(node_config_file='local_modem_config.json', enviro_config_file='enviro_config.json', anchor_id_list=(2,6,9),debug_prints=True)
         while(True):
             
             

@@ -6,11 +6,11 @@ import time
 import json
 from ahoi_interface import AhoiInterface
 
-class pyAhoiModemManager(object):
+class pyAhoiAnchorManager(object):
     def __init__(self, server_host, server_port, modem_config_file='local_modem_config.json', enviro_config_file='enviro_config.json'):
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         ###parameters###
-        self.moos_app_name = 'pyAhoiModemManager'
+        self.moos_app_name = 'pyAhoiAnchorManager'
         self.time_warp = 1
         self.server_host = server_host #'localhost'
         self.server_port = server_port #9001 
@@ -40,9 +40,8 @@ class pyAhoiModemManager(object):
         #     self.my_dof = 3
         # else:
         #     self.my_dof = 2
-        self.node_config = self.load_config(modem_config_file)
-        self.enviro_config = self.load_config(enviro_config_file)
-        self.ahoi_interface = AhoiInterface(node_config=self.node_config, enviro_config=self.enviro_config)
+
+        self.ahoi_interface = AhoiInterface(node_config_file=modem_config_file, enviro_config_file=enviro_config_file)
 
 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -80,7 +79,7 @@ class pyAhoiModemManager(object):
             if self.moos_connected:
                 self.iterate()
                 if counter%100 == 0:
-                    print(f"[pyAhoiModemManager] still alive ... since {(counter/rate/60):.1f}min")
+                    print(f"[pyAhoiAnchorManager] still alive ... since {(counter/rate/60):.1f}min")
                 time.sleep(1/rate)
                 #self.mooscomms.yield_(1)  # Sleep for 1 seconds
                 counter+=1
@@ -98,7 +97,7 @@ class pyAhoiModemManager(object):
         
         
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='pyAhoiModemManager runner')
+    parser = argparse.ArgumentParser(description='pyAhoiAnchorManager runner')
     parser.add_argument('--server_host', required=True, help='Server host address')
     parser.add_argument('--server_port', type=int, required=True, help='Server port')
     parser.add_argument('--modem_config_file', default='local_modem_config.json', help='Path to the modem config file')
@@ -107,5 +106,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Arguments are passed directly as they are already correctly referenced in the launch.sh
-    app = pyAhoiModemManager(args.server_host, args.server_port, args.modem_config_file, args.enviro_config_file)
+    app = pyAhoiAnchorManager(args.server_host, args.server_port, args.modem_config_file, args.enviro_config_file)
     app.run()
