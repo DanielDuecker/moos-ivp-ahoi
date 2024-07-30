@@ -8,11 +8,14 @@ Simple python interface to ahoi-modems
 import numpy as np
 import json
 import time
+
+import ahoi_csv_logger
+
 from collections import deque
 from ahoi.modem.modem import Modem
 
 class AhoiInterface():
-    def __init__(self, node_config_file, enviro_config_file, anchor_id_list=None, debug_prints=False):
+    def __init__(self, node_config_file, enviro_config_file, anchor_id_list=None, debug_prints=False, logging=False):
 
         node_config = self.load_config(config_file=node_config_file)
         enviro_config = self.load_config(config_file=enviro_config_file)
@@ -39,20 +42,21 @@ class AhoiInterface():
 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         self.i_am = node_config['node_type']
+
         self.debug_mode = debug_prints
                 
         self.speed_of_sound = enviro_config["speed_of_sound"] # in m/s
         
         self.anchor_list = anchor_id_list # list of all anchor ids - can be None for anchors that are not mobile base
 
-        if i_am == "Mobile-Base":
+        if self.i_am == "Mobile-Base":
             # Initialize the anchor objects and store them in a dictionary
             try:
                 self.remote_anchors = {anchor_id: AnchorModel(anchor_id) for anchor_id in anchor_id_list}
             except:
-                print(f"[ahoi_interace] i_am {i_am} and need list of remote anchors - only have anchor_id_list = {anchor_id_list}")
+                print(f"[ahoi_interace] i_am {self.i_am} and need list of remote anchors - only have anchor_id_list = {anchor_id_list}")
                 
-        elif i_am == "Anchor":
+        elif self.i_am == "Anchor":
             self.my_anchor = AnchorModel(self.my_id)
         
  
@@ -64,7 +68,12 @@ class AhoiInterface():
         self.transmit_unit = 'cm' # round to [--] for acoustic transmission
         self.reply_wait_time_pos_range = 0.5 # wait time before replying to poll range+pos - range goes first
 
-    
+        self.logging = logging
+        if self.logging:
+            self.ahoi_logger = ahoi_csv_logger.AhoiCSVLogger("ahoi_interface_log.csv")
+
+
+
     def get_id(self):
         return self.my_id
     
@@ -87,6 +96,8 @@ class AhoiInterface():
 
         if self.debug_mode:
             print(f"\n[Base_ID_{self.my_id}] sent range poll to ID {dst_modem_id} sqn {new_seq} ...")
+        if self.logging:
+            self.ahoi_logger.log_range_poll(base_id=self.my_id, target_id=dst_modem_id, sqn=new_seq)
     
 # =====================================================================================
 # =====================================================================================
@@ -179,6 +190,9 @@ class AhoiInterface():
                 dt_ms = (time.time() - self.remote_anchors[anchor_id].get_last_poll_seq()[1])*1000
                 print(f"[Base ID {self.my_id}] TOF-ACK to poll_seq {seq_of_poll} @ {dt_ms:.0f}ms from ANCHOR ID {anchor_id}: distance {distance:.2f}m")
 
+            if self.logging:
+                self.ahoi_logger.log_tof_ack(base_id=self.my_id, poll_seq=seq_of_poll, time=dt_ms, 
+                                             anchor_id=anchor_id, distance=distance)
 
 
     def callback_on_pos_reply(self, pkt):
@@ -210,6 +224,10 @@ class AhoiInterface():
             if self.debug_mode :
                 dt_ms = (time.time() - self.remote_anchors[anchor_id].get_last_poll_seq()[1])*1000
                 print(f"[Base ID {self.my_id}] POS-ACK to poll_seq {seq_of_poll} @ {dt_ms:.0f}ms from ANCHOR ID {anchor_id}: pos {rec_position_x}m, {rec_position_y}m")
+            
+            if self.logging:
+                self.ahoi_logger.log_pos_ack(base_id=self.my_id, poll_seq=seq_of_poll, time=dt_ms, 
+                                             anchor_id=anchor_id, pos_x=rec_position_x, pos_y=rec_position_y)
 
 
     def load_config(self,config_file):
@@ -277,7 +295,7 @@ class AnchorModel():
         # output: dist [m], last_range_update [seq], last_range_update_time_local [s]
         return self.measured_range, self.last_range_update, self.last_range_update_time_local
 
-        
+
 
 if __name__ == '__main__':
 
@@ -288,18 +306,19 @@ if __name__ == '__main__':
         my_modem = AhoiInterface(node_config_file='local_modem_config.json', 
                                  enviro_config_file='enviro_config.json', 
                                  anchor_id_list=modem_id_list,
-                                 debug_prints=True)
+                                 debug_prints=True,
+                                 logging=True)
         while(True):
             
             
-            if my_modem.who_am_i == "Mobile-Base": # mobile base has id=0
+            if my_modem.who_am_i() == "Mobile-Base": # mobile base has id=0
                 for poll_id in modem_id_list:
 
                     my_modem.trigger_anchor_poll(dst_modem_id=poll_id)
                     
                     time.sleep(1.3) # TODO 1. if TOF does not appear - pass, if second arrives - pass
             else:
-                my_modem.my_anchor.update_pos(new_pos_x=10, new_pos_y=42, seq=None)
+                #my_modem.my_anchor.update_pos(new_pos_x=10, new_pos_y=42, seq=None)
                 time.sleep(1)
             
             if(counter % 15 == 0):
