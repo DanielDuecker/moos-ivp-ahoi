@@ -28,6 +28,7 @@ def main_sim():
             dist_real = np.sqrt((x_real[0] - anchor_pos[0])**2 +
                        (x_real[1] - anchor_pos[1])**2 + (x_real[2] - anchor_pos[2])**2)
             ahoi_ekf.measurement_update(dist_meas=dist_real, anchor_pos=anchor_pos, w_mat_dist=meas_noise_val)
+            time.sleep(0.1)
 
 if __name__ == '__main__':
     main_sim()
