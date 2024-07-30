@@ -66,8 +66,7 @@ class AhoiInterface():
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         self.pos_bytelength = 2
         self.transmit_unit = 'cm' # round to [--] for acoustic transmission
-        self.reply_wait_time_pos_range = 0.5 # wait time before replying to poll range+pos - range goes first
-
+       
         self.logging = logging
         if self.logging:
             self.ahoi_logger = ahoi_csv_logger.AhoiCSVLogger("ahoi_interface_log.csv")
@@ -142,7 +141,7 @@ class AhoiInterface():
             
             #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
             
-            time.sleep(self.reply_wait_time_pos_range)  # wait before sending position, ranging ACK is sent before
+            #time.sleep(0.2)  # Not required - messages simply queue up
 
             self.myModem.send(src=self.my_id,           # anchor's own id
                               dst=poll_src,             # reply to poll source
