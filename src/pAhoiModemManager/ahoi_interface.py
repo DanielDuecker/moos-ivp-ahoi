@@ -38,7 +38,7 @@ class AhoiInterface():
         print(f"[Anchor ID {self.my_id}] Ready!")
 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-        i_am = node_config['node_type']
+        self.i_am = node_config['node_type']
         self.debug_mode = debug_prints
                 
         self.speed_of_sound = enviro_config["speed_of_sound"] # in m/s
@@ -67,11 +67,14 @@ class AhoiInterface():
     
     def get_id(self):
         return self.my_id
+    
+    def who_am_i(self):
+        return self.i_am
 
     
     def trigger_anchor_poll(self, dst_modem_id):
 
-        new_seq = self.remote_anchors[dst_modem_id].get_last_poll_seq() + 1
+        new_seq = self.remote_anchors[dst_modem_id].get_last_poll_seq()[0] + 1
 
         self.myModem.send(src=self.my_id,
                             dst=dst_modem_id,       # id of destination modem
@@ -173,7 +176,8 @@ class AhoiInterface():
             self.remote_anchors[anchor_id].update_range(seq=seq_of_poll, new_range=distance) # update range for corresponding anchor
 
             if self.debug_mode:
-                print(f"[Base ID {self.my_id}] TOF-ACK to poll_seq {seq_of_poll} from ANCHOR ID {anchor_id}: distance {distance:.2f}m")
+                dt_ms = (time.time() - self.remote_anchors[anchor_id].get_last_poll_seq()[1])*1000
+                print(f"[Base ID {self.my_id}] TOF-ACK to poll_seq {seq_of_poll} @ {dt_ms:.0f}ms from ANCHOR ID {anchor_id}: distance {distance:.2f}m")
 
 
 
@@ -204,7 +208,8 @@ class AhoiInterface():
             self.remote_anchors[anchor_id].update_pos(seq=seq_of_poll, new_pos_x=rec_position_x, new_pos_y=rec_position_y) 
 
             if self.debug_mode :
-                print(f"[Base ID {self.my_id}] POS-ACK to poll_seq {seq_of_poll} from ANCHOR ID {anchor_id}: pos {rec_position_x}m, {rec_position_y}m")
+                dt_ms = (time.time() - self.remote_anchors[anchor_id].get_last_poll_seq()[1])*1000
+                print(f"[Base ID {self.my_id}] POS-ACK to poll_seq {seq_of_poll} @ {dt_ms:.0f}ms from ANCHOR ID {anchor_id}: pos {rec_position_x}m, {rec_position_y}m")
 
 
     def load_config(self,config_file):
@@ -219,9 +224,14 @@ class AnchorModel():
         self.anchor_id = anchor_modem_id
         log_history = 15
 
+        self.start_time = time.time()
+        self.start_time_seq = 0
+
         self.last_polled = 0 # seq when this anchor was last polled
 
         self.last_range_update = None
+        self.last_range_update_time_local = time.time()-self.start_time
+        self.range_read = False
         self.anchor_range = None
         self.range_log = deque(maxlen=log_history)
         #  timestamp = datetime.now()
@@ -232,53 +242,67 @@ class AnchorModel():
         # self.anchor_range_success_rate = 0
 
         self.last_pos_update = None
+        self.last_pos_update_time_local = time.time()-self.start_time
+        self.pos_read = False
         self.pos_x = None
         self.pos_y = None
     
     def polled_at_seq(self, seq):
         self.last_polled = seq
+        self.start_time_seq = time.time()
 
     def get_last_poll_seq(self):
-        return self.last_polled
+        return self.last_polled, self.start_time_seq
 
     def update_range(self, seq, new_range):    
+        self.range_read = False
         self.last_range_update = seq
+        self.last_range_update_time_local = time.time()-self.start_time
         self.measured_range = new_range
 
     def update_pos(self, seq, new_pos_x, new_pos_y):
+        self.pos_read = False
         self.last_pos_update = seq
+        self.last_pos_update_time_local = time.time()-self.start_time
         self.pos_x = new_pos_x
         self.pos_y = new_pos_y
     
-    def get_pos(self):
-        return self.pos_x, self.pos_y, self.last_pos_update
+    def get_pos(self, read=False):
+        self.pos_read = read
+        # output: pos_x [m], pos_y [m], last_range_update [seq], last_range_update_time_local [s]
+        return self.pos_x, self.pos_y, self.last_pos_update, self.last_pos_update_time_local
 
-    def get_range(self):
-        return self.measured_range, self.last_range_update
+    def get_range(self, read=False):
+        self.range_read = read
+        # output: dist [m], last_range_update [seq], last_range_update_time_local [s]
+        return self.measured_range, self.last_range_update, self.last_range_update_time_local
 
         
 
 if __name__ == '__main__':
 
-    modem_id_list = (2,6,9)
+    modem_id_list = (2,6,9) # list of remote anchor modems
     counter = 0
     try:
         # type (anchor/base) and ID are set via config file
-        my_modem = AhoiInterface(node_config_file='local_modem_config.json', enviro_config_file='enviro_config.json', anchor_id_list=(2,6,9),debug_prints=True)
+        my_modem = AhoiInterface(node_config_file='local_modem_config.json', 
+                                 enviro_config_file='enviro_config.json', 
+                                 anchor_id_list=modem_id_list,
+                                 debug_prints=True)
         while(True):
             
             
-            if my_modem.get_id() == 0: # mobile base has id=0
+            if my_modem.who_am_i == "Mobile-Base": # mobile base has id=0
                 for poll_id in modem_id_list:
 
                     my_modem.trigger_anchor_poll(dst_modem_id=poll_id)
                     
-                    time.sleep(1.5)
+                    time.sleep(1.3) # TODO 1. if TOF does not appear - pass, if second arrives - pass
             else:
                 my_modem.my_anchor.update_pos(new_pos_x=10, new_pos_y=42, seq=None)
                 time.sleep(1)
             
-            if(counter % 10 == 0):
+            if(counter % 15 == 0):
                 print(f"\n[ahoi_interface] Counter {counter} - Still alive... ")
 
             counter+=1
