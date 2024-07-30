@@ -3,7 +3,8 @@
 import pymoos
 import argparse
 import time
-from ahoi_interface import AhoiInterface, load_config
+import json
+from ahoi_interface import AhoiInterface
 
 class pyAhoiModemManager(object):
     def __init__(self, server_host, server_port, modem_config_file='local_modem_config.json', enviro_config_file='enviro_config.json'):
@@ -39,8 +40,8 @@ class pyAhoiModemManager(object):
         #     self.my_dof = 3
         # else:
         #     self.my_dof = 2
-        self.node_config = load_config(modem_config_file)
-        self.enviro_config = load_config(enviro_config_file)
+        self.node_config = self.load_config(modem_config_file)
+        self.enviro_config = self.load_config(enviro_config_file)
         self.ahoi_interface = AhoiInterface(node_config=self.node_config, enviro_config=self.enviro_config)
 
 
@@ -88,6 +89,12 @@ class pyAhoiModemManager(object):
         self.ahoi_interface.my_anchor.update_pos(new_pos_x=self.my_moos_pos_x, new_pos_y=self.my_moos_pos_y, seq=None)
         # if self.my_pos_x is not None and self.my_pos_y is not None:
         #     print(f"[AhoiModemManager] set my ASV-MOOS position x={self.my_pos_x:.2f}, y={self.my_pos_y:.2f}")
+    
+    def load_config(self,config_file):
+        with open(config_file, 'r') as file:
+            config = json.load(file)
+        return config
+
         
         
 if __name__ == '__main__':

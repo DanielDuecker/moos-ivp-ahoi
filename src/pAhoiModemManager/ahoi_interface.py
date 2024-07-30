@@ -12,7 +12,11 @@ from collections import deque
 from ahoi.modem.modem import Modem
 
 class AhoiInterface():
-    def __init__(self, node_config, enviro_config, anchor_id_list=None, debug_prints=True):
+    def __init__(self, node_config, enviro_config, anchor_id_list=None, debug_prints=False):
+
+        node_config = self.load_config(config_file=node_config)
+        enviro_config = self.load_config(config_file=enviro_config)
+
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         print(f"\nStarting ahoi interface...")
     
@@ -166,7 +170,7 @@ class AhoiInterface():
             self.remote_anchors[anchor_id].update_range(seq=seq_of_poll, new_range=distance) # update range for corresponding anchor
 
             if self.debug_mode:
-                print(f"[Base ID {self.my_id}] TOF-ACK to poll_seq {seq_of_poll} from ANCHOR ID {anchor_id}: -  distance {distance:.2f}m")
+                print(f"[Base ID {self.my_id}] TOF-ACK to poll_seq {seq_of_poll} from ANCHOR ID {anchor_id}: distance {distance:.2f}m")
 
 
 
@@ -197,7 +201,13 @@ class AhoiInterface():
             self.remote_anchors[anchor_id].update_pos(seq=seq_of_poll, new_pos_x=rec_position_x, new_pos_y=rec_position_y) 
 
             if self.debug_mode :
-                print(f"[Base ID {self.my_id}] POS-ACK to my poll {seq_of_poll} from ANCHOR ID {anchor_id}: Rec pos {rec_position_x}m, {rec_position_y}m")
+                print(f"[Base ID {self.my_id}] POS-ACK to poll_seq {seq_of_poll} from ANCHOR ID {anchor_id}: pos {rec_position_x}m, {rec_position_y}m")
+
+
+    def load_config(self,config_file):
+        with open(config_file, 'r') as file:
+            config = json.load(file)
+        return config
 
 
 class AnchorModel():
@@ -245,24 +255,13 @@ class AnchorModel():
 
         
 
-
-
-
-def load_config(config_file):
-    with open(config_file, 'r') as file:
-        config = json.load(file)
-    return config
-
-
 if __name__ == '__main__':
-    node_config = load_config(config_file='local_modem_config.json')
-    enviro_config = load_config(config_file='enviro_config.json')
+
     modem_id_list = (2,6,9)
-    channel_seqs = np.ones((1,len(modem_id_list)), dtype=int)
     counter = 0
     try:
         # type (anchor/base) and ID are set via config file
-        my_modem = AhoiInterface(node_config=node_config, enviro_config=enviro_config, anchor_id_list=(2,6,9))
+        my_modem = AhoiInterface(node_config='local_modem_config.json', enviro_config='enviro_config.json', anchor_id_list=(2,6,9),debug_prints=True)
         while(True):
             
             
@@ -273,11 +272,11 @@ if __name__ == '__main__':
                     
                     time.sleep(1.5)
             else:
-                my_modem.sim_own_position(noisy=True)
+                my_modem.my_anchor.update_pos(new_pos_x=10, new_pos_y=42, seq=None)
                 time.sleep(1)
             
             if(counter % 10 == 0):
-                print(f"\n[Counter {counter}] Still alive... ")
+                print(f"\n[ahoi_interface] Counter {counter} - Still alive... ")
 
             counter+=1
 
