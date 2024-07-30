@@ -9,17 +9,6 @@ def evaluate_csv_per_anchor(data):
     # Group the data by anchor_id
     anchor_groups = data.groupby('anchor_id')
 
- import pandas as pd
-
-# Load the CSV file into a pandas DataFrame
-csv_file = 'ahoi_data.csv'
-data = pd.read_csv(csv_file)
-
-# Function to evaluate the CSV file for each anchor node
-def evaluate_csv_per_anchor(data):
-    # Group the data by anchor_id
-    anchor_groups = data.groupby('anchor_id')
-
     # Evaluate each anchor group separately
     for anchor_id, group in anchor_groups:
         print(f"Evaluating data for Anchor ID {anchor_id}:")
