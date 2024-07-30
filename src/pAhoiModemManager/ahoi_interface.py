@@ -123,7 +123,7 @@ class AhoiInterface():
             seq_of_poll = pkt.header.dsn        # read packet sequence number from poll
 
             #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-            my_pos_x, my_pos_y, _ = self.my_anchor.get_pos()
+            my_pos_x, my_pos_y, _, _ = self.my_anchor.get_pos()
 
             if self.transmit_unit == 'cm':
                 my_pos_x_int = int(my_pos_x * 100)  # from [m] --> [cm]
