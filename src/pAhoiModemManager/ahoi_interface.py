@@ -220,8 +220,8 @@ class AhoiInterface():
             anchor_id = pkt.header.src  # read source id
             seq_of_poll = pkt.header.dsn   # read packet sequence number from poll
 
-            rec_position_x_int = int.from_bytes(pkt.payload[0:self.pos_bytelength], 'big', signed=True) * 1e-2
-            rec_position_y_int = int.from_bytes(pkt.payload[self.pos_bytelength:2*self.pos_bytelength], 'big', signed=True) * 1e-2
+            rec_position_x_int = int.from_bytes(pkt.payload[0:self.pos_bytelength], 'big', signed=True)
+            rec_position_y_int = int.from_bytes(pkt.payload[self.pos_bytelength:2*self.pos_bytelength], 'big', signed=True)
 
             if self.transmit_unit == 'cm':
                 rec_position_x = rec_position_x_int / 100

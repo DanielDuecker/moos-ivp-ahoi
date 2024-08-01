@@ -11,8 +11,11 @@ SERVER_PORT="9000"
 MODEM_CONFIG_FILE="$SCRIPT_DIR/local_modem_config.json"
 ENVIRO_CONFIG_FILE="$SCRIPT_DIR/enviro_config.json"
 
+LOGGING="TRUE"
+DEBUG_PRINTING="TRUE"
+
 # Define the path to the Python script
 PYTHON_SCRIPT="$SCRIPT_DIR/../../src/pAhoiModemManager/pyAhoi_MobileBase_Manager.py"
 
 # Run the Python script with the arguments
-python3 "$PYTHON_SCRIPT" --server_host $SERVER_HOST --server_port $SERVER_PORT --modem_config_file $MODEM_CONFIG_FILE --enviro_config_file $ENVIRO_CONFIG_FILE
+python3 "$PYTHON_SCRIPT" --server_host $SERVER_HOST --server_port $SERVER_PORT --modem_config_file $MODEM_CONFIG_FILE --enviro_config_file $ENVIRO_CONFIG_FILE --logging $LOGGING --debug_printing=$DEBUG_PRINTING
