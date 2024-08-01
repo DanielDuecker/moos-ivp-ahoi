@@ -79,7 +79,7 @@ class pyAhoiAnchorManager(object):
             if self.moos_connected:
                 self.iterate()
                 if counter%100 == 0:
-                    print(f"[pyAhoiAnchorManager] still alive ... since {(counter/rate/60):.1f}min")
+                    print(f"[pyAhoi_Anchor_Manager] still alive ... since {(counter/rate/60):.1f}min")
                 time.sleep(1/rate)
                 #self.mooscomms.yield_(1)  # Sleep for 1 seconds
                 counter+=1

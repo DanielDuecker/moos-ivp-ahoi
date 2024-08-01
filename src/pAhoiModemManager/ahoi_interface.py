@@ -284,6 +284,12 @@ class AnchorModel():
         self.pos_x = new_pos_x
         self.pos_y = new_pos_y
     
+    def is_pos_new(self):
+        return self.pos_read
+    
+    def is_range_new(self):
+        return self.range_read
+    
     def get_pos(self, read=False):
         self.pos_read = read
         # output: pos_x [m], pos_y [m], last_range_update [seq], last_range_update_time_local [s]
