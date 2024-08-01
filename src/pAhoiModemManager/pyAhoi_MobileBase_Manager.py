@@ -87,7 +87,8 @@ class pyAhoiMobileBaseManager(object):
         counter = 0
         rate = 10
 
-        self.ahoi_interface.run_anchor_polling_loop(self, self.anchor_id_list, wait_for_ack=1.3)
+        # run polling loop in
+        self.ahoi_interface.run_anchor_polling_loop(self.anchor_id_list,loop_active=True, wait_for_ack=1.3)
 
         while True:
             if self.moos_connected:
