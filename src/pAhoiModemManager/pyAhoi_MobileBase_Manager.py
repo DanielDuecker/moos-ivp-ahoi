@@ -72,6 +72,11 @@ class pyAhoiMobileBaseManager(object):
             self.mooscomms.register("ANCHOR_" + str(id) + "_POS_Y", 0)
             self.mooscomms.register("ANCHOR_" + str(id) + "_SEQ", 0)
 
+
+            # elif msg.key() == 'RANGE_6':
+            #     self.my_range6 = msg.double()
+            #     print(f"received mail with range 6: {self.my_range6}m")
+
         return True
 
     def on_new_mail(self):
@@ -90,7 +95,7 @@ class pyAhoiMobileBaseManager(object):
         rate = 10
 
         # run polling loop in
-        self.ahoi_interface.run_anchor_polling_loop(self.anchor_id_list,loop_active=True, wait_for_ack=1.3)
+        #self.ahoi_interface.run_anchor_polling_loop(self.anchor_id_list,loop_active=True, wait_for_ack=1.3)
 
         while True:
             if self.moos_connected:
@@ -107,15 +112,19 @@ class pyAhoiMobileBaseManager(object):
         # TODO 2. notice that pos is received
         # TODO 3. notify accordingly
         for id in self.anchor_id_list:
-            self.ahoi_interface.remote_anchors[id]
+            self.ahoi_interface.trigger_anchor_poll(dst_modem_id=id)
+            time.sleep(1.3)
 
             if self.ahoi_interface.remote_anchors[id].is_pos_new():
+                #print(f"new position id {id}")
+                
                 # check if new anchor position has been received - if so -> notify
                 anchor_pos_x, anchor_pos_y, seq, pos_update_time = self.ahoi_interface.remote_anchors[id].get_pos(read=True)
 
                 self.mooscomms.notify("ANCHOR_" + str(id) + "_POS_X", anchor_pos_x ,pymoos.time())
                 self.mooscomms.notify("ANCHOR_" + str(id) + "_POS_Y", anchor_pos_y, pymoos.time())
                 self.mooscomms.notify("ANCHOR_" + str(id) + "_SEQ", seq, pymoos.time())
+
 
             if self.ahoi_interface.remote_anchors[id].is_range_new():
                 # check if new range measurement has been received - if so -> notify

@@ -252,7 +252,6 @@ class AnchorModel():
     def __init__(self, anchor_modem_id):
         
         self.anchor_id = anchor_modem_id
-        log_history = 15
 
         self.start_time = time.time()
         self.start_time_seq = 0
@@ -261,21 +260,16 @@ class AnchorModel():
 
         self.last_range_update = None
         self.last_range_update_time_local = time.time()-self.start_time
-        self.range_read = False
+        self.range_read = True
         self.anchor_range = None
-        self.range_log = deque(maxlen=log_history)
-        #  timestamp = datetime.now()
-        #  self.signal_log.append((timestamp, signal_received))
-        # if len(self.signal_log) == 0:
-        #    return 0.0
-        # self.anchor_range_update_log = None
-        # self.anchor_range_success_rate = 0
+        self.range_valid = False
 
         self.last_pos_update = None
         self.last_pos_update_time_local = time.time()-self.start_time
-        self.pos_read = False
+        self.pos_read = True
         self.pos_x = None
         self.pos_y = None
+        self.pos_valid = False
     
     def polled_at_seq(self, seq):
         self.last_polled = seq
@@ -289,6 +283,7 @@ class AnchorModel():
         self.last_range_update = seq
         self.last_range_update_time_local = time.time()-self.start_time
         self.measured_range = new_range
+        self.range_valid = True
 
     def update_pos(self, seq, new_pos_x, new_pos_y):
         self.pos_read = False
@@ -296,12 +291,13 @@ class AnchorModel():
         self.last_pos_update_time_local = time.time()-self.start_time
         self.pos_x = new_pos_x
         self.pos_y = new_pos_y
+        self.pos_valid = True
     
     def is_pos_new(self):
-        return self.pos_read
+        return (~self.pos_read and self.pos_valid)
     
     def is_range_new(self):
-        return self.range_read
+        return (~self.range_read and self.range_valid)
     
     def get_pos(self, read=False):
         self.pos_read = read
