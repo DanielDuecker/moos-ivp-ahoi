@@ -124,7 +124,7 @@ class pyAhoiMobileBaseManager(object):
 
         
 
-        self.ahoi_interface.my_anchor.update_pos(new_pos_x=self.my_moos_pos_x, new_pos_y=self.my_moos_pos_y, seq=None)
+        #self.ahoi_interface.my_anchor.update_pos(new_pos_x=self.my_moos_pos_x, new_pos_y=self.my_moos_pos_y, seq=None)
         # if self.my_pos_x is not None and self.my_pos_y is not None:
         #     print(f"[AhoiModemManager] set my ASV-MOOS position x={self.my_pos_x:.2f}, y={self.my_pos_y:.2f}")
     
