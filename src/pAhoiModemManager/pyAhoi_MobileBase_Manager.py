@@ -86,11 +86,15 @@ class pyAhoiMobileBaseManager(object):
     def run(self):
         counter = 0
         rate = 10
+
+        self.ahoi_interface.run_anchor_polling_loop(self, self.anchor_id_list, wait_for_ack=1.3)
+
         while True:
             if self.moos_connected:
                 self.iterate()
                 if counter%100 == 0:
                     print(f"[pyAhoi_MobileBase_Manager] still alive ... since {(counter/rate/60):.1f}min")
+                          
                 time.sleep(1/rate)
                 #self.mooscomms.yield_(1)  # Sleep for 1 seconds
                 counter+=1
@@ -118,12 +122,6 @@ class pyAhoiMobileBaseManager(object):
                 self.mooscomms.notify("RANGE_" + str(id) + "_SEQ", seq ,pymoos.time())
 
 
-
-
-         
-
-        
-
         #self.ahoi_interface.my_anchor.update_pos(new_pos_x=self.my_moos_pos_x, new_pos_y=self.my_moos_pos_y, seq=None)
         # if self.my_pos_x is not None and self.my_pos_y is not None:
         #     print(f"[AhoiModemManager] set my ASV-MOOS position x={self.my_pos_x:.2f}, y={self.my_pos_y:.2f}")
@@ -136,15 +134,15 @@ class pyAhoiMobileBaseManager(object):
         
         
 if __name__ == '__main__':
-    # parser = argparse.ArgumentParser(description='pyAhoiAnchorManager runner')
-    # parser.add_argument('--server_host', required=True, help='Server host address')
-    # parser.add_argument('--server_port', type=int, required=True, help='Server port')
-    # parser.add_argument('--modem_config_file', default='local_modem_config.json', help='Path to the modem config file')
-    # parser.add_argument('--enviro_config_file', default='enviro_config.json', help='Path to the environment config file')
+    parser = argparse.ArgumentParser(description='pyAhoiAnchorManager runner')
+    parser.add_argument('--server_host', required=True, help='Server host address')
+    parser.add_argument('--server_port', type=int, required=True, help='Server port')
+    parser.add_argument('--modem_config_file', default='local_modem_config.json', help='Path to the modem config file')
+    parser.add_argument('--enviro_config_file', default='enviro_config.json', help='Path to the environment config file')
+    args = parser.parse_args()
     
-    # args = parser.parse_args()
-
-    # # Arguments are passed directly as they are already correctly referenced in the launch.sh
-    # app = pyAhoiMobileBaseManager(args.server_host, args.server_port,  args.modem_config_file, args.enviro_config_file)
-    app = pyAhoiMobileBaseManager("localhost", 9000,  "local_modem_config.json", "enviro_config.json")
+    # Arguments are passed directly as they are already correctly referenced in the launch.sh
+    app = pyAhoiMobileBaseManager(args.server_host, args.server_port,  args.modem_config_file, args.enviro_config_file)
+    #ben_ip = "192.168.15.100"
+    #app = pyAhoiMobileBaseManager(ben_ip, 9000,  "local_modem_config.json", "enviro_config.json")
     app.run()

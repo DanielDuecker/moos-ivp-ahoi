@@ -101,6 +101,14 @@ class AhoiInterface():
             print(f"\n[Base_ID_{self.my_id}] sent range poll to ID {dst_modem_id} sqn {new_seq} ...")
         if self.logging:
             self.ahoi_logger.log_range_poll(base_id=self.my_id, target_id=dst_modem_id, sqn=new_seq)
+
+    def run_anchor_polling_loop(self, anchor_id_list, wait_for_ack=1.3):
+        for poll_id in anchor_id_list:
+
+            my_modem.trigger_anchor_poll(dst_modem_id=poll_id)
+            
+            time.sleep(wait_for_ack) # TODO 1. if TOF does not appear - pass, if second arrives - pass
+        
     
 # =====================================================================================
 # =====================================================================================
