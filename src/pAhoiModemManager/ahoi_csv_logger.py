@@ -3,15 +3,15 @@ import os
 from datetime import datetime
 
 class AhoiCSVLogger():
-    def __init__(self, log_file_prefix="ahoi_interface_log"):
-        # Determine the directory of the current script
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        
+    def __init__(self, log_file_prefix="ahoi_interface_log", log_dir="logs_ahoi"):
+        # Ensure the log directory exists
+        os.makedirs(log_dir, exist_ok=True)
+
         # Create a timestamp string for the filename
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        
+
         # Combine the directory, prefix, timestamp, and extension to create the full file path
-        self.csv_file = os.path.join(script_dir, f"{log_file_prefix}_{timestamp}.csv")
+        self.csv_file = os.path.join(log_dir, f"{log_file_prefix}_{timestamp}.csv")
         
         # Initialize the CSV file with headers
         with open(self.csv_file, mode='w', newline='') as file:
@@ -48,6 +48,7 @@ class AhoiCSVLogger():
                 datetime.now(), base_id, None, poll_seq, 
                 'POS-ACK', time, anchor_id, None, pos_x, pos_y
             ])
+
 
 
 if __name__ == '__main__':
