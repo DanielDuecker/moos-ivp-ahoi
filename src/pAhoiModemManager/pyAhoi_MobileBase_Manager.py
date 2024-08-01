@@ -43,7 +43,7 @@ class pyAhoiMobileBaseManager(object):
         enviro_data = self.load_config(enviro_config_file)
         self.anchor_id_list = enviro_data["anchor_id_list"]
 
-        self.ahoi_interface = AhoiInterface(node_config_file=modem_config_file, enviro_config_file=enviro_config_file)
+        self.ahoi_interface = AhoiInterface(node_config_file=modem_config_file, enviro_config_file=enviro_config_file,debug_prints=True, logging=True)
 
 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
