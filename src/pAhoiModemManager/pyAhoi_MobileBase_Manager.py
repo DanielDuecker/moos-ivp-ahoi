@@ -100,22 +100,22 @@ class pyAhoiMobileBaseManager(object):
         # TODO 2. notice that pos is received
         # TODO 3. notify accordingly
         for id in self.anchor_id_list:
-            with self.ahoi_interface.remote_anchors[id] as this_anchor:
+            self.ahoi_interface.remote_anchors[id]
 
-                if this_anchor.is_pos_new():
-                    # check if new anchor position has been received - if so -> notify
-                    anchor_pos_x, anchor_pos_y, seq, pos_update_time = this_anchor.get_pos(read=True)
+            if self.ahoi_interface.remote_anchors[id].is_pos_new():
+                # check if new anchor position has been received - if so -> notify
+                anchor_pos_x, anchor_pos_y, seq, pos_update_time = self.ahoi_interface.remote_anchors[id].get_pos(read=True)
 
-                    self.mooscomms.notify("ANCHOR_" + str(id) + "_POS_X", anchor_pos_x ,pymoos.time())
-                    self.mooscomms.notify("ANCHOR_" + str(id) + "_POS_Y", anchor_pos_y, pymoos.time())
-                    self.mooscomms.notify("ANCHOR_" + str(id) + "_SEQ", seq, pymoos.time())
+                self.mooscomms.notify("ANCHOR_" + str(id) + "_POS_X", anchor_pos_x ,pymoos.time())
+                self.mooscomms.notify("ANCHOR_" + str(id) + "_POS_Y", anchor_pos_y, pymoos.time())
+                self.mooscomms.notify("ANCHOR_" + str(id) + "_SEQ", seq, pymoos.time())
 
-                if this_anchor.is_range_new():
-                    # check if new range measurement has been received - if so -> notify
-                    range, seq, range_update_time = this_anchor.get_range(read=True)
-                
-                    self.mooscomms.notify("RANGE_" + str(id), range, pymoos.time())
-                    self.mooscomms.notify("RANGE_" + str(id) + "_SEQ", seq ,pymoos.time())
+            if self.ahoi_interface.remote_anchors[id].is_range_new():
+                # check if new range measurement has been received - if so -> notify
+                range, seq, range_update_time = self.ahoi_interface.remote_anchors[id].get_range(read=True)
+            
+                self.mooscomms.notify("RANGE_" + str(id), range, pymoos.time())
+                self.mooscomms.notify("RANGE_" + str(id) + "_SEQ", seq ,pymoos.time())
 
 
 

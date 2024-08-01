@@ -47,15 +47,19 @@ class AhoiInterface():
                 
         self.speed_of_sound = enviro_config["speed_of_sound"] # in m/s
         
-        self.anchor_list = anchor_id_list # list of all anchor ids - can be None for anchors that are not mobile base
+        if anchor_id_list is None:
+            self.anchor_id_list = enviro_config["anchor_id_list"]
+        else:
+            self.anchor_id_list = anchor_id_list # list of all anchor ids - can be None for anchors that are not mobile base
 
+        print(f"ahoi_interface - {self.anchor_id_list}")
         if self.i_am == "Mobile-Base":
             # Initialize the anchor objects and store them in a dictionary
             try:
-                self.remote_anchors = {anchor_id: AnchorModel(anchor_id) for anchor_id in anchor_id_list}
+                self.remote_anchors = {anchor_id: AnchorModel(anchor_id) for anchor_id in self.anchor_id_list}
             except:
-                print(f"[ahoi_interace] i_am {self.i_am} and need list of remote anchors - only have anchor_id_list = {anchor_id_list}")
-                
+                print(f"[ahoi_interace] i_am {self.i_am} and need list of remote anchors - only have anchor_id_list = {self.anchor_id_list}")
+                   
         elif self.i_am == "Anchor":
             self.my_anchor = AnchorModel(self.my_id)
         
