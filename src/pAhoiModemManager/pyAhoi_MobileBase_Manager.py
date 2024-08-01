@@ -142,15 +142,11 @@ if __name__ == '__main__':
     parser.add_argument('--server_port', type=int, required=True, help='Server port')
     parser.add_argument('--modem_config_file', default='local_modem_config.json', help='Path to the modem config file')
     parser.add_argument('--enviro_config_file', default='enviro_config.json', help='Path to the environment config file')
-    parser.add_argument('--logging', type=bool, default=True, help='(de-)activate onboard logging')
-    parser.add_argument('--debug_printing', type=bool, default=True, help='(de-)activate debug prints to console')
 
     args = parser.parse_args()
     
     # Arguments are passed directly as they are already correctly referenced in the launch.sh
     app = pyAhoiMobileBaseManager(server_host=args.server_host, server_port=args.server_port,  
                                   modem_config_file=args.modem_config_file, enviro_config_file=args.enviro_config_file,
-                                  logging=args.logging, debug_printing=args.debug_printing)
-    #ben_ip = "192.168.15.100"
-    #app = pyAhoiMobileBaseManager(ben_ip, 9000,  "local_modem_config.json", "enviro_config.json")
+                                  logging=True, debug_printing=True)
     app.run()
