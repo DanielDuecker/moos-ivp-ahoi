@@ -2,7 +2,7 @@
 #Example directory conversion script
 
 target_directory="$1"
-destination_directory="${1}_tmp"
+destination_directory="${1}_mdm"
 
 python3 -m mdm -d $target_directory/ \
 # python3 ../../MWDataMgr/MWDataMgr.py -d $target_directory/ \

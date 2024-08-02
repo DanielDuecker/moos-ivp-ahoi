@@ -2,8 +2,7 @@
 
 # Strip variables worth ignoring from a mission
 
-newest_mission=(logs/$1*)
-newest_mission=${newest_mission[0]}
+newest_mission=($1*)
 
 rm -rf $newest_mission/**/**.blog $newest_mission/**/**.ylog
 
@@ -48,8 +47,6 @@ deletions="\
     HELM_MAP_CLEAR \
     REALMCAST_CHANNELS \
     IVPHELM_REGISTER \
-    CONTACTS_RECAP \
-    CONTACT_RANGES \
     PCONTACTMGRV20_PID \
     IVPHELM_CPU \
     PNR_EXTRAP_POS_GAP \
@@ -64,22 +61,17 @@ deletions="\
     TM_ALERT_REQUEST \
     BCM_ALERT_REQUEST \
     MOOS_DEBUG \
-    VIEW_POINT \
     TAIL_SIZE \
     HM_SIZE \
     MEDIATED_MESSAGE \
     MEDIATED_MESSAGE* \
     MEDIATED_MESSAGE_LOCAL \
     NAV_HEADING_OVER_GROUND \
-    NAV_LAT \
-    NAV_LONG \
-    HIT_MARKER \
     IVPHELM_UPDATE_RESULT \
     PNR_POST_GAP \
     OPR_ABSOLUTE_PERIM_DIST \
     OPR_ABSOLUTE_PERIM_ETA \
     ALERT_VERBOSE \
-    VIEW_COMMS_PULSE \
     UFSB_BRIDGE_VARS \
     *_ITER_LEN \
     *_ITER_GAP \
@@ -117,19 +109,19 @@ done
 
 #TODO: Check to make sure this runs okay, it may fail if a mission did not run as expected, and if it fails, we need to put the mission hash into a failed directory, i.e. 00_failed/
 # > Run another Python script for composing a plot with relevant information
-python3 analyze.py ${newest_mission}
+#python3 analyze.py ${newest_mission}
 
 #If our analysis script fails, we remove the meta directory, but zip the mission to observe what happened later. 
-if [ $? -ne 0 ]; then
-    m_id=${newest_mission#*/}
-    m_id=${m_id%_meta}
-    mkdir -p logs/failed
-    7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on logs/failed/$newest_mission.7z ${newest_mission} &> /dev/null
-    rmdir ${newest_mission}_meta
-    echo "$m_id" >> logs/failed.txt
-fi 
+#if [ $? -ne 0 ]; then
+#    m_id=${newest_mission#*/}
+#    m_id=${m_id%_meta}
+#    mkdir -p logs/failed
+#    7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on logs/failed/$newest_mission.7z ${newest_mission} &> /dev/null
+#    rmdir ${newest_mission}_meta
+#    echo "$m_id" >> logs/failed.txt
+#fi 
 
-rm -rf ${newest_mission}_tmp
+#rm -rf ${newest_mission}_tmp
 # Do we want to save good data? 
 #7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on $newest_mission.7z $newest_mission &> /dev/null
-rm -rf $newest_mission
+#rm -rf $newest_mission
