@@ -61,6 +61,7 @@ local_modem_config.json
 .vscode
 .venv
 
+logs_ahoi/
 *.csv
 debug_*.txt
 missions/ahoi_multi_agent_base/logs/

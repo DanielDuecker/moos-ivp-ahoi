@@ -41,7 +41,7 @@ class pyAhoiAnchorManager(object):
         # else:
         #     self.my_dof = 2
 
-        self.ahoi_interface = AhoiInterface(node_config_file=modem_config_file, enviro_config_file=enviro_config_file)
+        self.ahoi_interface = AhoiInterface(node_config_file=modem_config_file, enviro_config_file=enviro_config_file,debug_prints=True, logging=True)
 
 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
