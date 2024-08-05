@@ -30,7 +30,12 @@
    ```
 5. **Install pymoos**
 
-   Go to [https://github.com/msis/python-moos](https://github.com/msis/python-moos)
+   Go to 
+   
+   the newer version at : https://pypi.org/project/pymoos/ and install via pip
+   
+   
+   [https://github.com/msis/python-moos](https://github.com/msis/python-moos)
 
    Clone the repository:
    ```sh
