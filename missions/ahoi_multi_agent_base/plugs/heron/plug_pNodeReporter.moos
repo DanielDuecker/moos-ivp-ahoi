@@ -12,12 +12,12 @@ ProcessConfig = pNodeReporter
 	platform_color  = $(COLOR)
   platform_type   = kayak
 //  platform_length = 2
-  terse_reports   = true
+  terse_reports   = false // - true = low bandwitdth logging
 
 	extrap_enabled = true
 	extrap_pos_thresh = 0.25  // meters
 	extrap_hdg_thresh = 2.0  // degrees
-	extrap_max_gap = 3       // seconds
+	extrap_max_gap = 0.25       // seconds
 	
 	nav_grace_period = 180
 }
