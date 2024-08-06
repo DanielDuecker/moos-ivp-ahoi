@@ -61,6 +61,8 @@ local_modem_config.json
 .vscode
 .venv
 
+
+logs/
 logs_ahoi/
 *.csv
 debug_*.txt

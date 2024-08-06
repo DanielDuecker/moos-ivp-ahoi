@@ -46,6 +46,8 @@ class AhoiInterface():
         self.debug_mode = debug_prints
                 
         self.speed_of_sound = enviro_config["speed_of_sound"] # in m/s
+
+        self.wait_max_after_poll_s = enviro_config["wait_max_after_poll_s"] # wait before next poll is sent
         
         if anchor_id_list is None:
             self.anchor_id_list = enviro_config["anchor_id_list"]
@@ -73,7 +75,7 @@ class AhoiInterface():
        
         self.logging = logging
         if self.logging:
-            self.ahoi_logger = ahoi_csv_logger.AhoiCSVLogger("ahoi_interface_log.csv")
+            self.ahoi_logger = ahoi_csv_logger.AhoiCSVLogger("ahoi_interface_log")
 
 
 
@@ -330,7 +332,7 @@ if __name__ == '__main__':
 
                     my_modem.trigger_anchor_poll(dst_modem_id=poll_id)
                     
-                    time.sleep(1.3) # TODO 1. if TOF does not appear - pass, if second arrives - pass
+                    time.sleep(my_modem.wait_max_after_poll_s) # TODO 1. if TOF does not appear - pass, if second arrives - pass
             else:
                 #my_modem.my_anchor.update_pos(new_pos_x=10, new_pos_y=42, seq=None)
                 time.sleep(1)
