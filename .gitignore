@@ -62,7 +62,7 @@ local_modem_config.json
 .venv
 
 
-missions/*/logs/
+logs/
 logs_ahoi/
 *.csv
 debug_*.txt
