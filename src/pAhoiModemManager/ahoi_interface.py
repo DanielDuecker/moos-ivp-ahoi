@@ -73,7 +73,7 @@ class AhoiInterface():
        
         self.logging = logging
         if self.logging:
-            self.ahoi_logger = ahoi_csv_logger.AhoiCSVLogger("ahoi_interface_log.csv")
+            self.ahoi_logger = ahoi_csv_logger.AhoiCSVLogger("ahoi_interface_log")
 
 
 
@@ -330,7 +330,7 @@ if __name__ == '__main__':
 
                     my_modem.trigger_anchor_poll(dst_modem_id=poll_id)
                     
-                    time.sleep(1.3) # TODO 1. if TOF does not appear - pass, if second arrives - pass
+                    time.sleep(1.5) # TODO 1. if TOF does not appear - pass, if second arrives - pass
             else:
                 #my_modem.my_anchor.update_pos(new_pos_x=10, new_pos_y=42, seq=None)
                 time.sleep(1)
