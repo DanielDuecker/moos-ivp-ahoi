@@ -18,7 +18,7 @@ class AhoiCSVLogger():
             writer = csv.writer(file)
             # Write headers
             writer.writerow([
-                'timestamp', 'base_id', 'target_id', 'sequence_number', 
+                'time', 'base_id', 'target_id', 'sequence_number', 
                 'event', 'time', 'anchor_id', 'distance', 'pos_x', 'pos_y'
             ])
 
