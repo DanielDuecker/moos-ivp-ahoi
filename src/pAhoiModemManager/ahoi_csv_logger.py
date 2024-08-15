@@ -28,7 +28,7 @@ class AhoiCSVLogger():
             writer = csv.writer(file)
             writer.writerow([
                 datetime.now(), base_id, target_id, sqn, 
-                'range_poll', None, None, None, None, None
+                'range_poll', None, target_id, None, None, None # add target_id to anchor_id for easier parsing
             ])
 
     # Function to log TOF-ACK events
