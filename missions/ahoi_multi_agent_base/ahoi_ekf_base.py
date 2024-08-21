@@ -6,6 +6,9 @@ import time
 #import rospy
 import threading
 
+from ahoi_ekf_base_process import ProcessModel, ProcessModelVelocities
+from ahoi_ekf_base_meas import MeasurementModelDistances
+
 
 class ExtendedKalmanFilter(object):
     def __init__(self, dim_state, dim_meas, measurement_model, process_model,
@@ -15,11 +18,12 @@ class ExtendedKalmanFilter(object):
         self._x_est_0 = x0
         self._x_est = self._x_est_0
         self._x_est_last = self._x_est
-        #self._last_time_stamp_update = rospy.get_time()
-        #self._last_time_stamp_prediction = rospy.get_time()
         self._p0_mat = p0_mat
         self._p_mat = self._p0_mat
         self.lock = threading.Lock()
+
+        #self.process_model_type = "simple"
+        self.process_model_type = "velocities"
 
         self.process_model = process_model
         self.measurement_model = measurement_model
@@ -65,44 +69,60 @@ class ExtendedKalmanFilter(object):
 
         return True
     
-    def update_dist_data(self, measurements, anchor_pos, w_mat_dist):
+    def update_dist_data(self, measurements, anchor_pos,w_mat_dist):
         self._x_est_last = self._x_est
         
         z_est_anchor = self.measurement_model.h_dist_anchor_data(
             self.get_x_est(), anchor_pos)
         h_mat_anchor = self.measurement_model.h_jacobian_dist_anchor_data(
             self.get_x_est(), anchor_pos)
-        y_vision =  measurements - z_est_anchor
+        y_delta_dist =  measurements - z_est_anchor
 
         self._x_est, self._p_mat = self._update(self.get_x_est(),
-                                                self.get_p_mat(), y_vision,
+                                                self.get_p_mat(), y_delta_dist,
                                                 h_mat_anchor, w_mat_dist)
 
+        return y_delta_dist, measurements, z_est_anchor
+
+    # def update_vision_data(self, measurements, detected_tags):
+    #     # measurement is: dist, yaw to each tag
+
+    #     self._x_est_last = self._x_est
+    #     z_est_vision = self.measurement_model.h_vision_data(
+    #         self.get_x_est(), detected_tags)
+    #     h_mat_vision = self.measurement_model.h_jacobian_vision_data(
+    #         self.get_x_est(), detected_tags)
+    #     w_mat_vision = self.measurement_model.vision_dynamic_meas_model(
+    #         self.get_x_est(), measurements, detected_tags)
+
+    #     y_vision = measurements - z_est_vision
+    #     # wrap yaw innovation (every second entry) so it is between -pi and pi
+    #     y_vision[1::2] = np.arctan2(np.sin(y_vision[1::2]),
+    #                                 np.cos(y_vision[1::2]))
+
+    #     self._x_est, self._p_mat = self._update(self.get_x_est(),
+    #                                             self.get_p_mat(), y_vision,
+    #                                             h_mat_vision, w_mat_vision)
+
+    #     return True
+
+    def update_yaw_data(self, measurements, w_mat_yaw):
+        # measurement is: yaw
+
+        z_est_yaw = self.measurement_model.h_yaw_data(self.get_x_est())
+        h_mat_yaw = self.measurement_model.h_jacobian_yaw_data()
+
+        y_yaw = measurements - z_est_yaw
+        # wrap angle innovations between -pi and pi
+        y_yaw = np.arctan2(np.sin(y_yaw), np.cos(y_yaw))
+
+        self._x_est, self._p_mat = self._update(
+            self.get_x_est(), self.get_p_mat(), y_yaw, h_mat_yaw,
+            w_mat_yaw)
+
         return True
 
-    def update_vision_data(self, measurements, detected_tags):
-        # measurement is: dist, yaw to each tag
-
-        self._x_est_last = self._x_est
-        z_est_vision = self.measurement_model.h_vision_data(
-            self.get_x_est(), detected_tags)
-        h_mat_vision = self.measurement_model.h_jacobian_vision_data(
-            self.get_x_est(), detected_tags)
-        w_mat_vision = self.measurement_model.vision_dynamic_meas_model(
-            self.get_x_est(), measurements, detected_tags)
-
-        y_vision = measurements - z_est_vision
-        # wrap yaw innovation (every second entry) so it is between -pi and pi
-        y_vision[1::2] = np.arctan2(np.sin(y_vision[1::2]),
-                                    np.cos(y_vision[1::2]))
-
-        self._x_est, self._p_mat = self._update(self.get_x_est(),
-                                                self.get_p_mat(), y_vision,
-                                                h_mat_vision, w_mat_vision)
-
-        return True
-
-    def update_orientation_data(self, measurements):
+    def update_orientation_data(self, measurements,w_mat_orientation):
         # measurement is: roll, pitch from /mavros/local_position/pose
 
         z_est_orient = self.measurement_model.h_orientation_data(
@@ -115,7 +135,7 @@ class ExtendedKalmanFilter(object):
 
         self._x_est, self._p_mat = self._update(
             self.get_x_est(), self.get_p_mat(), y_orient, h_mat_orient,
-            self.measurement_model.w_mat_orientation)
+            w_mat_orientation)
 
         return True
 
@@ -166,85 +186,22 @@ class ExtendedKalmanFilter(object):
     
 
 
-# ====================================================
-# based on https://github.com/HippoCampusRobotics/mu_auv_localization/blob/main/src/mu_auv_localization/process_model_class.py
-
-class ProcessModel(object):
-    """ Simple process model: no prediction """
-    def __init__(self, dim_state, dim_meas, V):
-        self._dim_state = dim_state
-        self._dim_meas = dim_meas
-        self.V = V  # process noise
-
-    def f(self, x_est, dt):
-        x_next = np.copy(x_est)
-        return x_next
-
-    def f_jacobian(self, x_est, dt):
-        A = np.eye(self._dim_state)
-        return A  # dim [dim_state X dim_state]
-    
-# ====================================================
-# based on https://github.com/HippoCampusRobotics/mu_auv_localization/blob/main/src/mu_auv_localization/meas_model_class.py
-
-
-class MeasurementModelDistances(object):
-    def __init__(self, dim_state, dim_meas, w_mat_dist):
-    #def __init__(self, dim_state, dim_meas, w_mat_vision, c_penalty_dist,
-    #             c_penalty_yaw, w_mat_orientation):
-        self._dim_state = dim_state
-        self._dim_meas = dim_meas
-        self._w_mat_dist = w_mat_dist   # measurement noise
-
-        # self._w_mat_vision_static = w_mat_vision
-        # self._c_penalty_dist = c_penalty_dist
-        # self._c_penalty_yaw = c_penalty_yaw
-        # self.w_mat_orientation = w_mat_orientation
-
-    def h_dist_anchor_data(self, x_est, anchor_pos_3d):
-        # measurement is: distance to anchor
-        z_est = self.get_dist(x_est, anchor_pos_3d)
-
-        return z_est  # dim [1 X 1]
-    
-    def h_jacobian_dist_anchor_data(self, x_est, anchor_pos_3d):
-        
-        h_mat = np.zeros((self._dim_meas, self._dim_state))
-        
-
-        dist = self.get_dist(x_est, anchor_pos_3d)
-
-        # dh /dx = 1/2 * (dist ^2)^(-1/2) * (2 * (x1 - t1) * 1)
-        h_jac_x = (x_est[0] - anchor_pos_3d[0]) / dist
-        # dh /dy
-        h_jac_y = (x_est[1] - anchor_pos_3d[1]) / dist
-        # dh /dz
-        h_jac_z = (x_est[2] - anchor_pos_3d[2]) / dist
-        ## dh /dyaw
-        #h_jac_yaw = 1.0
-
-        h_mat[0, 0:3] = [h_jac_x, h_jac_y, h_jac_z]
-        #h_mat[self._dim_meas * i + 1, 5] = h_jac_yaw
-        # all other derivatives are zero
-
-        return h_mat  # dim [1x3]
-
-
-    def get_dist(self, x_est, ref_pos):
-        # dist = sqrt((x - x_tag) ^ 2 + (y - y_tag) ^ 2 + (z - z_tag) ^ 2)
-        dist = np.sqrt((x_est[0] - ref_pos[0])**2 +
-                       (x_est[1] - ref_pos[1])**2 + 
-                       (x_est[2] - ref_pos[2])**2)
-        return dist
 
 
 class EKF_Node():
-    def __init__(self, auv_dim_state, ahoi_dim_meas, meas_noise, process_noise, x0_est, p_mat_est) -> None:
+    def __init__(self, auv_dim_state, ahoi_dim_meas, process_model_type, process_noise, x0_est, p_mat_est) -> None:
+
+        # meas_noise - list of meas noise matrices [ahoi_mat, yaw_mat, imu_mat,...]
+
+        if process_model_type == "simple":
+            process_model = ProcessModel(dim_state=auv_dim_state,dim_meas=ahoi_dim_meas, V=process_noise)
+        elif process_model_type == "velocities":
+            process_model = ProcessModelVelocities(dim_state=auv_dim_state,dim_meas=ahoi_dim_meas, V=process_noise)
 
         # init EKF
         self.ekf = ExtendedKalmanFilter(dim_state=auv_dim_state, dim_meas=ahoi_dim_meas, 
-                                    measurement_model=MeasurementModelDistances(dim_state=auv_dim_state,dim_meas=ahoi_dim_meas,w_mat_dist=meas_noise), 
-                                    process_model=ProcessModel(dim_state=auv_dim_state,dim_meas=ahoi_dim_meas, V=process_noise),
+                                    measurement_model=MeasurementModelDistances(dim_state=auv_dim_state,dim_meas=ahoi_dim_meas), 
+                                    process_model=process_model,
                                     x0 = x0_est, 
                                     p0_mat = p_mat_est)
         self._last_predict_time = time.time()
@@ -268,5 +225,9 @@ class EKF_Node():
         self._last_predict_time = time_now
         return True
 
-    def measurement_update(self, dist_meas, anchor_pos, w_mat_dist):
-        self.ekf.update_dist_data(measurements=dist_meas, anchor_pos=anchor_pos,w_mat_dist=w_mat_dist)
+    def dist_measurement_update(self, dist_meas, anchor_pos, w_mat_dist):
+        y_delta_dist, measurements, z_est_anchor = self.ekf.update_dist_data(measurements=dist_meas, anchor_pos=anchor_pos,w_mat_dist=w_mat_dist)
+        return y_delta_dist, measurements, z_est_anchor
+    
+    def yaw_measurement_update(self, yaw_meas, w_mat_yaw):
+        self.ekf.update_yaw_data(measurements=yaw_meas, w_mat_yaw=w_mat_yaw)
