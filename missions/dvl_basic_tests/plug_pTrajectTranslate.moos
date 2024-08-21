@@ -1,0 +1,48 @@
+//------------------------------------------------
+// pTrajectTranslate config block
+
+ProcessConfig = pTrajectTranslate
+{
+   AppTick   = 4
+   CommsTick = 4
+
+   time_window = 0.5
+
+   // Heading rate gain is used to calculate
+   // desired heading rate with the following
+   // formulas:
+   // delta_theta = desired_heading - compass_heading
+   // desired_heading_rate = heading_rate_scale * delta_theta
+   // (and the result is input to the lowpass filter)
+   heading_rate_gain = 0.1
+
+
+   // The depth-to-pitch gain is used to calculate
+   // desired pitch with the following
+   // formulas:
+   // delta_depth = desired_depth - current_depth
+   // desired_pitch = depth_to_pitch_gain * delta_depth
+   // (and the result is input to the lowpass filter)
+   depth_to_pitch_gain = 0.1 
+
+   cutoff_freq_vel_x = 1  // Hz
+   cutoff_freq_vel_y = 1  // Hz
+   cutoff_freq_ang_z = 1  // Hz
+   cutoff_freq_pitch = 1  // Hz	
+
+   // Actual body heading variable to use in calc
+   #ifdef XMODE SIM
+      body_heading_var = NAV_HEADING
+   #elseifdef XMODE M300
+      body_heading_var = COMPASS_HEADING_RAW
+   #endif
+
+
+   body_depth_var = NAV_DEPTH
+   
+   des_speed_in_surge_only = true
+   include_depth = true
+     
+
+}
+

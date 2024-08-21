@@ -1,0 +1,92 @@
+//------------------------------------------------
+// pDynamLearning config block
+
+ProcessConfig = pDynamLearning
+{
+   AppTick   = 4
+   CommsTick = 4
+
+   ////////////////////////////
+   // State prefix for learning system dynamics
+   //  Ex.  NAV or GT or GPS
+   StateVarPrefix = NAV
+   
+   ////////////////////////////
+   // Filepath to save the weights
+   SaveFilePath = /home/student2680/moos-ivp-pavlab/src/pDynamLearning/data/
+
+   /////////////////////////////
+   //// Time lim for state ////
+   MaxTimeLim     = 0.2 // Time "window" in which all measurements
+                        // must lie to be considered a single state
+   TimeBetweenEst = 0.4  // An estimate is attempeted every interval 
+
+   /////////////////////////////
+   ////// RNN Parameters ///////
+
+   NumberNeurons = 20
+   NumberInputs  = 5
+   
+   // These values are used to scale the inputs to the range 0 to 1.
+   // It is better to over estimate the max values than to underestimate
+   // The units are the same as the inputs.
+   MaxInput1 = 4    // Max Speed
+   
+   MaxInput3 = 110  // Max Thrust Left Value (Commanded)
+   MaxInput4 = 110  // Max Thrust Right Value (Commanded)
+
+   // These values are used for the Adams back-propagation algorithm
+   Alpha   = 0.0005  
+   Beta1   = 0.9
+   Beta2   = 0.999
+   Epsilon = 0.00000001
+   ContractionWeight = 0.1
+
+   /////////////////////////////
+   ////// AID Parameters ///////
+
+   NumberParamsAID = 9
+
+   // Initial estimate of each param
+   AIDParamInit1 =  0.0022
+   AIDParamInit2 =  0.0000061309
+   AIDParamInit3 =  0.0146
+   AIDParamInit4 =  0.00056060
+   AIDParamInit5 =  0.00000665
+   AIDParamInit6 =  0.0147
+   AIDParamInit7 = -0.9998
+   AIDParamInit8 = -0.0034
+   AIDParamInit9 = -0.0000086704
+
+   // Adaptation gains
+   GainParam1 = 0.00000035
+   GainParam2 = 0.0000000000035  
+   GainParam3 = 0.00000000035
+   GainParam4 = 0.00000035
+   GainParam5 = 0.0000000000035
+   GainParam6 = 0.00000000035
+   GainParam7 = 0.000035
+   GainParam8 = 0.0000035
+   GainParam9 = 0.00035
+   aM 	      = -0.1
+
+   ////////////////////////////
+   ////// RLS Parameters //////
+
+   NumberParamsRLS = 9
+   OrderRLS        = 0
+   ForgettingFactor = 0.995
+   //RLSParamInit1   = 0.00012668
+   //RLSParamInit2   = 
+   RLSParamInit1   =  0.0081
+   RLSParamInit2   =  0.00022536
+   RLSParamInit3   = -0.0000024357
+   RLSParamInit4   =  0.0138
+   RLSParamInit5   =  0.000030636
+   RLSParamInit6   = -0.0000011269
+   RLSParamInit7   =  0.0486
+   RLSParamInit8   =  0.0304
+   RLSParamInit9   =  0.0208
+   
+}
+

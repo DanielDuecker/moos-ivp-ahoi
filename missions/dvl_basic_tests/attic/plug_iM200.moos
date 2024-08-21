@@ -1,0 +1,26 @@
+//--------------------------------------------------------
+// iM200 Config Block
+	
+ProcessConfig = iM200
+{
+  AppTick        = 10
+  CommsTick      = 10
+
+  port_number    = 29500
+  ip_address     = $(FSEAT_IP) // Default is 'localhost'
+  gps_prefix     = NAV_        // Prepended to GPS position messages.
+  direct_thrust  = false       // Default is false.
+                               // When true, vehicle in direct-thrust mode.
+                               // When false, vehicle in rudder-thrust mode.
+
+  heading_offset = 0.0         // Offset to add to published heading
+
+	
+  publish_raw    = true        // When true, publish all messages from
+                               // front seat to M200_RAW_NMEA
+  max_rudder     = 100.0        // Rudder value will be capped to this, +/-
+  max_thrust     = 100.0        // Thrust value to each motor will be
+                               // capped to this value, +/-
+
+  publish_thrust = TRUE
+}
