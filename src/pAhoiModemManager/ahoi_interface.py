@@ -84,9 +84,29 @@ class AhoiInterface():
     
     def who_am_i(self):
         return self.i_am
+    
+    def trigger_anchor_tof_poll(self, dst_modem_id):
+        # trigger a TOF poll to a specific anchor
+
+        new_seq = self.remote_anchors[dst_modem_id].get_last_poll_seq()[0] + 1
+
+        self.myModem.send(src=self.my_id,
+                            dst=dst_modem_id,       # id of destination modem
+                            status=2,               # status 2 trigger HW-range-ACK
+                            type=0x00,              # type for ranging+pos poll [own]
+                            payload=bytearray(),    # empty for poll 
+                            dsn=new_seq)            # poll_sequence number is max 255 by modem
+        
+        self.remote_anchors[dst_modem_id].polled_at_seq(new_seq) # note for each anchor that it was polled.
+
+        if self.debug_mode:
+            print(f"\n[Base_ID_{self.my_id}] sent TOF-poll poll to ID {dst_modem_id} sqn {new_seq} ...")
+        if self.logging:
+            self.ahoi_logger.log_poll(poll_type='TOF-poll',base_id=self.my_id, target_id=dst_modem_id, sqn=new_seq)
 
     
-    def trigger_anchor_poll(self, dst_modem_id):
+    def trigger_anchor_tof_pos_poll(self, dst_modem_id):
+        # trigger a TOF+POS poll to a specific anchor
 
         new_seq = self.remote_anchors[dst_modem_id].get_last_poll_seq()[0] + 1
 
@@ -100,15 +120,15 @@ class AhoiInterface():
         self.remote_anchors[dst_modem_id].polled_at_seq(new_seq) # note for each anchor that it was polled.
 
         if self.debug_mode:
-            print(f"\n[Base_ID_{self.my_id}] sent range poll to ID {dst_modem_id} sqn {new_seq} ...")
+            print(f"\n[Base_ID_{self.my_id}] sent TOF-POS-poll poll to ID {dst_modem_id} sqn {new_seq} ...")
         if self.logging:
-            self.ahoi_logger.log_range_poll(base_id=self.my_id, target_id=dst_modem_id, sqn=new_seq)
+            self.ahoi_logger.log_poll(poll_type='TOF-POS-poll',base_id=self.my_id, target_id=dst_modem_id, sqn=new_seq)
 
     def run_anchor_polling_loop(self, anchor_id_list, loop_active=True, wait_for_ack=1.3):
         while loop_active:
             for poll_id in anchor_id_list:
 
-                self.trigger_anchor_poll(dst_modem_id=poll_id)
+                self.trigger_anchor_tof_pos_poll(dst_modem_id=poll_id)
                 
                 time.sleep(wait_for_ack) # TODO 1. if TOF does not appear - pass, if second arrives - pass
         

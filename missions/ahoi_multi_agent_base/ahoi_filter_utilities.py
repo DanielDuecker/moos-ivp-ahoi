@@ -25,8 +25,8 @@ class AnchorEstModel():
         self._last_pos_time = None
         self._last_pos_poll_time = None
 
-        self._pos = np.zeros((2,1))
-        self._vel = np.zeros((2,1))
+        self._pos = np.zeros((3,1))
+        self._vel = np.zeros((3,1))
 
         self._last_range_time = None
         self._last_range = None
@@ -47,20 +47,22 @@ class AnchorEstModel():
     def sent_pos_poll(self, timestamp):
         self._last_pos_poll_time = timestamp
 
-    def update_pos(self, pos, timestamp):
-        self._pos = pos
+    def update_pos(self, pos3d, timestamp):
+        self._pos = pos3d
         self._last_pos_time = timestamp
         self._number_pos_updates += 1
         self._is_fully_initialized = True
+        #print(f'Anchor {self._id} updated pos to {pos3d} at {timestamp}')
+
         if self._logging:
-            self._log_pos.append((timestamp, pos))
+            self._log_pos.append((timestamp, pos3d))
 
     def get_last_pos(self):
         if self._last_pos_time is None:
             print(f'ERROR: Anchor Pos is {self._pos} and has not been set yet for this anchor') 
-        return self._pos, self, self._last_pos_time
+        return self._pos, self._last_pos_time
     
-    def is_valid(self):
+    def is_init(self):
         return self._is_fully_initialized
     
     def get_pos_age(self, current_datetime):
@@ -81,12 +83,12 @@ class AnchorEstModel():
         # output list of tuples (timestamp, range)
         return self._log_range
 
-    def comp_vel(self, pos, time):
+    def comp_vel(self, pos, time_pos):
         if self._last_pos_time is not None:
-            dt = (time - self._last_pos_time).total_seconds()
+            dt = (time_pos - self._last_pos_time).total_seconds()
             self._vel = (pos - self._pos) / dt
         else:
-            self._vel = np.zeros((2,1))
+            self._vel = np.zeros(np.shape(pos))
         return self._vel
 
 
@@ -94,31 +96,44 @@ class AnchorEstModel():
 class AhoiMeasurement():
     def __init__(self):
         self.status = {0: 'inactive', 1: 'TOF-poll', 2: 'got_only_tof', 3: 'got_only_pos', 4:'got_tof_pos'}
-
-
-        self.reset()
-
-    def reset(self):
-
         self.open_poll_tof = False
         self.open_poll_pos = False
 
-        #self.measurement_status = self.status[0] # inactive
-        #self.meas_complete = False
+        self.reset(reset_type = 'full')
 
-        self.poll_time = None
-        self.seq_id = None
-        self.anchor_id = None
+    def reset(self, reset_type):
 
-        self.rec_range = None
-        self.rec_range_time = None
+        
+        if reset_type == 'TOF':
+             self.open_poll_tof = False
+             self.rec_range = None
+             self.rec_range_time = None
+        elif reset_type == 'POS':
+            self.open_poll_pos = False
+            self.rec_anchor_pos = None
+            self.rec_pos_time = None
+        
 
-        self.rec_anchor_pos = None
-        self.rec_pos_time = None
+        elif reset_type == 'full':
+            self.open_poll_tof = False
+            self.open_poll_pos = False
+
+            self.poll_time = None
+            self.seq_id = None
+            self.anchor_id = None
+
+            self.rec_range = None
+            self.rec_range_time = None
+
+            self.rec_anchor_pos = None
+            self.rec_pos_time = None
+        else:
+            print("ERROR: Reset type not recognized")
 
     def issued_poll(self, poll_type, poll_time, seq_id, anchor_id):
         if poll_type == 'TOF-poll':
             self.open_poll_tof = True
+            self.open_poll_pos = False
         elif poll_type == 'TOF-POS-poll':
             self.open_poll_tof = True
             self.open_poll_pos = True
@@ -129,7 +144,6 @@ class AhoiMeasurement():
         self.seq_id = seq_id
         self.anchor_id = anchor_id
 
-        self.measurement_status = self.status[1] # polled
 
     def get_poll_status(self):
         # return status on tof poll , pos poll
@@ -154,7 +168,8 @@ class AhoiMeasurement():
 
             self.open_poll_tof = False # close the tof poll
             #self.measurement_status = self.status[2] # 'got_only_tof'
-
+        elif self.seq_id is None:
+            print(f"Sequence ID is None - input seq_i: {seq_i}")
         else:
             print("Overlapping sequences")
     
@@ -165,12 +180,8 @@ class AhoiMeasurement():
 
             self.open_poll_pos = False # close the pos poll
 
-
-            # if self.measurement_status == 'got_only_tof':
-            #     self.measurement_status = self.status[4] # 'got_tof_pos'
-            # else:
-            #     self.measurement_status = self.status[3] # 'got_only_pos'
-            # self.meas_complete = (self.rec_range is not None and self.rec_anchor_pos is not None)
+        elif self.seq_id is None:
+            print(f"Sequence ID is None - input seq_i: {seq_i}")
         else:
             print("Overlapping sequences")
 
@@ -183,12 +194,12 @@ class AhoiMeasurement():
     def get_range(self):
         if self.rec_range == None:
             print(f'ERROR: Anchor Range is {self.rec_range} and has not been set yet for this sequence')
-        return self.rec_range, self.anchor_id
+        return self.rec_range, self.anchor_id, self.rec_range_time
     
     def get_anchor_pos(self):
         if self.rec_anchor_pos is None:
             print(f'ERROR: Anchor Pos is {self.rec_anchor_pos} and has not been set yet for this sequence')
-        return self.rec_anchor_pos, self.anchor_id
+        return self.rec_anchor_pos, self.anchor_id, self.rec_pos_time
     
 
 class RealWorldDataLoader():
@@ -345,7 +356,20 @@ class RealWorldDataLoader():
         ).reset_index(name='id2_dist')
 
         # Step 4: Combine results into a single data frame
+
+        id2_interpolated[['id2_X', 'id2_Y']] = id2_interpolated[['X', 'Y']]
+        id6_interpolated[['id6_X', 'id6_Y']] = id6_interpolated[['X', 'Y']]
+        id9_interpolated[['id9_X', 'id9_Y']] = id9_interpolated[['X', 'Y']]
+
+        self.anchor_pos_df = id9_interpolated.merge(id6_interpolated, on='time').merge(id2_interpolated, on='time')
+
+        
         self.distances_combined = id6_distances.merge(id9_distances, on='time').merge(id2_distances, on='time')
+    
+    def get_all_anchor_data_df(self):
+        # Return the combined distances and positions
+        # 'time', 'id6_X', 'id6_Y', 'id9_X', 'id9_Y', 'id2_X', 'id2_Y', 'id6_dist', 'id9_dist', 'id2_dist'
+        return self.anchor_pos_df.merge(self.distances_combined, on='time')
 
     def get_all_anchor_dist_df(self):
         # Return the combined distances
@@ -359,8 +383,18 @@ class RealWorldDataLoader():
     def get_ahoi_df(self):
         return self.ahoi_df_clipped
     
-    def get_anchor_df(self):
+    def get_anchor_dfs(self):
         return self._df_mdm_id2, self._df_mdm_id6, self._df_mdm_id9
+    
+    def get_anchor_df(self, id):
+        if id == 2:
+            return self._df_mdm_id2
+        elif id == 6:
+            return self._df_mdm_id6
+        elif id == 9:
+            return self._df_mdm_id9
+        else:
+            print("ERROR: Anchor ID not recognized")
     
     def get_anchor_labels(self):
         return self.anchor_labels
@@ -417,10 +451,12 @@ class DFReader():
             return False
         
 class AhoiSimulator():
-    def __init__(self, poll_scheme=['tof','tof-pos'], tof_timeout=0.7, pos_timeout=1.3) -> None:
+    def __init__(self, poll_scheme=['tof','tof-pos'], anchor_list=[2,6,9], tof_timeout=0.7, pos_timeout=1.3) -> None:
         self.poll_scheme = poll_scheme
         self.scheme_len = len(self.poll_scheme)
         self.poll_scheme_idx = 0
+
+        self.anchor_list = anchor_list
 
         self.tof_timeout = tof_timeout
         self.pos_timeout = pos_timeout

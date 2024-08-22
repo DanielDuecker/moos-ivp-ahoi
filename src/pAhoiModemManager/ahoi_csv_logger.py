@@ -23,12 +23,12 @@ class AhoiCSVLogger():
             ])
 
     # Function to log range poll events
-    def log_range_poll(self, base_id, target_id, sqn):
+    def log_poll(self, poll_type, base_id, target_id, sqn):
         with open(self.csv_file, mode='a', newline='') as file:
             writer = csv.writer(file)
             writer.writerow([
                 datetime.now(), base_id, target_id, sqn, 
-                'range_poll', None, target_id, None, None, None # add target_id to anchor_id for easier parsing
+                poll_type, None, target_id, None, None, None # add target_id to anchor_id for easier parsing
             ])
 
     # Function to log TOF-ACK events
