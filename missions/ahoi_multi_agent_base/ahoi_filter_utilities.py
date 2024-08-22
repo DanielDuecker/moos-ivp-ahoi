@@ -14,8 +14,12 @@ class AnchorEstimator():
         return self._anchor_dict[anchor_id]
 
 class AnchorEstModel():
-    def __init__(self, anchor_id) -> None:
-        self._id = anchor_id
+    def __init__(self, id, logging=False) -> None:
+        self._id = id
+        self._logging = logging
+
+        self._log_pos = []
+        self._log_range = []
         
         self._is_fully_initialized = False
         self._last_pos_time = None
@@ -37,6 +41,8 @@ class AnchorEstModel():
         self._last_range = range_data
         self._last_range_time = timestamp
         self._number_range_updates += 1
+        if self._logging:
+            self._log_range.append((timestamp, range_data))
     
     def sent_pos_poll(self, timestamp):
         self._last_pos_poll_time = timestamp
@@ -46,6 +52,8 @@ class AnchorEstModel():
         self._last_pos_time = timestamp
         self._number_pos_updates += 1
         self._is_fully_initialized = True
+        if self._logging:
+            self._log_pos.append((timestamp, pos))
 
     def get_last_pos(self):
         if self._last_pos_time is None:
@@ -65,21 +73,38 @@ class AnchorEstModel():
         #range_age = (current_datetime - self._last_range_time).total_seconds()
         return pos_age #, range_age    
 
+    def get_log_pos(self):
+        # output list of tuples (timestamp, pos)
+        return self._log_pos
+    
+    def get_log_range(self):
+        # output list of tuples (timestamp, range)
+        return self._log_range
 
-
-
-
+    def comp_vel(self, pos, time):
+        if self._last_pos_time is not None:
+            dt = (time - self._last_pos_time).total_seconds()
+            self._vel = (pos - self._pos) / dt
+        else:
+            self._vel = np.zeros((2,1))
+        return self._vel
 
 
 
 class AhoiMeasurement():
     def __init__(self):
-        self.status = {0: 'inactive', 1: 'polled', 2: 'got_only_tof', 3: 'got_only_pos', 4:'got_tof_pos'}
+        self.status = {0: 'inactive', 1: 'TOF-poll', 2: 'got_only_tof', 3: 'got_only_pos', 4:'got_tof_pos'}
+
+
         self.reset()
 
     def reset(self):
-        self.measurement_status = self.status[0] # inactive
-        self.meas_complete = False
+
+        self.open_poll_tof = False
+        self.open_poll_pos = False
+
+        #self.measurement_status = self.status[0] # inactive
+        #self.meas_complete = False
 
         self.poll_time = None
         self.seq_id = None
@@ -91,19 +116,44 @@ class AhoiMeasurement():
         self.rec_anchor_pos = None
         self.rec_pos_time = None
 
-    def issued_poll(self, poll_time, seq_id, anchor_id):
+    def issued_poll(self, poll_type, poll_time, seq_id, anchor_id):
+        if poll_type == 'TOF-poll':
+            self.open_poll_tof = True
+        elif poll_type == 'TOF-POS-poll':
+            self.open_poll_tof = True
+            self.open_poll_pos = True
+        else:
+            print("ERROR: Poll type not recognized")
+
         self.poll_time = poll_time
         self.seq_id = seq_id
         self.anchor_id = anchor_id
 
         self.measurement_status = self.status[1] # polled
 
-
+    def get_poll_status(self):
+        # return status on tof poll , pos poll
+        return self.open_poll_tof, self.open_poll_pos
+    
+    def got_range(self):
+        if self.rec_range is None:
+            return False
+        else:
+            return True
+    
+    def got_pos(self):
+        if self.rec_anchor_pos is None:
+            return False
+        else:
+            return True
+        
     def received_range(self, rec_range, rec_range_time, seq_i):
         if self.seq_id == seq_i:
             self.rec_range = rec_range
             self.rec_range_time = rec_range_time
-            self.measurement_status = self.status[2] # 'got_only_tof'
+
+            self.open_poll_tof = False # close the tof poll
+            #self.measurement_status = self.status[2] # 'got_only_tof'
 
         else:
             print("Overlapping sequences")
@@ -113,19 +163,22 @@ class AhoiMeasurement():
             self.rec_anchor_pos = rec_pos
             self.rec_pos_time = rec_pos_time
 
-            if self.measurement_status == 'got_only_tof':
-                self.measurement_status = self.status[4] # 'got_tof_pos'
-            else:
-                self.measurement_status = self.status[3] # 'got_only_pos'
-            self.meas_complete = (self.rec_range is not None and self.rec_anchor_pos is not None)
+            self.open_poll_pos = False # close the pos poll
+
+
+            # if self.measurement_status == 'got_only_tof':
+            #     self.measurement_status = self.status[4] # 'got_tof_pos'
+            # else:
+            #     self.measurement_status = self.status[3] # 'got_only_pos'
+            # self.meas_complete = (self.rec_range is not None and self.rec_anchor_pos is not None)
         else:
             print("Overlapping sequences")
 
-    def is_complete(self):
-        if self.measurement_status == 'got_tof_pos':
-            return True
-        else:
-            return False
+    # def is_complete(self):
+    #     if self.measurement_status == 'got_tof_pos':
+    #         return True
+    #     else:
+    #         return False
 
     def get_range(self):
         if self.rec_range == None:
@@ -330,6 +383,12 @@ class DFReader():
     def get_end_time(self):
         return self.df_end_time
     
+    def check_end_of_data(self):
+        if self.current_index >= self.df_length-1:
+            print(f"End of data reached idx: {self.current_index} df-len:{self.df_length}")
+            return True 
+    
+
     def proceed_for_new_data(self, current_time): # roll forward in df to current time
 
         while self.current_index < self.df_length and current_time >= self.df['time'].iloc[self.current_index]:
@@ -348,9 +407,73 @@ class DFReader():
         return self.get_newest_data()
     
     def to_next_data_row(self, current_time):
+        # true if this returns a new data row
+        # false if no new data or end of data is reached
+
         if self.current_index < self.df_length and current_time >= self.df['time'].iloc[self.current_index]: 
             self.current_index+=1
             return True
         else:
             return False
         
+class AhoiSimulator():
+    def __init__(self, poll_scheme=['tof','tof-pos'], tof_timeout=0.7, pos_timeout=1.3) -> None:
+        self.poll_scheme = poll_scheme
+        self.scheme_len = len(self.poll_scheme)
+        self.poll_scheme_idx = 0
+
+        self.tof_timeout = tof_timeout
+        self.pos_timeout = pos_timeout
+
+        self.time_last_poll = None
+
+        self.open_tof_poll = False
+        self.open_pos_poll = False
+
+        
+    # def set_current_time(self, current_time):
+    #     self.current_time = current_time
+
+    def poll_tof(self,current_time):
+        self.time_last_poll = current_time
+        self.poll_event = 'poll_tof'
+        self.open_tof_poll = True
+
+        self.poll_scheme_idx = (self.poll_scheme_idx + 1) % self.scheme_len
+
+
+        return self.poll_event
+    
+    def poll_tofpos(self,current_time):
+        self.time_last_poll = current_time
+        self.poll_event = 'poll_tofpos'
+        self.open_tof_poll = True
+        self.open_pos_poll = True
+
+        self.poll_scheme_idx = (self.poll_scheme_idx + 1) % self.scheme_len
+
+        return self.poll_event
+    
+    def reset_poll(self):
+        self.open_tof_poll = False
+        self.open_pos_poll = False
+
+    def poll_timeout(self, current_time):
+        if self.poll_event == 'poll_tof':
+            if (current_time - self.time_last_poll).total_seconds() > self.tof_timeout:
+                self.reset_poll()
+        
+        elif self.poll_event == 'poll_tofpos':
+            if (current_time - self.time_last_poll).total_seconds() > self.pos_timeout:
+                self.reset_poll()
+    
+    def get_next_anchor(self):
+        if self.poll_scheme_idx >= len(self.poll_scheme):
+            self.poll_scheme_idx = 0
+        return self.poll_scheme[self.poll_scheme_idx]
+    
+    def ack_tof(self):
+        
+        self.open_tof_poll = False
+        self.ack_event = 'tof_ack'
+        return self.ack_event, distance
