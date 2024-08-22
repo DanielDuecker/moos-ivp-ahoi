@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import pymoos
+import numpy as np
 import argparse
 import time
 import json
@@ -53,6 +54,13 @@ class pyAhoiMobileBaseManager(object):
         self.my_moos_pos_y = None
         self.my_moos_pos_z = None
 
+        self.polling_type_idx = 0
+        self.polling_scheme_dict = {0:'TOF-POS-poll'}
+        # self.polling_scheme_dict = {0:'TOF-POS-poll', 1:'TOF-poll'}
+        # self.polling_scheme_dict = {0:'TOF-POS-poll', 1:'TOF-poll',2:'TOF-poll'}
+        self.anchor_polling_type = np.zeros((len(self.anchor_id_list),), dtype=int) # current polling type for each anchor
+        
+
 
     def on_connect(self):
         ''' On connection to MOOSDB, register for desired MOOS variables (allows for * regex) e.g. register('variable', 'community', 'interval')
@@ -97,8 +105,10 @@ class pyAhoiMobileBaseManager(object):
         # run polling loop in
         #self.ahoi_interface.run_anchor_polling_loop(self.anchor_id_list,loop_active=True, wait_for_ack=1.3)
 
+
         while True:
             if self.moos_connected:
+                
                 self.iterate()
                 if counter%100 == 0:
                     print(f"[pyAhoi_MobileBase_Manager] still alive ... since {(counter/rate/60):.1f}min")
@@ -111,9 +121,27 @@ class pyAhoiMobileBaseManager(object):
         # TODO 1. notice that range is received
         # TODO 2. notice that pos is received
         # TODO 3. notify accordingly
+
+        polling_type = self.polling_scheme_dict[self.poll_type_idx]
+
+        self.polling_type_idx += 1
+        if self.polling_type_idx == len(self.polling_scheme_dict):
+            self.poll_type_idx = 0
+        
+        # polling_type = 'TOF-POS-poll'
+        
+        # Anchor polling loop
         for id in self.anchor_id_list:
-            self.ahoi_interface.trigger_anchor_poll(dst_modem_id=id)
-            time.sleep(1.3)
+
+            if polling_type == 'TOF-POS-poll':
+                self.ahoi_interface.trigger_anchor_tof_pos_poll(dst_modem_id=id)
+                time.sleep(1.3)
+            elif polling_type == 'TOF-poll':
+                self.ahoi_interface.trigger_anchor_tof_poll(dst_modem_id=id)
+                time.sleep(0.7)
+            else:
+                print(f"[pyAhoi_MobileBase_Manager] polling type {polling_type} not recognized")
+
 
             if self.ahoi_interface.remote_anchors[id].is_pos_new():
                 #print(f"new position id {id}")
@@ -133,6 +161,7 @@ class pyAhoiMobileBaseManager(object):
                 self.mooscomms.notify("RANGE_" + str(id), range, pymoos.time())
                 self.mooscomms.notify("RANGE_" + str(id) + "_SEQ", seq ,pymoos.time())
 
+            
 
         #self.ahoi_interface.my_anchor.update_pos(new_pos_x=self.my_moos_pos_x, new_pos_y=self.my_moos_pos_y, seq=None)
         # if self.my_pos_x is not None and self.my_pos_y is not None:
