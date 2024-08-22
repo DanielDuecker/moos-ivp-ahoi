@@ -55,6 +55,7 @@ class pyAhoiMobileBaseManager(object):
         self.my_moos_pos_z = None
 
         self.polling_type_idx = 0
+        self.poll_type_idx = 0
         self.polling_scheme_dict = {0:'TOF-POS-poll'}
         # self.polling_scheme_dict = {0:'TOF-POS-poll', 1:'TOF-poll'}
         # self.polling_scheme_dict = {0:'TOF-POS-poll', 1:'TOF-poll',2:'TOF-poll'}
