@@ -125,8 +125,8 @@ class pyAhoiMobileBaseManager(object):
 
         polling_type = self.polling_scheme_dict[self.poll_type_idx]
 
-        self.polling_type_idx += 1
-        if self.polling_type_idx == len(self.polling_scheme_dict):
+        self.poll_type_idx += 1
+        if self.poll_type_idx == len(self.polling_scheme_dict):
             self.poll_type_idx = 0
         
         # polling_type = 'TOF-POS-poll'
