@@ -156,7 +156,7 @@ while current_time < anchor_dist_df_mgt.get_end_time():
     # =============================================================================
     #     # sim measurements
     # =============================================================================
-    replay_base = 'real'#'sim-from-gps'
+    replay_base = 'sim-from-gps'
     if replay_base == 'sim-from-gps':
         
         # -------------------------------------------
