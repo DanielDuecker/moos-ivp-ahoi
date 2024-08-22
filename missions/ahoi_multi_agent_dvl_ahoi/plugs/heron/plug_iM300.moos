@@ -1,0 +1,37 @@
+//--------------------------------------------------------
+// iM300 Config Block
+	
+ProcessConfig = iM300
+{
+  AppTick    = 10
+  CommsTick  = 10
+
+	comms_type = client
+  	port       = 29500
+	ip_addr    = $(FSEAT_IP)
+
+	stale_thresh = 15
+
+  warn_bad_nmea_len  = false   
+  warn_bad_nmea_form = false   
+	
+	max_rudder  = 50
+	max_thrust  = 100
+	drive_mode  = normal
+	ignore_msg  = $GPGLL, $GPGSV, $GPVTG, $GPZDA, $CPALT, $CPIMU, $CPNVR, $GPGST, $CPRCM, $GNGLL, $GNGSV, $GNVTG, $GNZDA, $GLGSV, $GNGSA
+	ignore_checksum_errors = true
+
+	max_appcast_events       = 8
+//	max_appcast_run_warnings = 10
+	
+	// Set to 1 if you want to use IMU heading for NAV_HEADING
+	heading_source = auto
+
+	nav_prefix 			= NAV
+	gps_prefix			= GPS
+	compass_prefix	= COMPASS
+
+	publish_body_vel = true
+
+}
+

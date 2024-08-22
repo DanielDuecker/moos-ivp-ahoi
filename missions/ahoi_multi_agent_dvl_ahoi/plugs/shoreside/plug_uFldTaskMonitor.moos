@@ -1,0 +1,12 @@
+//---------------------------------------------------------
+// uFldTaskMonitor Config Block
+
+ProcessConfig = uFldTaskMonitor
+{
+  AppTick    = 2
+  CommsTick  = 2
+
+	report_discrepancies = false
+	
+	app_logging = off
+}

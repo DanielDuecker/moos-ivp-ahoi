@@ -1,0 +1,18 @@
+//----------------------------------------------
+Behavior = BHV_OpRegionRecover
+{
+  name         = recover
+  pwt          = 300
+  updates      = RECOVER_UPDATES
+  activeflag   = RECOVER = true
+  inactiveflag = RECOVER = false
+
+// old            polygon = pts={-95,-59:-56,-157:134,-71:86,26}
+// recent         polygon = pts={-95,-59:-67,-127:22,-144:77,-120:117,-38:86,26}
+             polygon = pts={-112,-68:-78,-153:22,-144:77,-120:141,-48:105,35}
+	trigger_entry_time = 1
+  trigger_exit_time  = 1
+
+  visual_hints = edge_color = white
+  visual_hints = label_color = off
+}

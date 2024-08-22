@@ -1,0 +1,78 @@
+ //----------------------------------------------
+Behavior = BHV_AvoidCollision
+{
+  name         = ac_
+  pwt          = 350
+  condition    = MODE == ACTIVE 
+  condition    = MODE!=ACTIVE:STATION-KEEPING
+  condition    = AVOID == true
+  updates      = CONTACT_INFO
+
+  endflag      = CONTACT_RESOLVED = $[CONTACT]
+  spawnflag    = CONTACT_SPAWNED = $[CONTACT]
+  idleflag     = CONTACT_IDLE = $[CONTACT]
+  runflag      = CONTACT_RUN = $[CONTACT]
+  activeflag   = CONTACT_ACTIVE = $[CONTACT]
+  inactiveflag = CONTACT_INACTIVE = $[CONTACT]
+
+  templating   = spawn
+
+             contact = to-be-set
+    on_no_contact_ok = true
+         extrapolate = true
+               decay = 30,60
+
+        use_refinery = true
+
+
+           pwt_outer_dist = 10
+           pwt_inner_dist = 7
+                pwt_grade = linear
+           completed_dist = 12
+        min_util_cpa_dist = 3
+        max_util_cpa_dist = 10
+      bearing_line_config = white:0, green:0.65, yellow:0.8, red:1.0
+  bearing_line_label_show = false
+}
+
+//---------------------------------------------- 
+//Behavior = BHV_AvdColregsV22
+//{
+//  name         = avdcol_
+//  //pwt          = 0
+//  pwt          = 600
+//  condition    = AVOID == true
+//  condition    = MODE==ACTIVE
+//  condition    = MODE!=ACTIVE:STATION-KEEPING
+//  updates      = CONTACT_INFO
+//  //endflag      = CONTACT_RESOLVED = $[CONTACT]
+//  templating   = spawn
+//
+//  activeflag   = AVOIDING = active
+//  inactiveflag = AVOIDING = inactive
+//  runflag      = AVOIDING = running
+//  endflag      = AVOIDING = end
+//
+//            contact = to-be-set
+//   on_no_contact_ok = true
+//        extrapolate = true
+//              decay = 30,60
+//
+//        headon_only = true
+//    velocity_filter = min_spd=0.2, max_spd=1.0, pct=40
+//       use_refinery = true
+//
+//#ifdef XMODE SIM
+//	bearing_line_show = true
+//#else
+//	bearing_line_show = false
+//#endif
+//	
+//     pwt_outer_dist = 15
+//     pwt_inner_dist = 8
+//     completed_dist = 17
+//  min_util_cpa_dist = 4
+//  max_util_cpa_dist = 8
+//          pwt_grade = linear
+//   bearing_line_config = white:0, green:0.65, yellow:0.8, red:1.0
+//}

@@ -1,0 +1,18 @@
+//------------------------------------------
+// pMediator config block
+
+ProcessConfig = pMediator
+{
+  AppTick   = 4
+  CommsTick = 4
+
+	//app_logging = true
+
+	//no_ack_vars = MUSTER_COLLAB
+	
+	
+	resend_thresh = 2
+	max_tries = 10
+
+}
+

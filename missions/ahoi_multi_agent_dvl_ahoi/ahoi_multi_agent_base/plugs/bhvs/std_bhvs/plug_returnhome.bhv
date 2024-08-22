@@ -1,0 +1,43 @@
+//----------------------------------------------
+Behavior=BHV_Waypoint
+{
+  name       = waypt_return
+  pwt        = 100
+  condition  = RETURN = true
+  condition  = DEPLOY = true
+  perpetual  = true
+  updates    = RETURN_UPDATE
+  endflag    = RETURN = false
+  endflag    = STATION = true
+
+      lead_condition = AVOIDING != active
+
+//                lead = 8
+//         lead_damper = 1
+//       lead_to_start = true
+
+           speed = $(TRANSIT_SPD)
+  capture_radius = 5.0
+     slip_radius = 12.0
+
+
+#ifdef VNAME abe
+	point = 52,9
+#elseifdef VNAME ben
+	point = 39,4
+#elseifdef VNAME cal
+	point = 29,0
+#elseifdef VNAME deb
+	point = 16,-6
+#elseifdef VNAME eve
+	point = 4,-11
+#elseifdef VNAME fin
+	point = 2,-15
+#elseifdef VNAME max
+	point = 26,-2
+#elseifdef VNAME ned
+	point = 12,-8
+#else
+	point = -2, -18
+#endif
+ }

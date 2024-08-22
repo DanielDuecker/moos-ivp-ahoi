@@ -1,0 +1,189 @@
+//---------------------------------------------------
+// Helm Behavior file 
+
+initialize   DEPLOY  = false
+initialize   MUSTER  = false
+initialize   RETURN  = false
+initialize   STATION = false
+initialize   LOITER  = false
+initialize   AVOID   = true
+initialize   LEADER   = false
+initialize   COMMS_POLICY = lean
+
+set MODE = ACTIVE {
+  DEPLOY = true
+} INACTIVE
+
+set MODE = STATIONING {
+//  MODE = ACTIVE
+  STATION = true
+}
+
+set MODE = RETURNING {
+  MODE = ACTIVE
+  RETURN = true
+} 
+
+set MODE = MUSTERING {
+  MODE = ACTIVE
+  MUSTER = true
+}                       
+
+set MODE = IN_FORMATION {
+  MODE = ACTIVE
+  FORMATION_ACTIVE = true
+}
+
+#ifdef ROLL MNODE
+  Behavior = BHV_Waypoint
+  {
+    // General Behavior Parameters
+    // ---------------------------
+    name         = circuit               // example
+    pwt          = 100                   // default
+    condition    = MODE==ACTIVE
+    condition    = DEPLOY==true
+    condition    = RETURN==false
+    condition    = STATION==false
+    updates      = TRANSIT_UPDATES       // example
+
+    // Parameters specific to this behavior
+    // ------------------------------------
+        capture_radius = 3                       // default
+          capture_line = false                   // default
+                  lead = 0                      // default
+        lead_to_start = false                   // default
+                order = normal                  // default 
+
+                points = format=lawnmower, x=30, y=-40, height=30, width=70, lane_width=10
+
+                repeat = 3
+          slip_radius = 15
+                speed = 1
+              endflag = RETURN_ALL=true
+              endflag = QUIT_MISSION=true
+            
+          visual_hints = vertex_size  = 3             // default
+          visual_hints = edge_size    = 1             // default
+          visual_hints = vertex_color = dodger_blue   // default
+          visual_hints = edge_color   = white         // default
+          visual_hints = nextpt_color = yellow        // default
+          visual_hints = nextpt_lcolor = aqua         // default
+          visual_hints = nextpt_vertex_size = 5       // default
+  }
+#elseifdef ROLL ANCHOR1
+  Behavior = BHV_Waypoint
+  {
+    // General Behavior Parameters
+    // ---------------------------
+    name         = circuit               // example
+    pwt          = 100                   // default
+    condition    = MODE==ACTIVE
+    condition    = DEPLOY==true
+    condition    = RETURN==false
+    condition    = STATION==false
+    updates      = TRANSIT_UPDATES       // example
+
+    // Parameters specific to this behavior
+    // ------------------------------------
+        capture_radius = 3                       // default
+          capture_line = false                   // default
+                  lead = 0                      // default
+        lead_to_start = false                   // default
+                order = normal                  // default 
+
+                point = 40,0
+
+          slip_radius = 15
+                speed = 1
+              endflag = STATION=true
+            
+          visual_hints = vertex_size  = 3             // default
+          visual_hints = edge_size    = 1             // default
+          visual_hints = vertex_color = dodger_blue   // default
+          visual_hints = edge_color   = white         // default
+          visual_hints = nextpt_color = yellow        // default
+          visual_hints = nextpt_lcolor = aqua         // default
+          visual_hints = nextpt_vertex_size = 5       // default
+  }
+
+#elseifdef ROLL ANCHOR2
+  Behavior = BHV_Waypoint
+  {
+    // General Behavior Parameters
+    // ---------------------------
+    name         = circuit               // example
+    pwt          = 100                   // default
+    condition    = MODE==ACTIVE
+    condition    = DEPLOY==true
+    condition    = RETURN==false
+    condition    = STATION==false
+    updates      = TRANSIT_UPDATES       // example
+
+    // Parameters specific to this behavior
+    // ------------------------------------
+        capture_radius = 3                       // default
+          capture_line = false                   // default
+                  lead = 0                      // default
+        lead_to_start = false                   // default
+                order = normal                  // default 
+
+                point = 40,-75
+
+          slip_radius = 15
+                speed = 1
+              endflag = STATION=true
+            
+          visual_hints = vertex_size  = 3             // default
+          visual_hints = edge_size    = 1             // default
+          visual_hints = vertex_color = dodger_blue   // default
+          visual_hints = edge_color   = white         // default
+          visual_hints = nextpt_color = yellow        // default
+          visual_hints = nextpt_lcolor = aqua         // default
+          visual_hints = nextpt_vertex_size = 5       // default
+  }
+
+#elseifdef ROLL ANCHOR3
+  Behavior = BHV_Waypoint
+  {
+    // General Behavior Parameters
+    // ---------------------------
+    name         = circuit               // example
+    pwt          = 100                   // default
+    condition    = MODE==ACTIVE
+    condition    = DEPLOY==true
+    condition    = RETURN==false
+    condition    = STATION==false
+    updates      = TRANSIT_UPDATES       // example
+
+    // Parameters specific to this behavior
+    // ------------------------------------
+        capture_radius = 3                       // default
+          capture_line = false                   // default
+                  lead = 0                      // default
+        lead_to_start = false                   // default
+                order = normal                  // default 
+
+                point = -20,-30
+
+          slip_radius = 15
+                speed = 1
+              endflag = STATION=true
+            
+          visual_hints = vertex_size  = 3             // default
+          visual_hints = edge_size    = 1             // default
+          visual_hints = vertex_color = dodger_blue   // default
+          visual_hints = edge_color   = white         // default
+          visual_hints = nextpt_color = yellow        // default
+          visual_hints = nextpt_lcolor = aqua         // default
+          visual_hints = nextpt_vertex_size = 5       // default
+  }
+#else 
+  //sol
+#endif 
+
+
+#include plugs/bhvs/std_bhvs/plug_stationkeep.bhv
+//#include plugs/bhvs/std_bhvs/plug_opregion.bhv
+#include plugs/bhvs/std_bhvs/plug_returnhome.bhv
+#include plugs/bhvs/std_bhvs/plug_colregs.bhv

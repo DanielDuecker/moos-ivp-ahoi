@@ -1,0 +1,14 @@
+MOOSTimeWarp = $(WARP)
+
+
+MIT Sailing Pavilion (use this one)                                                    
+LatOrigin  = 42.358456
+LongOrigin = -71.087589
+
+// Connecticut
+//LatOrigin = 41.300539
+//LongOrigin = -71.8680815
+	
+// Juan de Fuca
+//LatOrigin  = 48
+//LongOrigin = -123.5

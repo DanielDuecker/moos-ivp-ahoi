@@ -1,0 +1,16 @@
+//------------------------------------------
+// iSay config block
+	
+ProcessConfig = iSay                                            
+{                                                               
+  AppTick   = 4                                                 
+  CommsTick = 4                                                 
+                                                                
+  default_voice   = alex        // iSay --voices for others   
+  default_rate    = 200                                      
+  interval_policy = from_start  // or from end
+  os_mode         = osx         // Default is "osx"         
+	volume          = 0.03
+
+  min_utter_interval = 1        
+}                                       
