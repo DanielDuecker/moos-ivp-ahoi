@@ -31,10 +31,7 @@ Processconfig = ANTLER
   Run = iM300Health        @ NewConsole = false
   //DANIEL! 
   #ifdef ROLL MNODE
-    Run = /home/student2680/falcon/mrac/heron_realtime.py @ NewConsole = false
     Run = iTracker650         @ NewConsole = false
-  #else 
-    Run = /home/student2680/falcon/mrac/heron_realtime.py @ NewConsole = false
   #endif 
 #endif
 }
