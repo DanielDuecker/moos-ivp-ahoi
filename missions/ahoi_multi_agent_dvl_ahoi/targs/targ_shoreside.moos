@@ -5,7 +5,7 @@ ServerHost = localhost
 ServerPort = 9000
 Community  = shoreside
 
-MOOSTimeWarp = 10
+MOOSTimeWarp = 1
 
 
 MIT Sailing Pavilion (use this one)                                                    
@@ -48,7 +48,7 @@ ProcessConfig = pShare
   AppTick    = 2
   CommsTick  = 2
 
-  input = route =  localhost:9200
+  input = route =  192.168.1.78:9200
 }
 
 
@@ -60,7 +60,7 @@ ProcessConfig = pHostInfo
   AppTick 	= 1
   CommsTick = 1
 
-    default_hostip_force = localhost
+    default_hostip_force = 192.168.1.78
 }
 
 
@@ -213,7 +213,7 @@ ProcessConfig = pHostInfo
   AppTick 	= 1
   CommsTick = 1
 
-    default_hostip_force = localhost
+    default_hostip_force = 192.168.1.78
 }
 
 
@@ -238,7 +238,7 @@ ProcessConfig = pLogger
   CommsTick     = 10
   
   File          = LOG_SHORESIDE
-  PATH          = ./logs/240821-2311J-LAZY-GOAL/
+  PATH          = ./logs/
   SyncLog       = true @ 0.2
   AsyncLog      = true
   FileTimeStamp = true
@@ -339,18 +339,18 @@ ProcessConfig = pMarineViewer
   button_11 = ALL_STOP  # DEPLOY_ALL=false
   button_12 = RESUME    # DEPLOY_ALL=true
 	
-  cmd = label=DEPLOY, var=DEPLOY,  sval=true,  receivers=all:abe:ben:cal:deb
-  cmd = label=DEPLOY, var=MOOS_MANUAL_OVERRIDE,  sval=false,  receivers=all:abe:ben:cal:deb
-  cmd = label=DEPLOY, var=AVOID,  sval=true,  receivers=all:abe:ben:cal:deb
-  cmd = label=DEPLOY, var=RETURN,  sval=false,  receivers=all:abe:ben:cal:deb
-  cmd = label=DEPLOY, var=STATION_KEEP,  sval=false,  receivers=all:abe:ben:cal:deb
+  cmd = label=DEPLOY, var=DEPLOY,  sval=true,  receivers=all:
+  cmd = label=DEPLOY, var=MOOS_MANUAL_OVERRIDE,  sval=false,  receivers=all:
+  cmd = label=DEPLOY, var=AVOID,  sval=true,  receivers=all:
+  cmd = label=DEPLOY, var=RETURN,  sval=false,  receivers=all:
+  cmd = label=DEPLOY, var=STATION_KEEP,  sval=false,  receivers=all:
 
-  cmd = label=RETURN, var=RETURN, sval=true, receivers=all:abe:ben:cal:deb
-  cmd = label=RETURN, var=STATION_KEEP, sval=false, receivers=all:abe:ben:cal:deb
+  cmd = label=RETURN, var=RETURN, sval=true, receivers=all:
+  cmd = label=RETURN, var=STATION_KEEP, sval=false, receivers=all:
 
-  cmd = label=STATION, var=STATION_KEEP,  sval=true,  receivers=all:abe:ben:cal:deb
+  cmd = label=STATION, var=STATION_KEEP,  sval=true,  receivers=all:
 
-  cmd = label=STATION, var=STATION_KEEP,  sval=true,  receivers=all:abe:ben:cal:deb
+  cmd = label=STATION, var=STATION_KEEP,  sval=true,  receivers=all:
 }
 
 

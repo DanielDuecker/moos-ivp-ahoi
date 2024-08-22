@@ -131,7 +131,7 @@ ProcessConfig = pLogger
   CommsTick = 5
   
   File          = LOG_BEN
-  PATH	        = ./logs/240821-2311J-LAZY-GOAL/
+  PATH	        = ./logs/240822-0905A-EASY-ROOK/
   AsyncLog 	    = true
   FileTimeStamp = true
 

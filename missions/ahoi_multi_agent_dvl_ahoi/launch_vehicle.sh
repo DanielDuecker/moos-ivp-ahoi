@@ -147,6 +147,8 @@ for ARGI; do
         VNAME="ned"
     elif [ "${ARGI}" = "--oak" -o "${ARGI}" = "-O" ]; then
         VNAME="oak"
+    elif [ "${ARGI}" = "--pip" -o "${ARGI}" = "-P" ]; then
+        VNAME="pip"
 	
     elif [ "${ARGI:0:5}" = "--ip=" ]; then
         IP_ADDR="${ARGI#--ip=*}"
@@ -213,6 +215,8 @@ elif [ "${VNAME}" = "ned" ]; then
     INDEX=21
 elif [ "${VNAME}" = "oak" ]; then
     INDEX=22
+    elif [ "${VNAME}" = "pip" ]; then
+    INDEX=23
 fi
 
 MOOS_PORT=`expr $INDEX + 9000`
