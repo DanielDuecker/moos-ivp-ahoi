@@ -20,7 +20,7 @@ rwdl = RealWorldDataLoader(ahoi_csv='2024-08-05_01_mobile_node/ahoi_interface_lo
 rwdl.set_start_end(start_utc=d_time(2024, 8, 5, 23, 3, 0), 
                    end_utc=d_time(2024, 8, 5, 23, 4, 30))
 
-rwdl.get_anchor_df() # anchor df - output: id2, id6, id9
+rwdl.get_anchor_dfs() # anchor df - output: id2, id6, id9
 rwdl.get_mobile_df()
 
 
@@ -51,6 +51,7 @@ ahoi_ekf = ahoi_ekf_base.EKF_Node(auv_dim_state, ahoi_dim_meas,
 mobile_node_df = rwdl.get_mobile_df()
 ahoi_df = rwdl.get_ahoi_df()
 anchor_dist_df = rwdl.get_all_anchor_dist_df()
+anchor_all_data_df = rwdl.get_all_anchor_data_df()
 
 # Dictionary to store all dynamic anchor positions over sequences by anchor ID
 anchor_estimator = AnchorEstimator([2,6,9])
@@ -77,7 +78,9 @@ data_index = 1
 ahoi_data_df_mgt = DFReader(ahoi_df, start_idx=data_index)
 
 gt_data_index = 4
-anchor_dist_df_mgt = DFReader(anchor_dist_df,start_idx=gt_data_index)
+anchor_dist_df_mgt = DFReader(anchor_dist_df, start_idx=gt_data_index)
+
+anchor_all_data_df_mgt = DFReader(anchor_all_data_df, start_idx=gt_data_index)
 
 new_poll = False
 new_meas = False
@@ -98,13 +101,23 @@ debug_plotting = True
 if debug_plotting:
     plt.ion()
 
-
-last_time = current_time
+poll_time = current_time
+event_time = current_time
+last_meas_time = current_time   
 ahoi_meas = AhoiMeasurement() # from utilities
 
 
+poll_tof_open = False
+poll_pos_open = False
+sequence_id = 0
+anchor_order_idx = 0
 
+new_meas_update = False
 
+anchor_order_dict = {0:2, 1:6, 2:9}
+polling_scheme_dict = {0:'TOF-POS-poll', 1:'TOF-poll',2:'TOF-poll'}
+
+polling_type_idx = np.zeros((len(anchor_order_dict),), dtype=int) # current polling type for each anchor
 
 # =============================================================================
 # ========================== EKF - LOOP =======================================
@@ -114,88 +127,158 @@ while current_time < anchor_dist_df_mgt.get_end_time():
     current_time += dt
     # Predict the next state
     ahoi_ekf.predict(dt_sim=dt)
+
     # Store the predicted position
+    x_est_list.append(ahoi_ekf.get_x_est().copy())
+
     time_steps_list.append(current_time)
 
     if anchor_dist_df_mgt.check_end_of_data():
         break
     current_gt_distances = anchor_dist_df_mgt.get_recent_data_at(current_time)
+    current_anchor_data = anchor_all_data_df_mgt.get_recent_data_at(current_time)
+
 
     #return event_type, event_time, sequence_id, polled_anchor_id, new_data_row
 
     # =============================================================================
     #     # sim measurements
     # =============================================================================
-    anchor_order_scheme = [2,6,9]
-    anchor_order_idx = 0
 
 
-    poll_idx = 0
-    polling_scheme = ['TOF-poll', 'TOF-POS-poll']
-    polling_type_idx = np.zeros((len(anchor_order_scheme),), dtype=int)
+    time_reply_tof_poll = 0.65 # t_delta(seconds=0.65)
+    time_reply_pos_poll = 1.25 # t_delta(seconds=1.25)
+    time_out_tof = 0.7 # t_delta(seconds=0.7)
+    time_out_pos = 1.3 # t_delta(seconds=1.3)
 
-    time_reply_tof_poll = t_delta(seconds=0.65)
-    time_reply_pos_poll = t_delta(seconds=1.25)
-    time_out_tof = t_delta(seconds=0.7)
-    time_out_pos = t_delta(seconds=1.3)
-
-    #time_since_poll = (poll_time - current_time).total_seconds()
+    time_since_poll = (current_time-poll_time).total_seconds()
 
     # =============================================================================
     #     # sim measurements
     # =============================================================================
-    replay_base = 'real'
-    if replay_base == 'sim-gps':
-        pass
-   
-    if not poll_tof_open and not poll_pos_open:
-    #     # issue poll to anchor
+    replay_base = 'real'#'sim-from-gps'
+    if replay_base == 'sim-from-gps':
         
-    #     poll_type = polling_scheme[poll_idx]
-    #     poll_time = current_time
+        # -------------------------------------------
+        # trigger new poll
+        # -------------------------------------------
+        if not poll_tof_open and not poll_pos_open:
+            # no open? issue new poll according to polling scheme
 
-    #     if poll_type == 'tof-poll':
-    #         poll_tof_open = True
-    #         poll_pos_open = False
-    #     elif poll_type == 'tof-pos-poll':
-    #         poll_tof_open = True
-    #         poll_pos_open = True
-        
-    #     # could be also increase after successful poll cycle
-    #     polling_type_idx[anchor_order_idx] = (polling_type_idx[anchor_order_idx]+1) % len(polling_scheme)
+            # get next anchor to poll
+            polled_anchor_id = anchor_order_dict[anchor_order_idx]
+
+            # get polling idx -> type for selected anchor
+            poll_type_idx = polling_type_idx[anchor_order_idx]
+            #print(f"\n id{polled_anchor_id} to select:{poll_type_idx} from {polling_type_idx}")
+            event_type = polling_scheme_dict[poll_type_idx]
+            event_time = current_time
+            poll_time = current_time
+
+            if event_type == 'TOF-poll':
+                poll_tof_open = True
+                poll_pos_open = False
+            elif event_type == 'TOF-POS-poll':
+                poll_tof_open = True
+                poll_pos_open = True
+            else:
+                print("Error: Poll type not found")
+
+            new_poll = True
+            time_since_poll = (current_time-poll_time).total_seconds()
+            sequence_id = (sequence_id + 1) % 256
+            #print(f"sequence_id {sequence_id} polling {event_type} for anchor {polled_anchor_id}")
+
+            
+            # optional: write poll to df or csv [poll_time, event_type, target_anchor_id]
+
+            
+            # update polling type for current anchor
+            polling_type_idx[anchor_order_idx] += 1
+            if polling_type_idx[anchor_order_idx] == len(polling_scheme_dict):  
+                polling_type_idx[anchor_order_idx] = 0
+
+            # go to next anchor
+            anchor_order_idx += 1
+            if anchor_order_idx == len(anchor_order_dict):
+                anchor_order_idx = 0
 
 
+            #print(f"After poll anchor_order_idx {anchor_order_idx} polling_type_idx {polling_type_idx}")
 
-    # if poll_tof_open and time_since_poll > time_reply_tof_poll:
-    #     poll_tof_open = False
-    #     #send_range to anchor
-    #     event_type = 'TOF-ACK'
-    #     event_time = current_time
-    #     new_meas = True
-    #     if poll_type == 'tof-poll':
-    #         poll_idx += 1
+            
 
-    # if poll_pos_open and time_since_poll > time_reply_pos_poll:
-    #     poll_pos_open = False
-    #     #send pos of anchor
-    #     event_type = 'POS-ACK'
-    #     event_time = current_time
+            #if anchor_order_idx == 0:
+                # all anchors polled, increment polling type
 
-    #     new_meas = True
-    #     if poll_type == 'tof-pos-poll':
-    #         poll_idx += 1
+                # for current anchor, update polling type
+                # this can also be done after successful reply -> retry otherwise
+                
 
-    # if poll_tof_open and time_since_poll > time_out_tof:
-    #     poll_tof_open = False
-    # if poll_pos_open and time_since_poll > time_out_pos:
-    #     poll_pos_open = False
+
+        # -------------------------------------------
+        # ACK on TOF-poll - if open and min time passed
+        # -------------------------------------------
+        if poll_tof_open and time_since_poll >= time_reply_tof_poll:
+            # received TOF-poll (can be part of TOF-POS-poll)
+            # reply with TOF-ACK
+
+            # TODO: add random failure --> pass
+
+            poll_tof_open = False
+            
+            event_type = 'TOF-ACK'
+            event_time = current_time
+            # TODO: MEASUREMENT: get range from anchor
+            if  polled_anchor_id == 2:
+                received_range = current_anchor_data['id2_dist']
+                
+            elif polled_anchor_id == 6:
+                received_range = current_anchor_data['id6_dist']
+                
+            elif polled_anchor_id == 9:
+                received_range = current_anchor_data['id9_dist']
+              
+            new_meas = True
+            
+
+        if poll_pos_open and time_since_poll >= time_reply_pos_poll:
+            # received POS-poll (is part of TOF-POS-poll)
+            # reply with POS-ACK
+
+            # TODO: add random failure --> pass
+
+            poll_pos_open = False
+           
+            event_type = 'POS-ACK'
+            event_time = current_time
+            # TODO: MEASUREMENT: get pos from anchor
+            
+            if  polled_anchor_id == 2:
+                received_pos = current_anchor_data[['id2_X', 'id2_Y']].values.ravel()
+            elif polled_anchor_id == 6:
+                received_pos = current_anchor_data[['id6_X', 'id6_Y']].values.ravel()
+            elif polled_anchor_id == 9:
+                received_pos = current_anchor_data[['id9_X', 'id9_Y']].values.ravel()
+            else:
+                print("Error: Anchor ID not found")
+
+            new_meas = True
+
+        if poll_tof_open and time_since_poll > time_out_tof:
+            poll_tof_open = False
+            print(f"TOF poll timed out for anchor {polled_anchor_id} at {current_time}")
+
+        if poll_pos_open and time_since_poll > time_out_pos:
+            poll_pos_open = False
+            print(f"POS poll timed out for anchor {polled_anchor_id} at {current_time}")
 
     # =============================================================================
     #   process measurement data
     # 
     #   new_poll / new_meas
     #    
-    #   event_time
+    #   event_time - datetime
     #   event_type
     #   sequence_id
     #   polled_anchor_id
@@ -251,7 +334,7 @@ while current_time < anchor_dist_df_mgt.get_end_time():
         elif new_poll and event_type == 'POS-ACK':
             if use_data == 'ahoi' or use_data == 'ground_truth_dist':
                 polled_anchor_id = new_data_row['anchor_id']
-                received_pos = (new_data_row['pos_x'], new_data_row['pos_y'])
+                received_pos = new_data_row[['pos_x','pos_y']].values.ravel()
 
             new_meas = True
             new_poll = False
@@ -270,24 +353,26 @@ while current_time < anchor_dist_df_mgt.get_end_time():
     #
     # =============================================================================
 
-    if new_poll and event_type =='TOF-POS-poll':
-        #print(f"got range poll for anchor {new_data_row['target_id']}")
-        ahoi_meas.reset()
+    if new_poll and (event_type =='TOF-POS-poll' or event_type =='TOF-poll'):
+        ahoi_meas.reset(reset_type='full')
         ahoi_meas.issued_poll(poll_type=event_type,
                               poll_time=event_time,
                               seq_id=sequence_id, 
                               anchor_id=polled_anchor_id)
+        #print(f"polling anchor {polled_anchor_id} w {event_type}")
+        event_type = ''
         new_poll = False
 
         
     elif new_meas and event_type =='TOF-ACK':
+
         ahoi_meas.received_range(rec_range=received_range, 
                                  rec_range_time=event_time, 
                                  seq_i=sequence_id)
+        event_type = ''
         new_meas = False
         
-    elif new_meas and event_type =='POS-ACK':
-        
+    elif new_meas and event_type =='POS-ACK':       
         x, y = received_pos
         anchor_id = polled_anchor_id
 
@@ -295,43 +380,57 @@ while current_time < anchor_dist_df_mgt.get_end_time():
                                 rec_pos_time=event_time, 
                                 seq_i=sequence_id)
 
-        # update anchor position in anchor estimator
-        anchor_estimator.get_anchor(anchor_id).update_pos(pos=np.array([x,y]), timestamp=event_time) # this time is much newer than the position time
-        
+        event_type = ''
         new_meas = False
 
 
+    
 
+    # =============================================================================
+    # Update Anchors Estimator
+    # =============================================================================
+    if ahoi_meas.got_pos():
+        anchor_pos3d, meas_anchor_id, time_pos = ahoi_meas.get_anchor_pos()
+        # TODO: velocity currently needs to be updated before position
+        vel = anchor_estimator.get_anchor(meas_anchor_id).comp_vel(pos=anchor_pos3d, time_pos=time_pos)
+        anchor_estimator.get_anchor(meas_anchor_id).update_pos(pos3d=anchor_pos3d, timestamp=time_pos) # this time is much newer/more recent than the position time
+        
+        print(f"ID:{meas_anchor_id} updated -> Anchor velocity {np.linalg.norm(vel):.2f}m/s")
 
-
-
-    x_est_list.append(ahoi_ekf.get_x_est().copy())
-
-
+        
+        
 
 
     # =============================================================================
-    #   Update EKF with TOF+POS measurements
+    #   Update EKF with TOF measurements
     # =============================================================================
-    if ahoi_meas.got_range() and ahoi_meas.got_pos():
-        meas_range, meas_anchor_id = ahoi_meas.get_range()
-        # print(f"meas range from anchor {meas_anchor_id}: {meas_range}m")
-       
-        anchor_pos3d, meas_anchor_id = ahoi_meas.get_anchor_pos()
+    if ahoi_meas.got_range(): 
+        meas_range, meas_anchor_id, time_range = ahoi_meas.get_range()
+        if anchor_estimator.get_anchor(meas_anchor_id).is_init():
+ 
+            anchor_pos3d,_ = anchor_estimator.get_anchor(meas_anchor_id).get_last_pos()    
 
-        y_delta_dist, z_meas, z_est_anchor = ahoi_ekf.dist_measurement_update(dist_meas=meas_range, anchor_pos=anchor_pos3d, w_mat_dist=meas_noise_ahoi)
-        ahoi_meas.reset() # Measurement has been used - reset poll
+            y_delta_dist, z_meas, z_est_anchor = ahoi_ekf.dist_measurement_update(dist_meas=meas_range, 
+                                                                                anchor_pos=anchor_pos3d, 
+                                                                                w_mat_dist=meas_noise_ahoi)
+            ahoi_meas.reset(reset_type='TOF') # Measurement has been used - reset poll
+            #print(f"Anchor {meas_anchor_id} EKF-Range update")
+            
+            new_meas_update = True
 
-
+    if new_meas_update:
         y_delta_dist_list.append((meas_anchor_id, anchor_pos3d, y_delta_dist, z_meas, z_est_anchor))
         y_update_time_list.append((current_time))
-        time_since_meas = current_time-last_time
+
         
-        print(f"id:{meas_anchor_id} - meas {meas_range:.2f}m, z_meas {z_meas:.2f}m, z_est: {z_est_anchor:.2f}, y_delta {y_delta_dist:.2f}")
-        print(f"    {time_since_meas.total_seconds()}s since last update")
+        #print(f"id:{meas_anchor_id} - meas {meas_range:.2f}m, z_meas {z_meas:.2f}m, z_est: {z_est_anchor:.2f}, y_delta {y_delta_dist:.2f}")
+        print(f"ID:{meas_anchor_id} EKF-Range Update {(current_time-last_meas_time).total_seconds()}s since last update")
+        last_meas_time = current_time
  
         
         time_steps_array = np.array(time_steps_list)
+        new_meas_update = False
+
 
         if debug_plotting:  
             anchor_start= np.array([[ 44.69, -38.08],
@@ -365,8 +464,9 @@ while current_time < anchor_dist_df_mgt.get_end_time():
             
             plt.show()
             plt.pause(0.1)
+            
 
-        last_time = current_time
+
     
 
 
