@@ -161,6 +161,12 @@ class AhoiMeasurement():
         else:
             return True
         
+    def got_pos(self):
+        if self.rec_anchor_pos is None:
+            return False
+        else:
+            return True
+        
     def received_range(self, rec_range, rec_range_time, seq_i):
         if self.seq_id == seq_i:
             self.rec_range = rec_range
@@ -301,10 +307,24 @@ class RealWorldDataLoader():
         
 
 
+        # # Step 1: Create a union of all time points using numpy
+        # common_time = np.union1d(mobile_df_clipped['time'], id6_df_clipped['time'])
+        # common_time = np.union1d(common_time, id9_df_clipped['time'])
+        # common_time = np.union1d(common_time, id2_df_clipped['time'])
+
         # Step 1: Create a union of all time points using numpy
         common_time = np.union1d(mobile_df_clipped['time'], id6_df_clipped['time'])
         common_time = np.union1d(common_time, id9_df_clipped['time'])
         common_time = np.union1d(common_time, id2_df_clipped['time'])
+
+        # Ensure common_time has unique values
+        common_time = np.unique(common_time)
+
+        # Ensure DataFrames have unique time indices
+        mobile_df_clipped = mobile_df_clipped.drop_duplicates(subset='time')
+        id6_df_clipped = id6_df_clipped.drop_duplicates(subset='time')
+        id9_df_clipped = id9_df_clipped.drop_duplicates(subset='time')
+        id2_df_clipped = id2_df_clipped.drop_duplicates(subset='time')
 
         # Step 2: Interpolate data for Oak
         mobile_interp = (

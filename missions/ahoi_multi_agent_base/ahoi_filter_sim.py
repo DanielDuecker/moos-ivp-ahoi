@@ -8,17 +8,30 @@ import matplotlib.gridspec as gridspec
 import ahoi_ekf_base
 from ahoi_filter_utilities import *
 
-    
-rwdl = RealWorldDataLoader(ahoi_csv='2024-08-05_01_mobile_node/ahoi_interface_log_20240805_190152.csv',
-                           mobile_csv='2024-08-05_01_mdm/LOG_OAK_5_8_2024_____18_34_20/log_oak_5_8_2024_____18_34_20_alog_csvs/NODE_REPORT_LOCAL.csv', 
-                           id2_csv='2024-08-05_01_mdm/LOG_NED_5_8_2024_____18_34_13/log_ned_5_8_2024_____18_34_13_alog_csvs/NODE_REPORT_LOCAL.csv',
-                           id6_csv='2024-08-05_01_mdm/LOG_ABE_5_8_2024_____18_34_05/log_abe_5_8_2024_____18_34_05_alog_csvs/NODE_REPORT_LOCAL.csv', 
-                           id9_csv='2024-08-05_01_mdm/LOG_MAX_5_8_2024_____18_33_54/log_max_5_8_2024_____18_33_54_alog_csvs/NODE_REPORT_LOCAL.csv', 
-                           rel_path = 'missions/ahoi_multi_agent_base/logs/',
-                           anchor_labels = {2: 'NED - 2', 6: 'ABE - 6', 9: 'MAX - 9',99: 'NA'})
+# rwdl = RealWorldDataLoader(ahoi_csv='2024-08-05_01_mobile_node/ahoi_interface_log_20240805_190152.csv',
+#                            mobile_csv='2024-08-05_01_mdm/LOG_OAK_5_8_2024_____18_34_20/log_oak_5_8_2024_____18_34_20_alog_csvs/NODE_REPORT_LOCAL.csv', 
+#                            id2_csv='2024-08-05_01_mdm/LOG_NED_5_8_2024_____18_34_13/log_ned_5_8_2024_____18_34_13_alog_csvs/NODE_REPORT_LOCAL.csv',
+#                            id6_csv='2024-08-05_01_mdm/LOG_ABE_5_8_2024_____18_34_05/log_abe_5_8_2024_____18_34_05_alog_csvs/NODE_REPORT_LOCAL.csv', 
+#                            id9_csv='2024-08-05_01_mdm/LOG_MAX_5_8_2024_____18_33_54/log_max_5_8_2024_____18_33_54_alog_csvs/NODE_REPORT_LOCAL.csv', 
+#                            rel_path = 'missions/ahoi_multi_agent_base/logs/',
+#                            anchor_labels = {2: 'NED - 2', 6: 'ABE - 6', 9: 'MAX - 9',99: 'NA'})
 
-rwdl.set_start_end(start_utc=d_time(2024, 8, 5, 23, 3, 0), 
-                   end_utc=d_time(2024, 8, 5, 23, 4, 30))
+#ahoi_path = '2024-08-22_01_mobile_node_ahoi/ahoi_interface_log_20240822_092044_tof-pos.csv'
+#ahoi_path = '2024-08-22_01_mobile_node_ahoi/ahoi_interface_log_20240822_093204_tof-pos-tof.csv'
+ahoi_path = '2024-08-22_01_mobile_node_ahoi/ahoi_interface_log_20240822_094009_tof-pos-tof-tof.csv'
+rwdl = RealWorldDataLoader(ahoi_csv=ahoi_path,
+                           mobile_csv='2024-08-22_01_mdm/LOG_OAK_22_8_2024_____09_14_00/log_oak_22_8_2024_____09_14_00_alog_csvs/NODE_REPORT_LOCAL.csv', 
+                           id2_csv='2024-08-22_01_mdm/LOG_BEN_22_8_2024_____09_14_10/log_ben_22_8_2024_____09_14_10_alog_csvs/NODE_REPORT_LOCAL.csv',
+                           id6_csv='2024-08-22_01_mdm/LOG_MAX_22_8_2024_____09_14_04/log_max_22_8_2024_____09_14_04_alog_csvs/NODE_REPORT_LOCAL.csv', 
+                           id9_csv='2024-08-22_01_mdm/LOG_PIP_22_8_2024_____09_13_55/log_pip_22_8_2024_____09_13_55_alog_csvs/NODE_REPORT_LOCAL.csv', 
+                           rel_path = 'missions/ahoi_multi_agent_base/logs/',
+                           anchor_labels = {2: 'BEN - 2', 6: 'MAX - 6', 9: 'PIP - 9',99: 'NA'})
+
+#rwdl.set_start_end(start_utc=d_time(2024, 8, 22, 13, 20, 45), 
+#                   end_utc=d_time(2024, 8, 22, 13, 31, 20))
+
+
+
 
 rwdl.get_anchor_dfs() # anchor df - output: id2, id6, id9
 rwdl.get_mobile_df()
@@ -77,7 +90,7 @@ current_time = start_time_utc
 data_index = 1
 ahoi_data_df_mgt = DFReader(ahoi_df, start_idx=data_index)
 
-gt_data_index = 4
+gt_data_index = 1
 anchor_dist_df_mgt = DFReader(anchor_dist_df, start_idx=gt_data_index)
 
 anchor_all_data_df_mgt = DFReader(anchor_all_data_df, start_idx=gt_data_index)
@@ -86,8 +99,8 @@ new_poll = False
 new_meas = False
 
 
-#use_data = 'ahoi' #
-use_data = 'ground_truth_dist'
+use_data = 'ahoi' #
+#use_data = 'ground_truth_dist'
 event_type = ''
 
 
@@ -156,7 +169,7 @@ while current_time < anchor_dist_df_mgt.get_end_time():
     # =============================================================================
     #     # sim measurements
     # =============================================================================
-    replay_base = 'sim-from-gps'
+    replay_base = 'real' #'sim-from-gps'
     if replay_base == 'sim-from-gps':
         
         # -------------------------------------------
@@ -395,6 +408,7 @@ while current_time < anchor_dist_df_mgt.get_end_time():
         vel = anchor_estimator.get_anchor(meas_anchor_id).comp_vel(pos=anchor_pos3d, time_pos=time_pos)
         anchor_estimator.get_anchor(meas_anchor_id).update_pos(pos3d=anchor_pos3d, timestamp=time_pos) # this time is much newer/more recent than the position time
         
+        ahoi_meas.reset(reset_type='POS') # Measurement has been used - reset poll
         print(f"ID:{meas_anchor_id} updated -> Anchor velocity {np.linalg.norm(vel):.2f}m/s")
 
         
@@ -433,9 +447,9 @@ while current_time < anchor_dist_df_mgt.get_end_time():
 
 
         if debug_plotting:  
-            anchor_start= np.array([[ 44.69, -38.08],
-                                    [ 19.43, -21.32],
-                                    [ 28.73, -64.63]])
+            anchor_start= np.array([[ 50.38, 1.88],
+                                    [  46.11, -81.75],
+                                    [ -19.36, -28.84]])
             
             x_est_list.append(ahoi_ekf.get_x_est().copy())
             x_est_array = np.array(x_est_list)
@@ -450,16 +464,16 @@ while current_time < anchor_dist_df_mgt.get_end_time():
             
             ax.scatter(anchor_pos3d[0], anchor_pos3d[1], color='r')
             ax.scatter(anchor_start[:,0], anchor_start[:,1], marker='*')
-            c_meas = plt.Circle((anchor_pos3d[0], anchor_pos3d[1]), z_meas, color='r', fill=False, label='z_meas')
-            c_est = plt.Circle((anchor_pos3d[0], anchor_pos3d[1]), z_est_anchor, color='b', fill=False, label='z_est')
+            # c_meas = plt.Circle((anchor_pos3d[0], anchor_pos3d[1]), z_meas, color='r', fill=False, label='z_meas')
+            # c_est = plt.Circle((anchor_pos3d[0], anchor_pos3d[1]), z_est_anchor, color='b', fill=False, label='z_est')
             
-            ax.add_patch(c_meas)
-            ax.add_patch(c_est)
+            # ax.add_patch(c_meas)
+            # ax.add_patch(c_est)
             
             ax.legend()
             ax.set_aspect('equal', 'box')
-            ax.set_xlim((0,80))
-            ax.set_ylim((-80,-0))
+            ax.set_xlim((-30,90))
+            ax.set_ylim((-90,10))
             ax.grid(True)
             
             plt.show()
