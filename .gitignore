@@ -65,6 +65,9 @@ local_modem_config.json
 logs/
 logs_ahoi/
 targs/
+targ_*.moos
+
+
 *.csv
 debug_*.txt
 
