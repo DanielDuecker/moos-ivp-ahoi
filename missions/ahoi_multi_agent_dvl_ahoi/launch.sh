@@ -47,6 +47,9 @@ USE_CACHE=""
 VLAUNCH_ARGS=" --auto "
 SLAUNCH_ARGS=" --auto "
 
+
+AHOI_TYPE="NONE"
+
 #-------------------------------------------------------
 #  Part 3: Check for and handle command-line arguments
 #-------------------------------------------------------
@@ -128,6 +131,8 @@ for ARGI; do
     elif [ "${ARGI:0:7}" = "--pref=" ]; then
         LOGDIR_PREF="${ARGI#--pref=*}"
         MISSION_NAME=$LOGDIR_PREF"_"$MISSION_NAME
+    elif [ "${ARGI:0:12}" = "--ahoi_type=" ]; then
+        AHOI_TYPE="${ARGI#--ahoi_type==*}"
 	if [ ! $AMT -ge 1 ]; then
 	    echo "$ME: Vehicle amount must be >= 1."
 	    exit 1
@@ -231,10 +236,14 @@ do
     IX_VLAUNCH_ARGS+=" $TIME_WARP "
 
     # If the index is 1, then --roll=MNODE, else if 2 then --roll=ANCHOR1, etc.
+    
+
+
     if [ $INDEX -eq 1 ]; then
-        IX_VLAUNCH_ARGS+=" --roll=MNODE "
+        IX_VLAUNCH_ARGS+=" --ahoi_type=TEST "
     else
-        IX_VLAUNCH_ARGS+=" --roll=ANCHOR$((INDEX-1)) "
+        IX_VLAUNCH_ARGS+=" --ahoi_type=NONE "
+        #IX_VLAUNCH_ARGS+=" --roll=ANCHOR$((INDEX-1)) "
     fi
 
     #vecho "Launching: $VNAME"

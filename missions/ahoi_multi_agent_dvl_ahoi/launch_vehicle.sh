@@ -37,6 +37,7 @@ MEDIATED="yes"
 CONVOY_POLICY=""
 TASKBHV=""
 ROLL=""
+AHOI_TYPE="TEST"
 
 REGION="pavlab"
 START_POS="0,0,180"  
@@ -106,11 +107,12 @@ for ARGI; do
         echo "  --ben,  -B  : ben vehicle.                     "
         echo "  --cal,  -C  : cal vehicle.                     "
         echo "  --deb,  -D  : deb vehicle.                     "
-	echo "  --eve,  -E  : eve vehicle.                     "
+	    echo "  --eve,  -E  : eve vehicle.                     "
         echo "  --fin,  -F  : fin vehicle.                     "
-	echo "  --max,  -M  : max vehicle.                     "
+	    echo "  --max,  -M  : max vehicle.                     "
         echo "  --ned,  -N  : ned vehicle.                     "
-	echo "  --oak,  -O  : oak vehicle.                     "
+	    echo "  --oak,  -O  : oak vehicle.                     "
+        echo "  --pip,  -O  : pip vehicle.                     "
 	exit 0;
     elif [ "${ARGI//[^0-9]/}" = "$ARGI" -a "$TIME_WARP" = 1 ]; then 
         TIME_WARP=$ARGI
@@ -154,6 +156,10 @@ for ARGI; do
         IP_ADDR="${ARGI#--ip=*}"
     elif [ "${ARGI:0:7}" = "--roll=" ]; then
         ROLL="${ARGI#--roll=*}"
+
+    elif [ "${ARGI:0:12}" = "--ahoi_type=" ]; then
+        AHOI_TYPE="${ARGI#--ahoi_type=*}"
+
     elif [ "${ARGI:0:7}" = "--mport" ]; then
         MOOS_PORT="${ARGI#--mport=*}"
     elif [ "${ARGI:0:9}" = "--pshare=" ]; then
@@ -215,7 +221,7 @@ elif [ "${VNAME}" = "ned" ]; then
     INDEX=21
 elif [ "${VNAME}" = "oak" ]; then
     INDEX=22
-    elif [ "${VNAME}" = "pip" ]; then
+elif [ "${VNAME}" = "pip" ]; then
     INDEX=23
 fi
 
@@ -273,6 +279,7 @@ if [ "${VERBOSE}" = "yes" -o "${CONFIRM}" = "yes" ]; then
     echo "CONVOY_ACTIVE =  [${CONVOY_ACTIVE}] "
     echo "CONVOY_POLICY =  [${CONVOY_POLICY}] "
     echo "TASKBHV =  [${TASKBHV}] "
+    echo "AHOI_TYPE =  [${AHOI_TYPE}] "
     echo -n "Hit the RETURN key to continue with launching"
     read ANSWER
 fi
@@ -308,7 +315,7 @@ nsplug meta_vehicle.moos targs/targ_$VNAME.moos $NSFLAGS WARP=$TIME_WARP  \
        IP_ADDR=$IP_ADDR             MAXIMUM_SPD=$MAXIMUM_SPD     \
        FSEAT_IP=$FSEAT_IP           XMODE=$XMODE                 \
        MEDIATED=$MEDIATED           MISSION_NAME=$MISSION_NAME   \
-       ROLL=$ROLL
+       ROLL=$ROLL                   AHOI_TYPE=$AHOI_TYPE
        
 nsplug meta_vehicle.bhv targs/targ_$VNAME.bhv $NSFLAGS VNAME=$VNAME    \
        TRANSIT_SPD=$TRANSIT_SPD     COLOR=$COLOR                 \

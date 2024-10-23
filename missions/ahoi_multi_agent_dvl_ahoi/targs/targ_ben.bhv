@@ -54,11 +54,13 @@ set MODE = IN_FORMATION {
         lead_to_start = false                   // default
                 order = normal                  // default 
 
-                point = 40,0
+                points = format=lawnmower, x=30, y=-40, height=30, width=70, lane_width=10
 
+                repeat = 3
           slip_radius = 15
                 speed = 1
-              endflag = STATION=true
+              endflag = RETURN_ALL=true
+              endflag = QUIT_MISSION=true
             
           visual_hints = vertex_size  = 3             // default
           visual_hints = edge_size    = 1             // default
@@ -68,7 +70,6 @@ set MODE = IN_FORMATION {
           visual_hints = nextpt_lcolor = aqua         // default
           visual_hints = nextpt_vertex_size = 5       // default
   }
-
 
 
 //----------------------------------------------

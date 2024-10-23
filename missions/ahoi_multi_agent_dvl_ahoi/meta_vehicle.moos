@@ -24,12 +24,34 @@ Processconfig = ANTLER
   Run = pHelmIvP           @ NewConsole = false
   Run = pMarinePID         @ NewConsole = false
 
+  ## runs but quits directly
+  
+  #Run = ../../src/pAhoiModemManager/pymoos_app_test.py  @ NewConsole = true, ExtraProcessParams=PythonParams
+  #Run = ../../src/pAhoiModemManager/pyAhoi_Anchor_Manager.py  @ NewConsole = true, ExtraProcessParams=PythonParams
+  
+  #PythonParams = localhost,9000,alder
+  
+  PythonParams = localhost,$(MOOS_PORT),$(VNAME)
+
+  #ifdef AHOI_TYPE MOBILE
+    Run = ../../src/pAhoiModemManager/pyAhoi_MobileBase_Manager.py  @ NewConsole = true, ExtraProcessParams=PythonParams
+    PythonParams = ServerHost,$(MOOS_PORT),$(VNAME)
+  #elseifdef AHOI_TYPE ANCHOR
+    Run = ../../src/pAhoiModemManager/pyAhoi_Anchor_Manager.py  @ NewConsole = true, ExtraProcessParams=PythonParams
+    PythonParams = ServerHost,$(MOOS_PORT),$(VNAME)
+  #elseifdef AHOI_TYPE TEST
+    #Run = ../../src/pAhoiModemManager/pymoos_app_test.py  @ NewConsole = true, ExtraProcessParams=PythonParams
+    Run = ../../src/pAhoiModemManager/pymoos_app_base_template.py  @ NewConsole = true, ExtraProcessParams=PythonParams
+    PythonParams = ServerHost,$(MOOS_PORT),$(VNAME)
+  #endif
+  
+
 #ifdef XMODE SIM
   Run = uSimMarineV22      @ NewConsole = false
 #else
   Run = iM300              @ NewConsole = false
   Run = iM300Health        @ NewConsole = false
-  //DANIEL! 
+
   #ifdef ROLL MNODE
     Run = iTracker650         @ NewConsole = false
   #endif 
@@ -56,6 +78,8 @@ Processconfig = ANTLER
     #include plugs/heron/plug_iTracker650.moos
   #endif 
 #endif
+
+
 	
 #ifdef MEDIATED yes
   #include plugs/heron/plug_pMediator.moos  
@@ -65,4 +89,5 @@ Processconfig = ANTLER
 #include plugs/heron/plug_pHelmIvP.moos
 #include plugs/heron/plug_pNodeReporter.moos
 #include plugs/heron/plug_uFldNodeBroker.moos
+
 

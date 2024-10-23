@@ -1,0 +1,34 @@
+# ServerHost = $(IP_ADDR)
+# ServerPort = $(MOOS_PORT)
+# Community  = $(VNAME)
+
+
+ServerHost = localhost
+ServerPort = '9000'
+Simulator  = true
+
+Community  = alder
+
+//------------------------------------------------------------
+ProcessConfig = ANTLER
+{
+  MSBetweenLaunches = 100
+
+  # 1. specify path towards pymoos app - 2. run pAntler python_example.moos from mission
+  #Run = <FULL>/<PATH>/<TO>/<PYTHON>/<FILE>/pymoos_app_test.py @ NewConsole = true, ExtraProcessParams=PythonParams
+
+  PythonParams = ServerHost,ServerPort,Community
+  Run = ../../src/pAhoiModemManager/pymoos_app_test.py  @ NewConsole = false, ExtraProcessParams=PythonParams
+
+  #Run = ../../src/pAhoiModemManager/pymoos_test.py  @ NewConsole = false # true
+
+
+  #Run = ../../src/pAhoiModemManager/pymoos_app_test_base.py  @ NewConsole = true, ExtraProcessParams=PythonParams
+  #PythonParams = ServerHost,ServerPort,Community
+  
+  
+  #PythonParams = ServerHost,ServerPort,Community
+  
+  
+  
+}

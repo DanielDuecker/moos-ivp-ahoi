@@ -2,7 +2,7 @@ ServerHost = localhost
 ServerPort = 9017
 Community  = deb
 
-MOOSTimeWarp = 10
+MOOSTimeWarp = 1
 
 
 MIT Sailing Pavilion (use this one)                                                    
@@ -37,6 +37,17 @@ Processconfig = ANTLER
   Run = pRealm             @ NewConsole = false
   Run = pHelmIvP           @ NewConsole = false
   Run = pMarinePID         @ NewConsole = false
+
+  ## runs but quits directly
+  
+  #Run = ../../src/pAhoiModemManager/pymoos_app_test.py  @ NewConsole = true, ExtraProcessParams=PythonParams
+  #Run = ../../src/pAhoiModemManager/pyAhoi_Anchor_Manager.py  @ NewConsole = true, ExtraProcessParams=PythonParams
+  
+  #PythonParams = localhost,9000,alder
+  
+  PythonParams = localhost,9017,deb
+
+  
 
   Run = uSimMarineV22      @ NewConsole = false
 }
@@ -131,7 +142,7 @@ ProcessConfig = pLogger
   CommsTick = 5
   
   File          = LOG_DEB
-  PATH	        = ./logs/240822-0905A-EASY-ROOK/
+  PATH	        = ./logs/241023-1214N-PUNY-HUEY/
   AsyncLog 	    = true
   FileTimeStamp = true
 
@@ -318,6 +329,8 @@ ProcessConfig = uSimMarineV22
 }
 
 
+
+
 	
 //------------------------------------------
 // pMediator config block
@@ -435,5 +448,6 @@ ProcessConfig = uFldNodeBroker
   bridge = src=AGENT_INFO
 	bridge = src=NODE_MESSAGE_LOCAL, alias=NODE_MESSAGE
 	}
+
 
 
