@@ -64,9 +64,9 @@ local_modem_config.json
 
 logs/
 logs_ahoi/
+targs/
 *.csv
 debug_*.txt
-missions/ahoi_multi_agent_base/logs/
-missions/ahoi_multi_agent_base/targs/
+
 
 __pycache__/
