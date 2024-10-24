@@ -51,7 +51,11 @@ class pymoosAhoiTest(object):
 
     def run(self):
         while True:
-            print("py moos test alive")
+            # if self.community == "abe":
+            #     remote_msg = "src_node="+self.community+",dest_node=ben,var_name=NAV_X_ABE,string_val="+str(self.my_moos_pos_x)
+            #     self.mooscomms.notify('NODE_MESSAGE_LOCAL', remote_msg)
+            #     print("sent message:", remote_msg)
+            print("\n pymoos test alive")
             time.sleep(0.5)
 
     def on_connect(self):
@@ -63,6 +67,8 @@ class pymoosAhoiTest(object):
         self.mooscomms.register('NAV_X', 0)
         self.mooscomms.register('NAV_Y', 0)
         self.mooscomms.register('NAV_Z', 0)
+
+        #self.mooscomms.register('NODE_MESSAGE_LOCAL', 0)
         
     
     def on_new_mail(self):
@@ -74,16 +80,18 @@ class pymoosAhoiTest(object):
                 self.my_moos_pos_y = msg.double()
             elif msg.key() == 'NAV_Z':
                 self.my_moos_pos_z = msg.double()
+            elif msg.key() == 'NAV_X_ABE':
+                print(msg.string())
         return True
 
 
 if __name__ == '__main__':
-    print(f"[pymoosAhoiTest] main starting ...")
+    print(f"[pymoosMultiVehicle] starting ...")
     time.sleep(1)
     hostname = sys.argv[3]
     hostport = int(sys.argv[4])
     vehicle_name = sys.argv[5]
-    print(vehicle_name)
+    print(f"vehicle name: {vehicle_name}")
 
     app = pymoosAhoiTest(server_host=hostname, server_port=hostport,vehicle_community=vehicle_name)
     app.run()

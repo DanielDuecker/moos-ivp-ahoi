@@ -241,6 +241,8 @@ do
 
     if [ $INDEX -eq 1 ]; then
         IX_VLAUNCH_ARGS+=" --ahoi_type=TEST "
+    # elif [ $INDEX -eq 2 ]; then
+    #     IX_VLAUNCH_ARGS+=" --ahoi_type=TEST "
     else
         IX_VLAUNCH_ARGS+=" --ahoi_type=NONE "
         #IX_VLAUNCH_ARGS+=" --roll=ANCHOR$((INDEX-1)) "
