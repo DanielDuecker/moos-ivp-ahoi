@@ -11,6 +11,7 @@ from ahoi_interface import AhoiInterface
 class pyAhoiMobileBaseManager(object):
     def __init__(self, server_host, server_port, 
                  modem_config_file='local_modem_config.json', enviro_config_file='enviro_config.json',
+                 poll_scheme = 0,
                  logging=False, debug_printing=False):
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         ###parameters###
@@ -57,9 +58,15 @@ class pyAhoiMobileBaseManager(object):
 
         self.polling_type_idx = 0
         self.poll_type_idx = 0
-        self.polling_scheme_dict = {0:'TOF-POS-poll'}
-        # self.polling_scheme_dict = {0:'TOF-POS-poll', 1:'TOF-poll'}
-        # self.polling_scheme_dict = {0:'TOF-POS-poll', 1:'TOF-poll',2:'TOF-poll'}
+        
+        if poll_scheme == 0:
+            self.polling_scheme_dict = {0:'TOF-POS-poll'}
+        elif poll_scheme == 1:
+            self.polling_scheme_dict = {0:'TOF-POS-poll', 1:'TOF-poll'}
+        elif poll_scheme == 2:
+            self.polling_scheme_dict = {0:'TOF-POS-poll', 1:'TOF-poll',2:'TOF-poll'}
+        else:
+            self.polling_scheme_dict = {0:'TOF-POS-poll'}
         self.anchor_polling_type = np.zeros((len(self.anchor_id_list),), dtype=int) # current polling type for each anchor
         
 
@@ -177,13 +184,7 @@ class pyAhoiMobileBaseManager(object):
         
         
 if __name__ == '__main__':
-#     parser = argparse.ArgumentParser(description='pyAhoiAnchorManager runner')
-#     parser.add_argument('--server_host', required=True, help='Server host address')
-#     parser.add_argument('--server_port', type=int, required=True, help='Server port')
-#     parser.add_argument('--modem_config_file', default='local_modem_config.json', help='Path to the modem config file')
-#     parser.add_argument('--enviro_config_file', default='enviro_config.json', help='Path to the environment config file')
 
-#     args = parser.parse_args()
     server_host = sys.argv[3]
     server_port = int(sys.argv[4])
     modem_config_file = 'local_modem_config.json'
@@ -191,11 +192,12 @@ if __name__ == '__main__':
 
     vehicle_name = sys.argv[5]
     print(f"[pyAhoi_Vehicle_MobileBase] starting ... on vehicle {vehicle_name}")
-    time.sleep(10)
+    time.sleep(1)
 
     
     # Arguments are passed directly as they are already correctly referenced in the launch.sh
     app = pyAhoiMobileBaseManager(server_host=server_host, server_port=server_port,  
                                   modem_config_file=modem_config_file, enviro_config_file=enviro_config_file,
+                                  poll_scheme = 0,
                                   logging=True, debug_printing=True)
     app.run()

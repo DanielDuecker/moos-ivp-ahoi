@@ -112,7 +112,7 @@ if __name__ == '__main__':
 
     vehicle_name = sys.argv[5]
     print(f"[pyAhoi_Vehicle_Anchor] starting ... on vehicle {vehicle_name}")
-    time.sleep(10)
+    time.sleep(1)
 
     # Arguments are passed directly as they are already correctly referenced in the launch.sh
     app = pyAhoiAnchorManager(server_host, server_port, modem_config_file, enviro_config_file)
