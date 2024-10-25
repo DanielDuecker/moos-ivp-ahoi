@@ -26,11 +26,13 @@ Processconfig = ANTLER
 
 
   #ifdef AHOI_TYPE MOBILE
-    Run = ../../src/pAhoiModemManager/pyAhoi_MobileBase_Manager.py  @ NewConsole = true, ExtraProcessParams=PythonParams
+    #Run = ../../src/pAhoiModemManager/pyAhoi_MobileBase_Manager.py  @ NewConsole = true, ExtraProcessParams=PythonParams
+    Run = ../../src/pAhoiModemManager/pyAhoi_Vehicle_MobileBase.py  @ NewConsole = true, ExtraProcessParams=PythonParams
     PythonParams = ServerHost,$(MOOS_PORT),$(VNAME)
 
   #elseifdef AHOI_TYPE ANCHOR
-    Run = ../../src/pAhoiModemManager/pyAhoi_Anchor_Manager.py  @ NewConsole = true, ExtraProcessParams=PythonParams
+    #Run = ../../src/pAhoiModemManager/pyAhoi_Anchor_Manager.py  @ NewConsole = true, ExtraProcessParams=PythonParams
+    Run = ../../src/pAhoiModemManager/pyAhoi_Vehicle_Anchor.py  @ NewConsole = true, ExtraProcessParams=PythonParams
     PythonParams = ServerHost,$(MOOS_PORT),$(VNAME)
 
   #elseifdef AHOI_TYPE TEST

@@ -11,7 +11,7 @@ import time
 
 import ahoi_csv_logger
 
-from collections import deque
+#from collections import deque
 from ahoi.modem.modem import Modem
 
 class AhoiInterface():
