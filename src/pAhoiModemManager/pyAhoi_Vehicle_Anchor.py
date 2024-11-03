@@ -105,12 +105,27 @@ if __name__ == '__main__':
     
     #args = parser.parse_args()
 
+    # Create a text file to log the arguments
+    with open("args_log.txt", "w") as log_file:
+        log_file.write("Arguments before parsing:\n")
+        log_file.write(" ".join(sys.argv) + "\n")
+
     server_host = sys.argv[1]
     server_port = int(sys.argv[2])
     modem_config_file = 'local_modem_config.json'
     enviro_config_file = 'enviro_config.json'
 
     vehicle_name = sys.argv[3]
+
+
+    with open("args_log.txt", "a") as log_file:
+        log_file.write("Arguments after parsing:\n")
+        log_file.write(f"server_host: {server_host}\n")
+        log_file.write(f"server_port: {server_port}\n")
+        log_file.write(f"modem_config_file: {modem_config_file}\n")
+        log_file.write(f"enviro_config_file: {enviro_config_file}\n")
+        log_file.write(f"vehicle_name: {vehicle_name}\n")
+
     print(f"[pyAhoi_Vehicle_Anchor] starting ... on vehicle {vehicle_name}")
     time.sleep(1)
 
