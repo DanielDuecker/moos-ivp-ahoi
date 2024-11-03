@@ -108,7 +108,7 @@ if __name__ == '__main__':
     # Create a text file to log the arguments
     with open("args_log.txt", "w") as log_file:
         log_file.write("Arguments before parsing:\n")
-        log_file.write(" ".join(sys.argv) + "\n")
+        log_file.write(str(sys.argv) + "\n")
 
     server_host = sys.argv[1]
     server_port = int(sys.argv[2])
