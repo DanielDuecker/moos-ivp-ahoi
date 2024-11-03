@@ -1,0 +1,24 @@
+//----------------------------------------------------
+// pHelmIvP Config Block  
+
+ProcessConfig = pHelmIvP
+{
+  AppTick    = 6
+  CommsTick  = 6
+
+      app_logging = log
+
+  goals_mandatory = true
+
+	//comms_policy = dire
+	
+	park_on_allstop = false
+	
+        ok_skew   = any
+        behaviors = targs/targ_$(VNAME).bhv  
+        verbose   = terse
+        domain    = course:0:359:360
+        domain    = speed:0:2.0:21
+
+     hold_on_apps = pMarinePIDV22
+}

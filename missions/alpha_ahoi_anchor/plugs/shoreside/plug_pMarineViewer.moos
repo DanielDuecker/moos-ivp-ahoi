@@ -1,0 +1,78 @@
+//--------------------------------------------------------
+ProcessConfig = pMarineViewer
+{
+  AppTick    = 4
+  CommsTick  = 4
+
+  //tiff_file            = forrest19.tif
+  tiff_file            = MIT_SP.tif
+  tiff_file            = mit_sp_osm18.tif
+  set_pan_x            = -31
+  set_pan_y            = -380
+  zoom                 = 1.15
+  vehicles_shape_scale = 1.5
+  vehicles_name_mode   = names
+
+  circle_viewable_all = true
+
+	beat_flag = HEARTBEAT=true
+	
+  appcast_viewable = true
+  appcast_color_scheme = white
+  realmcast_color_scheme = beige
+
+  scope  = DEPLOY_ALL
+
+  action = STATION_KEEP_ALL = false
+  action = STATION_KEEP_ALL = true
+
+	action = BLOCK_HEARTBEAT = true
+	action = BLOCK_HEARTBEAT = false
+	
+  button_one   = DEPLOY  # DEPLOY_ALL=true
+  button_one   = MOOS_MANUAL_OVERRIDE_ALL=false
+  button_one   = RETURN_ALL=false # STATION_KEEP_ALL=false
+
+  button_two   = RETURN  # RETURN_ALL=true
+  button_two   = RETURN  # STATION_KEEP_ALL=false
+
+	button_three = ALLSTOP # DEPLOY_ALL=false
+
+	button_four  = STATION # STATION_KEEP_ALL=true	
+
+  // Button 5: Increase center_x by 5 meters
+  button_five  = CX+5         # LEMNISCATE_UPDATES_ALL=center_x+=5
+
+  // Button 6: Decrease center_x by 5 meters
+  button_six   = CX-5         # LEMNISCATE_UPDATES_ALL=center_x-=5
+
+  // Button 7: Increase center_y by 5 meters
+  button_seven = CY+5         # LEMNISCATE_UPDATES_ALL=center_y+=5
+
+  // Button 8: Decrease center_y by 5 meters
+  button_eight = CY-5         # LEMNISCATE_UPDATES_ALL=center_y-=5
+
+  // Button 9: Increase height (Y axis) by 5 meters
+  button_nine  = H+5          # LEMNISCATE_UPDATES_ALL=height+=5
+
+  // Button 10: Decrease height (Y axis) by 5 meters
+  button_ten   = H-5          # LEMNISCATE_UPDATES_ALL=height-=5
+
+  // Button 11: Increase width (X axis) by 5 meters
+  button_eleven = W+5         # LEMNISCATE_UPDATES_ALL=width+=5
+
+  // Button 12: Decrease width (X axis) by 5 meters
+  button_twelve = W-5         # LEMNISCATE_UPDATES_ALL=width-=5
+
+  // Button 13: Increase alpha (angle) by 5 degrees
+  button_thirteen = A+5       # LEMNISCATE_UPDATES_ALL=alpha+=5
+
+  // Button 14: Decrease alpha (angle) by 5 degrees
+  button_fourteen = A-5       # LEMNISCATE_UPDATES_ALL=alpha-=5
+
+  // Button 15: Increase direction by 1
+  button_fifteen = DIR+1      # LEMNISCATE_UPDATES_ALL=direction+=1
+
+  // Button 16: Decrease direction by 1
+  button_sixteen = DIR-1      # LEMNISCATE_UPDATES_ALL=direction-=1
+}

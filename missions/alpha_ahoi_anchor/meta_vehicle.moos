@@ -1,0 +1,68 @@
+ServerHost = localhost
+ServerPort = $(MOOS_PORT)
+Community  = $(VNAME)
+
+#include plugs/shared/plug_origin_warp.moos
+
+//------------------------------------------------------------
+ProcessConfig = ANTLER
+{
+  MSBetweenLaunches = 100
+
+  //Core vehicle 
+  Run = MOOSDB             @ NewConsole = false
+  Run = pShare             @ NewConsole = false
+  Run = pLogger            @ NewConsole = false
+  Run = pNodeReporter      @ NewConsole = false
+  Run = pMarinePIDV22      @ NewConsole = false
+  Run = pHelmIvP           @ NewConsole = false
+  Run = pHostInfo          @ NewConsole = false
+  Run = uFldNodeBroker     @ NewConsole = false
+  Run = pDeadManPost       @ NewConsole = false
+  Run = pRealm             @ NewConsole = false
+  Run = uFldMessageHandler @ NewConsole = false
+  Run = pContactMgrV20     @ NewConsole = false
+  Run = uProcessWatch      @ NewConsole = false
+
+#ifdef XMODE SIM
+  //Simulation
+  Run = uSimMarineV22      @ NewConsole = false
+#elseifdef XMODE M300
+  // Heron specific
+  Run = iM300              @ NewConsole = false
+  Run = iM300Health        @ NewConsole = false
+
+  #ifdef ROLL ANCHOR
+    #Run = ../../src/pAhoiModemManager/pyAhoi_Anchor_Manager.py  @ NewConsole = false, ExtraProcessParams=PythonParams
+    Run = ../../src/pAhoiModemManager/pyAhoi_Vehicle_Anchor.py  @ NewConsole = false, ExtraProcessParams=PythonParams
+    PythonParams = ServerHost,$(MOOS_PORT),$(VNAME)
+  #elseifdef ROLL TEST
+    #Run = ../../src/pAhoiModemManager/pymoos_app_multi_vehicle.py  @ NewConsole = false, ExtraProcessParams=PythonParams
+    Run = ../../src/pAhoiModemManager/pymoos_app_base_template.py  @ NewConsole = false, ExtraProcessParams=PythonParams
+    PythonParams = ServerHost,$(MOOS_PORT),$(VNAME)
+  #endif
+#endif
+}
+
+#include plugs/heron/plug_uFldMessageHandler.moos
+#include plugs/heron/plug_pContactMgrV20.moos
+#include plugs/heron/plug_uMemWatch.moos
+#include plugs/heron/plug_pDeadManPost.moos
+#include plugs/shared/plug_pShare.moos
+#include plugs/shared/plug_pHostInfo.moos
+#include plugs/heron/plug_pLogger.moos
+#include plugs/shared/plug_uProcessWatch.moos
+#include plugs/heron/plug_uLoadWatch.moos
+#include plugs/heron/plug_pMarinePIDV22.moos
+
+#ifdef XMODE SIM
+  #include plugs/heron/plug_uSimMarineV22.moos
+#elseifdef XMODE M300
+  #include plugs/heron/plug_iM300.moos
+  #include plugs/heron/plug_iM300Health.moos
+#endif
+
+#include plugs/heron/plug_pRealm.moos
+#include plugs/heron/plug_pHelmIvP.moos
+#include plugs/heron/plug_pNodeReporter.moos
+#include plugs/heron/plug_uFldNodeBroker.moos
