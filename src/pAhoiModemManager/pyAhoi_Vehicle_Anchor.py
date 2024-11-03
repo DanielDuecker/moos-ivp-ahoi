@@ -105,12 +105,12 @@ if __name__ == '__main__':
     
     #args = parser.parse_args()
 
-    server_host = sys.argv[2]
-    server_port = int(sys.argv[3])
+    server_host = sys.argv[1]
+    server_port = int(sys.argv[2])
     modem_config_file = 'local_modem_config.json'
     enviro_config_file = 'enviro_config.json'
 
-    vehicle_name = sys.argv[4]
+    vehicle_name = sys.argv[3]
     print(f"[pyAhoi_Vehicle_Anchor] starting ... on vehicle {vehicle_name}")
     time.sleep(1)
 
