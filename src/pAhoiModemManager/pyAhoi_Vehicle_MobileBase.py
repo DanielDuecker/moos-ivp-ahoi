@@ -184,13 +184,12 @@ class pyAhoiMobileBaseManager(object):
         
         
 if __name__ == '__main__':
-    print(sys.argv)
-    server_host = sys.argv[3]
-    server_port = int(sys.argv[4])
+    server_host = sys.argv[2]
+    server_port = int(sys.argv[3])
     modem_config_file = 'local_modem_config.json'
     enviro_config_file = 'enviro_config.json'
 
-    vehicle_name = sys.argv[5]
+    vehicle_name = sys.argv[4]
     print(f"[pyAhoi_Vehicle_MobileBase] starting ... on vehicle {vehicle_name}")
     time.sleep(1)
 
