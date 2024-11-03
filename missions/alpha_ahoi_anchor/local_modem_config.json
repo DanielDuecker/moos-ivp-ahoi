@@ -1,0 +1,6 @@
+{
+    "node_type":"Mobile-Base",
+    "vehicle": "ASV",
+    "modem_id": 6,
+    "dev": "/dev/ttyAMA0"
+}
