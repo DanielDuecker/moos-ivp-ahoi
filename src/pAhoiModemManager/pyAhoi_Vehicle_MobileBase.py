@@ -184,7 +184,7 @@ class pyAhoiMobileBaseManager(object):
         
         
 if __name__ == '__main__':
-
+    print(sys.argv)
     server_host = sys.argv[3]
     server_port = int(sys.argv[4])
     modem_config_file = 'local_modem_config.json'
