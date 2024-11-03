@@ -37,11 +37,11 @@ ProcessConfig = ANTLER
   #ifdef ROLE ANCHOR
     #Run = ~/moos-ivp-ahoi/src/pAhoiModemManager/pyAhoi_Anchor_Manager.py  @ NewConsole = true, ExtraProcessParams=PythonParams
     Run = ~/moos-ivp-ahoi/src/pAhoiModemManager/pyAhoi_Vehicle_Anchor.py  @ NewConsole = true, ExtraProcessParams=PythonParams
-    PythonParams = ServerHost,$(MOOS_PORT),$(VNAME)
+    PythonParams = $(IP_ADDR),$(MOOS_PORT),$(VNAME)
   #elseifdef ROLE TEST
     #Run = ~/moos-ivp-ahoi/src/pAhoiModemManager/pymoos_app_multi_vehicle.py  @ NewConsole = false, ExtraProcessParams=PythonParams
     Run = ~/moos-ivp-ahoi/src/pAhoiModemManager/pymoos_app_base_template.py  @ NewConsole = false, ExtraProcessParams=PythonParams
-    PythonParams = ServerHost,$(MOOS_PORT),$(VNAME)
+    PythonParams = $(IP_ADDR),$(MOOS_PORT),$(VNAME)
   #endif
 #endif
 }
