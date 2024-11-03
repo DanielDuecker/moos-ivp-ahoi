@@ -27,18 +27,20 @@ ProcessConfig = ANTLER
 #ifdef XMODE SIM
   //Simulation
   Run = uSimMarineV22      @ NewConsole = false
+
+
 #elseifdef XMODE M300
   // Heron specific
   Run = iM300              @ NewConsole = false
   Run = iM300Health        @ NewConsole = false
 
   #ifdef ROLL ANCHOR
-    #Run = ../../src/pAhoiModemManager/pyAhoi_Anchor_Manager.py  @ NewConsole = false, ExtraProcessParams=PythonParams
-    Run = ../../src/pAhoiModemManager/pyAhoi_Vehicle_Anchor.py  @ NewConsole = false, ExtraProcessParams=PythonParams
+    #Run = ~/moos-ivp-ahoi/src/pAhoiModemManager/pyAhoi_Anchor_Manager.py  @ NewConsole = true, ExtraProcessParams=PythonParams
+    Run = ~/moos-ivp-ahoi/src/pAhoiModemManager/pyAhoi_Vehicle_Anchor.py  @ NewConsole = true, ExtraProcessParams=PythonParams
     PythonParams = ServerHost,$(MOOS_PORT),$(VNAME)
   #elseifdef ROLL TEST
-    #Run = ../../src/pAhoiModemManager/pymoos_app_multi_vehicle.py  @ NewConsole = false, ExtraProcessParams=PythonParams
-    Run = ../../src/pAhoiModemManager/pymoos_app_base_template.py  @ NewConsole = false, ExtraProcessParams=PythonParams
+    #Run = ~/moos-ivp-ahoi/src/pAhoiModemManager/pymoos_app_multi_vehicle.py  @ NewConsole = false, ExtraProcessParams=PythonParams
+    Run = ~/moos-ivp-ahoi/src/pAhoiModemManager/pymoos_app_base_template.py  @ NewConsole = false, ExtraProcessParams=PythonParams
     PythonParams = ServerHost,$(MOOS_PORT),$(VNAME)
   #endif
 #endif
