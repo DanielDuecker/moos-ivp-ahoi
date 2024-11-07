@@ -20,8 +20,8 @@ ADD_SUBDIRECTORY(pExampleApp)
 ADD_SUBDIRECTORY(pXRelayTest)
 ADD_SUBDIRECTORY(pOdometry)
 
-ADD_SUBDIRECTORY(pAhoiLocSolution)
-ADD_SUBDIRECTORY(pAhoiRangeSim)
+# ADD_SUBDIRECTORY(pAhoiLocSolution)
+# ADD_SUBDIRECTORY(pAhoiRangeSim)
 
 ##############################################################################
 #                           END of CMakeLists.txt
