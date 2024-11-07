@@ -1,0 +1,6 @@
+{
+	"node_type":"Mobile-Base",
+	"vehicle": "AUV",
+	"modem_id": 1,
+	"dev":"/dev/ttyS0"
+}
