@@ -1,0 +1,15 @@
+//----------------------------------------------
+ Behavior = BHV_MaxDepth
+ {
+   // General Behavior Parameters
+   // ---------------------------
+   name      = maxdepth
+   pwt       = 1000
+   condition = MODE==ACTIVE
+
+   // Parameters specific to this behavior
+   // ------------------------------------
+         max_depth = $(MAXIMUM_DEPTH) // (meters)
+         tolerance = 1                // default (meters)
+   depth_slack_var = DEPTH_SLACK      // example
+ }

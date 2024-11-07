@@ -1,0 +1,23 @@
+//--------------------------------------------------------
+// pNavigator_AHRS config Block 
+
+ProcessConfig = pNavigator_AHRS
+{
+  AppTick     = 16
+  CommsTick   = 16
+
+  debug = true 
+
+  logging = true
+  log_directory = ./logs/$(MISSION_NAME)
+  sample_rate = 150
+
+  mag_ak_cal_file = /home/pi/moos-ivp-seascout/data/$(VNAME)/mag/mag_cal.dat
+
+  gain = 0.5
+  world_frame = ned
+
+  
+  debug = true 
+
+}

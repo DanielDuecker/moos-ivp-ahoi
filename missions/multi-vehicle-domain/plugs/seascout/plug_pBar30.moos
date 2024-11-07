@@ -1,0 +1,9 @@
+//--------------------------------------------------------
+// pBar30 config Block 
+
+ProcessConfig = pBar30
+{
+  debug = true
+  AppTick     = 4
+  CommsTick   = 4
+}

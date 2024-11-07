@@ -1,0 +1,6 @@
+MOOSTimeWarp = $(WARP)
+
+
+MIT Sailing Pavilion (use this one)                                                    
+LatOrigin  = 42.358456
+LongOrigin = -71.087589

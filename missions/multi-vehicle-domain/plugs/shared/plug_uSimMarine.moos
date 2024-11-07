@@ -1,0 +1,26 @@
+//------------------------------------------
+// uSimMarine config block
+
+ProcessConfig = uSimMarine
+{
+  AppTick  	= 20
+  CommsTick	= 20
+
+  start_x       = 0
+  start_y       = -20
+  start_heading = 180
+  start_speed   = 0
+
+  prefix        = NAV
+
+  turn_rate     = 20
+  thrust_map    = 0:0, 20:1, 40:2, 60:3, 80:4, 100:5
+  thrust_reflect = true
+
+
+  buoyancy_rate        = 0.05
+  max_depth_rate       = 0.5
+  max_depth_rate_speed = 2
+  default_water_depth  = 400
+
+}                                                       

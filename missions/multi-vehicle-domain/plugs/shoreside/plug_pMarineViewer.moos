@@ -1,0 +1,77 @@
+//--------------------------------------------------------
+ProcessConfig = pMarineViewer
+{
+  AppTick    = 4
+  CommsTick  = 4
+
+  //tiff_file            = forrest19.tif
+  tiff_file            = MIT_SP.tif
+  tiff_file            = mit_sp_osm18.tif
+  set_pan_x            = 129
+  set_pan_y            = -364
+  zoom                 = 2.5
+  vehicles_shape_scale = 1.5
+  vehicles_name_mode   = names
+
+  circle_viewable_all = true
+
+	beat_flag = HEARTBEAT=true
+	
+  appcast_viewable = true
+  appcast_color_scheme = indigo
+
+  scope  = DEPLOY_ALL
+
+  action = STATION_KEEP_ALL = false
+  action = STATION_KEEP_ALL = true
+
+	action = BLOCK_HEARTBEAT = true
+	action = BLOCK_HEARTBEAT = false
+	
+  button_one   = DEPLOY  # DEPLOY_ALL=true # GO_HOLD_ALL = false
+  button_one   = DEPLOY  # MOOS_MANUAL_OVERIDE_ALL=false 
+  button_one   = RETURN_ALL=false # LOITER_ALL=true
+  button_one   = STATION_KEEP_ALL=false # FOLLOW_ALL=false
+
+  button_two   = ENCIRCLE:Y  # ENCIRCLE_ACTIVE_ALL=true
+  button_four  = ENCIRCLE:N  # ENCIRCLE_ACTIVE_ALL=false
+  button_three = RETURN  # RETURN_ALL=true # LOITER_ALL=false
+
+	button_5 = RAD++ # LOITER_UPDATE_ALL=mod_poly_rad=5
+	button_6 = RAD-- # LOITER_UPDATE_ALL=mod_poly_rad=-5
+
+	button_7 = RECALL # INTERCEPT_ALL=false
+	
+  left_context[mv_center] = LOITER_UPDATE_ALL = center_assign=$[XPOS],$[YPOS]	
+  left_context[mv_center] = LOITER_UPDATE_ALL = use_alt_speed=false
+
+  left_context[rtrack] = RTRACK_$[UP_VNAME_CLOSEST]=true
+  left_context[rtrack] = TRAIL_INFO_ALL= contact=$[VNAME_CLOSEST]
+
+  left_context[return_task] = MISSION_TASK_ALL = type=gohold,id=wpt$[BIX],waypt_x=$[XPOS],waypt_y=$[YPOS]	
+
+  right_context[return_task] = MISSION_TASK_ALL = type=waypoint,id=wpt$[BIX],waypt_x=$[XPOS],waypt_y=$[YPOS]
+
+  right_context[intercept] = INTERCEPT_$[UP_VNAME_CLOSEST]=true
+  right_context[intercept] = STATION_KEEP_$[UP_VNAME_CLOSEST]=false
+
+
+  right_context[scout] = MISSION_TASK_ALL = type=scout,id=scout$[BIX],x=$[XPOS],y=$[YPOS]
+
+  cmd = label=DEPLOY, var=DEPLOY,  sval=true,  receivers=all:$(VNAMES)
+  cmd = label=DEPLOY, var=MOOS_MANUAL_OVERRIDE,  sval=false,  receivers=all:$(VNAMES)
+  cmd = label=DEPLOY, var=RETURN,  sval=false,  receivers=all:$(VNAMES)
+  cmd = label=DEPLOY, var=STATION_KEEP,  sval=false,  receivers=all:$(VNAMES)
+
+  cmd = label=RETURN, var=RETURN, sval=true, receivers=all:$(VNAMES)
+  cmd = label=RETURN, var=STATION_KEEP, sval=false, receivers=all:$(VNAMES)
+	
+  cmd = label=STATION, var=RETURN, sval=false, receivers=all:$(VNAMES)
+  cmd = label=STATION, var=STATION_KEEP, sval=true, receivers=all:$(VNAMES)
+	
+   action = MISSION_TASK_ALL = type=waypoint,id=001,x=50,y=-5
+  action = MISSION_TASK_ALL = type=waypoint,id=002,x=70,y=-8
+  action = MISSION_TASK_ALL = type=waypoint,id=003,x=30,y=0
+
+  action = AVOID="true"
+}

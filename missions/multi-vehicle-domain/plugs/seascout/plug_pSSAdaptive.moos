@@ -1,0 +1,157 @@
+//------------------------------------------
+// pSSPIDBaseline config block
+
+ProcessConfig = pSSAdaptive
+{
+
+  //Controller which supports a PD controller, adaptive sliding mode controllers 
+
+  //App parameters
+  AppTick    = 10
+  CommsTick  = 10
+  debug = true
+
+  //Type of controller we are using
+  controller = 1
+
+  #ifdef VNAME seascout-00
+    //Gains for fundamental PD controller and overall maximum efforts
+    yaw_kp = 28
+    yaw_kd = 1
+    yaw_ki_limit = 0
+    max_rudder = 25 //percent
+
+    depth_kp = 30
+    depth_ki = 2
+    depth_kd = 0
+    depth_ki_limit = 4
+    max_pitch = 12 //degrees
+    
+    pitch_kp = 550
+    pitch_kd = 40 
+    pitch_ki_limit = 5
+
+    max_pitch_effort = 75
+
+    max_elevator = 75 //percent
+
+    roll_gain = 1
+    roll_kp  = 150
+    roll_kd = 0.5
+    roll_ki_limit = 0
+    max_fin_roll = 25
+
+    //Gains for adaptive controllers
+
+    gamma = 0.00
+    // gamma = 0
+    gamma_diag = 0.02,5,0.05
+    use_l1_norm = true 
+
+    deadzone_degrees = 4,1,3
+
+    roll_alpha = 0.2
+    pitch_alpha = 0.44
+    heading_alpha = 0.02
+    depth_alpha = 0.012
+    
+    roll_dot_alpha = 0.3
+    pitch_dot_alpha = 0.3
+    heading_dot_alpha = 0.3
+  
+  #elseifdef VNAME seascout-01
+
+    //Gains for fundamental PD controller and overall maximum efforts
+    yaw_kp = 28
+    yaw_kd = 1
+    yaw_ki_limit = 0
+    max_rudder = 25 //percent
+
+    depth_kp = 30
+    depth_ki = 2
+    depth_kd = 0
+    depth_ki_limit = 4
+    max_pitch = 8 //degrees
+    
+    pitch_kp = 450
+    pitch_kd = 40 
+    pitch_ki_limit = 5
+
+    max_pitch_effort = 55
+
+    max_elevator = 75 //percent
+
+    roll_gain = 1
+    roll_kp  = 150
+    roll_kd = 0.5
+    roll_ki_limit = 0
+    max_fin_roll = 15
+
+    //Gains for adaptive controllers
+
+    gamma = 0.00
+    // gamma = 0
+    gamma_diag = 0.02,5,0.05
+    use_l1_norm = true 
+
+    deadzone_degrees = 4,1,3
+
+    roll_alpha = 0.2
+    pitch_alpha = 0.44
+    heading_alpha = 0.02
+    depth_alpha = 0.012
+    
+    roll_dot_alpha = 0.3
+    pitch_dot_alpha = 0.3
+    heading_dot_alpha = 0.3
+    
+  #elseifdef VNAME seascout-02
+
+  //Gains for fundamental PD controller and overall maximum efforts
+    yaw_kp = 28
+    yaw_kd = 1
+    yaw_ki_limit = 0
+    max_rudder = 25 //percent
+
+    depth_kp = 30
+    depth_ki = 2
+    depth_kd = 0
+    depth_ki_limit = 4
+    max_pitch = 12 //degrees
+    
+    pitch_kp = 450
+    pitch_kd = 40 
+    pitch_ki_limit = 5
+
+    max_pitch_effort = 65
+
+    max_elevator = 75 //percent
+
+    roll_gain = 1
+    roll_kp  = 150
+    roll_kd = 0.5
+    roll_ki_limit = 0
+    max_fin_roll = 25
+
+    //Gains for adaptive controllers
+
+    gamma = 0.00
+    // gamma = 0
+    gamma_diag = 0.02,5,0.05
+    use_l1_norm = true 
+
+    deadzone_degrees = 4,1,3
+
+    roll_alpha = 0.2
+    pitch_alpha = 0.44
+    heading_alpha = 0.02
+    depth_alpha = 0.012
+    
+    roll_dot_alpha = 0.3
+    pitch_dot_alpha = 0.3
+    heading_dot_alpha = 0.3
+    
+  #endif
+  
+}
+

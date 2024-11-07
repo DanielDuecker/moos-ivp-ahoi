@@ -1,0 +1,94 @@
+ServerHost = localhost
+ServerPort = $(MOOS_PORT)
+Community  = $(VNAME)
+
+#include plugs/shared/plug_origin_warp.moos
+
+//------------------------------------------------------------
+Processconfig = ANTLER
+{
+  MSBetweenLaunches = 150
+   
+  Run = MOOSDB             @ NewConsole = false
+  Run = pHelmIvP           @ NewConsole = false
+  Run = pLogger            @ NewConsole = false
+  Run = uProcessWatch      @ NewConsole = false
+  Run = pShare             @ NewConsole = false
+  Run = pNodeReporter      @ NewConsole = false
+  Run = pHostInfo          @ NewConsole = false
+  Run = uFldNodeBroker     @ NewConsole = false
+  Run = uFldMessageHandler @ NewConsole = false
+  Run = uLoadWatch         @ NewConsole = false
+  Run = uMemWatch          @ NewConsole = false
+  Run = pRealm             @ NewConsole = false
+
+#ifdef XMODE SEASCOUT
+  Run = pNavigator_AHRS    @ NewConsole = false
+  Run = pBar30             @ NewConsole = false
+  Run = pSSPIDv2             @ NewConsole = false
+  //Run = pSSAdaptive             @ NewConsole = false
+  Run = pAftCtrlV1         @ NewConsole = false
+  Run = iNeoM9N_V0         @ NewConsole = false
+#elseifdef XMODE HITL
+  Run = uSimMarine         @ NewConsole = false
+  //Run = pSSAdaptive             @ NewConsole = false
+  Run = pAftCtrlV1         @ NewConsole = false
+
+#elseifdef XMODE SIM
+  Run = uSimMarine      @ NewConsole = false
+  Run = pMarinePIDV22         @ NewConsole = false
+#endif
+
+#ifdef VNAME seascout-00
+  Run = iHBK_CV7         @ NewConsole = false
+  Run = iTracker650         @ NewConsole = false
+
+#elseifdef VNAME seascout-01
+  
+
+#elseifdef VNAME seascout-02
+  
+#endif
+
+}
+	
+#include plugs/seascout/plug_uFldMessageHandler.moos
+#include plugs/seascout/plug_uMemWatch.moos
+#include plugs/shared/plug_pShare.moos
+#include plugs/shared/plug_pHostInfo.moos
+#include plugs/seascout/plug_pLogger.moos
+#include plugs/shared/plug_uProcessWatch.moos
+#include plugs/seascout/plug_uLoadWatch.moos
+
+#ifdef XMODE SEASCOUT
+  #include plugs/seascout/plug_pNavigator_AHRS.moos
+  #include plugs/seascout/plug_pBar30.moos
+  #include plugs/seascout/plug_pAftCtrlV1.moos
+  #include plugs/seascout/plug_pSSAdaptive.moos
+  #include plugs/seascout/plug_pSSPID.moos
+  #include plugs/seascout/plug_pSSPIDv2.moos
+  #include plugs/seascout/plug_iNeoM9N_V0.moos
+#elseifdef XMODE HITL
+  #include plugs/shared/plug_uSimMarine.moos
+  #include plugs/seascout/plug_pAftCtrlV1.moos
+  #include plugs/seascout/plug_pNavigator_ADC.moos
+  #include plugs/seascout/plug_pSSAdaptive.moos
+#elseifdef XMODE SIM
+  #include plugs/shared/plug_uSimMarine.moos
+  #include plugs/seascout/plug_pMarinePIDV22.moos
+#endif
+
+#ifdef VNAME seascout-00
+  #include plugs/seascout/plug_iHBK_CV7.moos
+  #include plugs/seascout/plug_iTracker650.moos
+#elseifdef VNAME seascout-01
+  
+
+#elseifdef VNAME seascout-02
+  
+#endif
+
+#include plugs/seascout/plug_pRealm.moos
+#include plugs/seascout/plug_pHelmIvP.moos
+#include plugs/seascout/plug_pNodeReporter.moos
+#include plugs/seascout/plug_uFldNodeBroker.moos

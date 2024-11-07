@@ -1,0 +1,39 @@
+//------------------------------------------
+// pSSPIDBaseline config block
+
+ProcessConfig = pSSPID
+{
+  AppTick    = 10
+  CommsTick  = 10
+
+  debug = true
+  
+  yaw_kp = 28
+  yaw_ki = 1
+  yaw_kd = 1
+  yaw_ki_limit = 0
+  max_rudder = 70
+
+  depth_kp = 30
+  depth_ki = 2 
+  depth_kd = 0
+  depth_ki_limit = 4
+  max_pitch = 12
+  
+  pitch_kp = 450
+  pitch_ki = 0.00 
+  pitch_kd = 40 
+  pitch_ki_limit = 5
+  max_elevator = 70
+
+  roll_gain = 1
+  roll_kp  = 150
+  roll_ki = 0
+  roll_kd = 0
+  roll_ki_limit = 0
+  max_fin_roll = 25
+
+  port_invert = false
+  stbd_invert = false
+}
+
