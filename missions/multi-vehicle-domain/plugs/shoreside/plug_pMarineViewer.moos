@@ -35,12 +35,14 @@ ProcessConfig = pMarineViewer
 
   button_two   = ENCIRCLE:Y  # ENCIRCLE_ACTIVE_ALL=true
   button_four  = ENCIRCLE:N  # ENCIRCLE_ACTIVE_ALL=false
-  button_three = RETURN  # RETURN_ALL=true # LOITER_ALL=false
+  button_three = RETURN  # RETURN_ALL=true # LOITER_ALL=false # STATION_KEEP_ALL=false
 
 	button_5 = RAD++ # LOITER_UPDATE_ALL=mod_poly_rad=5
 	button_6 = RAD-- # LOITER_UPDATE_ALL=mod_poly_rad=-5
 
 	button_7 = RECALL # INTERCEPT_ALL=false
+
+  button_8  = STATION # STATION_KEEP_ALL=true	
 	
   left_context[mv_center] = LOITER_UPDATE_ALL = center_assign=$[XPOS],$[YPOS]	
   left_context[mv_center] = LOITER_UPDATE_ALL = use_alt_speed=false

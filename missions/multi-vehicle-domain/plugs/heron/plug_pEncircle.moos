@@ -4,7 +4,7 @@ ProcessConfig = pEncircle
    CommsTick = 4
 
  //  circle_position = x=20,y=-90,radius=45
-   max_speed = 5
+   max_speed = 2
    aggression = 1
 
    encircle_active = true
