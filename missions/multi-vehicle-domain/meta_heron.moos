@@ -61,7 +61,7 @@ ProcessConfig = pEncircle
 
  //  circle_position = x=20,y=-90,radius=45
    max_speed = 2
-   aggression = 2
+   aggression = 5
 
    encircle_active = true
    consider_thresh = 30

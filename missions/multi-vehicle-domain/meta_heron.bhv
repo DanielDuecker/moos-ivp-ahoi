@@ -177,105 +177,35 @@ Behavior=BHV_Waypoint
  }
 
 //---------------------------------------------- 
-Behavior = BHV_AvdColregsV22
+Behavior = BHV_AvdColregsV19
 {
   name       = avdcol_
   pwt        = 500
-  condition  = AVOID = true
+
   condition  = MODE==ACTIVE
-  updates    = CONTACT_INFO
+
+	updates    = CONTACT_INFO
   endflag    = CONTACT_RESOLVED = $[CONTACT]
   templating = spawn
 
-            contact = to-be-set
-   on_no_contact_ok = true
-        extrapolate = true
-              decay = 30,60
-
-        headon_only = true
-
-  //velocity_filter = min_spd=0.2, max_spd=1.0, pct=40                 
-
-       use_refinery = true
-
-//    eval_tol = 30      
-
-     pwt_outer_dist = 35
-     pwt_inner_dist = 15
-     completed_dist = 40
-  min_util_cpa_dist = 10
-  max_util_cpa_dist = 18
-          pwt_grade = linear
-   bearing_line_config = white:0, green:0.65, yellow:0.8, red:1.0  
-}
-
-//----------------------------------------------
-//Behavior = BHV_AvoidCollision
-{
-  name       = avdcol_
-  pwt        = 350
-  condition  = AVOID = true 
-  condition  = MODE==ACTIVE
-  condition  = MODE!=ACTIVE:STATION-KEEPING
-  updates    = CONTACT_INFO
-  endflag    = CONTACT_RESOLVED = $[CONTACT]
-  templating = spawn
+  spawnx_flag  = ENCOUNTER_START = os=$(VNAME),cn=$[CONTACT],rng=$[RANGE],rel_brg=$[OS_CN_REL_BNG],targ_ang=$[CN_OS_REL_BNG],time=$[UTC]
+  cnflag     = @cpa ENCOUNTER_END = os=$(VNAME), cn=$[CONTACT], rng=$[RANGE], rel_brg=$[OS_CN_REL_BNG], targ_ang=$[CN_OS_REL_BNG], time=$[UTC]
 
              contact = to-be-set
     on_no_contact_ok = true
          extrapolate = true
-               decay = 30,60
+               decay = 10,20
 
-         use_refinery = true
+    giveway_bow_dist = 10
+        use_refinery = true
 
-        pwt_outer_dist = 35
-        pwt_inner_dist = 10
-        completed_dist = 40
-     min_util_cpa_dist = 10
-     max_util_cpa_dist = 18
-             pwt_grade = linear
-//   bearing_line_config = white:0, green:0.65, yellow:0.8, red:1.0
-}
-
-
-//----------------------------------------------
-Behavior = BHV_Waypoint
-{
-  name      = wpt_rtrack
-  pwt       = 100
-
-  condition = MODE==RTRACKING
-  updates   = RTRAC_UPDATE
-  perpetual = true
-
-//            lead = 8
-//     lead_damper = 1
-           speed = 1.4  // meters per second
-	      
-    capture_line = true
-  capture_radius = 5
-     slip_radius = 15
-         polygon = oval: x=0, y=-210, rad=15, len=200, ang=90
-           order = reverse
-          repeat = 10000
-
-	draw_path_loop = true
-	
-//       cycleflag = AAA_FOOBAR=true
-//       cycleflag = WPT_CYCLES=$[CTR]
-//       cycleflag = WPT_HASH=$[HASH]
-	
-    visual_hints = nextpt_color=yellow
-    visual_hints = nextpt_vertex_size=8
-    visual_hints = nextpt_lcolor=gray70
-    visual_hints = vertex_color=light_green
-    visual_hints = vertex_size=5
-    visual_hints = edge_size=1
-    visual_hints = edge_color=yellow
-	
-    visual_hints = trackpt_vertex_size=5
-	  visual_hints = trackpt_vertex_color=gray50
-	  visual_hints = trackpt_lcolor=off
+      pwt_outer_dist = 25
+      pwt_inner_dist = 11
+      completed_dist = 25
+   min_util_cpa_dist = 8
+   max_util_cpa_dist = 15
+           pwt_grade = linear
+ bearing_line_config = white:0, green:0.65, yellow:0.8, red:1.0
 }
 
 //----------------------------------------------

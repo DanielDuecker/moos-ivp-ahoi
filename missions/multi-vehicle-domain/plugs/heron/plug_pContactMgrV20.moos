@@ -6,7 +6,7 @@ ProcessConfig = pContactMgrV20
   AppTick   = 2
   CommsTick = 2
 
-  decay = 30,60
+  decay = 10,20
 
   alert_verbose = true
 
@@ -23,9 +23,10 @@ ProcessConfig = pContactMgrV20
 
 	post_closest_range = true
 	post_all_ranges = true
-	
   display_radii = true
+  
   alert_range_color = gray70
   cpa_range_color   = gray30
+  hold_alerts_for_helm = true
 }
 

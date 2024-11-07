@@ -28,6 +28,20 @@ ProcessConfig = uFldNodeBroker
   bridge = src=NODE_REPORT_LOCAL,  alias=NODE_REPORT
   bridge = src=QUIT_MISSION
 
+  bridge = src=ARRIVAL
+  bridge = src=COLREGS_AVOID_MODE
+  bridge = src=AVDCOL_MODE
+  bridge = src=VEHICLE_CONNECT
+  bridge = src=APPCAST
+  bridge = src=BCM_DETECTION_DIST
+  bridge = src=READY_HOLD
+  bridge = src=NODE_REPORT_LOCAL,  alias=NODE_REPORT
+  bridge = src=NODE_MESSAGE_LOCAL, alias=NODE_MESSAGE
+
+  bridge = src=ENCOUNTER_START
+  bridge = src=ENCOUNTER_END
+
+
 #ifdef MEDIATED yes
   bridge = src=MEDIATED_MESSAGE_LOCAL, alias=MEDIATED_MESSAGE
   bridge = src=ACK_MESSAGE_LOCAL, alias=ACK_MESSAGE

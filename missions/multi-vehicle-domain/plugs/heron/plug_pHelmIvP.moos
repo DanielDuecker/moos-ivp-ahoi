@@ -16,9 +16,9 @@ ProcessConfig = pHelmIvP
 	
         ok_skew   = any
         behaviors = targs/targ_$(VNAME).bhv  
-        verbose   = terse
+        verbose   = false
         domain    = course:0:359:360
         domain    = speed:0:2.0:21
 
-     hold_on_apps = pMarinePIDV22
+     hold_on_apps = pMarinePIDV22, pContactMgrV20
 }
