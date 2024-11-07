@@ -180,7 +180,7 @@ Behavior=BHV_Waypoint
 Behavior = BHV_AvdColregsV19
 {
   name       = avdcol_
-  pwt        = 500
+  pwt        = 250
 
   condition  = MODE==ACTIVE
 
