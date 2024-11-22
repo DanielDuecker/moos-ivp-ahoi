@@ -27,11 +27,11 @@ Behavior=BHV_ConstantDepth
 }
 
 //----------------------------------------------
-Behavior = BHV_Fig8
-{
-  name      = BHV_Fig8
+Behavior = BHV_Waypoint
+{ 
+  name      = waypt_survey
   pwt       = 100
-
+  
   #ifdef XMODE SEASCOUT
       condition = IN_WATER=true
       condition = NVGR_ROLLING_POWER < 80
@@ -42,25 +42,32 @@ Behavior = BHV_Fig8
 
   endflag   = ACQUIRE_FIX = true
 
-  perpetual = true
-  center_x = 15
-  center_y = -100
-  width = 50
-  height = 20
-  alpha = 30
-  direction = 1
-  n_points = 100
-  capture_radius = 5
-  slip_radius = 10
-  cycles=3
-  updates_var = LEMNISCATE_UPDATES
+  updates    = WPT_UPDATE
+  perpetual  = false
 
-  #ifdef XMODE SEASCOUT
-      desired_speed = 30
-  #elseifdef XMODE SIM
-      desired_speed = 2.5
-  #endif
-  debug = true 
+	         speed_alt = 1.2
+       use_alt_speed = true
+                lead = 8
+         lead_damper = 1
+       lead_to_start = true
+               #ifdef XMODE SEASCOUT
+                  speed = 30
+              #elseifdef XMODE SIM
+                  speed = 2.5
+              #endif
+        capture_line = true
+      capture_radius = 5.0
+         slip_radius = 15.0
+	efficiency_measure = all
+		points = format=lawnmower, x=60, y=-60, height=40, width=180, lane_width=10
+               order = normal
+             repeat  = 2
+
+    visual_hints = nextpt_color=yellow
+    visual_hints = nextpt_vertex_size=8
+    visual_hints = nextpt_lcolor=gray70
+    visual_hints = vertex_color=dodger_blue, edge_color=white
+    visual_hints = vertex_size=5, edge_size=1
 }
 
 //**********************************************
@@ -235,4 +242,23 @@ Behavior = BHV_ConstantHeading
    heading_mismatch_var = HDG_DIFF     // example
               peakwidth = 10           // default
             summitdelta = 25           // default
+ }
+
+
+ Behavior = BHV_MaxDepth
+ {
+   // General Behavior Parameters
+   // ---------------------------
+   name      = maxdepth
+   pwt       = 1000
+   condition = IN_WATER = true 
+condition = NVGR_ROLLING_POWER < 80
+condition = IN_WATER = true
+
+
+   // Parameters specific to this behavior
+   // ------------------------------------
+         max_depth = 2 // (meters)
+         tolerance = 0.5                // default (meters)
+   depth_slack_var = DEPTH_SLACK      // example
  }

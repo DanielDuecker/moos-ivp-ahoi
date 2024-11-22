@@ -1,0 +1,26 @@
+//--------------------------------------------------------
+// iNeoM9N_V0 config Block
+
+ProcessConfig = iNeoM9N_V0
+{
+  AppTick     = 10
+  CommsTick   = 10
+
+  // GPS serial port settings
+  port        = /dev/ttyAMA1
+  baud_rate   = 38400
+
+  // Set the initial sample frequency
+  initial_sample_frequency = 20.0  // 20 Hz sampling
+
+  // Enable debug mode for detailed logs
+  debug       = true
+
+  // Logging configuration
+  logging     = true
+  log_dir     = ./logs/$(MISSION_NAME)
+
+  // Sample rate based on GPS lock status
+  sample_rate_lock   = 20.0  // 20 Hz when GPS lock is achieved
+  sample_rate_no_lock = 5.0  // 5 Hz when GPS lock is not achieved
+}

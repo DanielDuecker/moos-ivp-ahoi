@@ -24,8 +24,8 @@ AUTO_LAUNCHED="no"
 CMD_ARGS=""
 
 IP_ADDR="localhost"
-MOOS_PORT="9001"
-PSHARE_PORT="9201"
+MOOS_PORT="9005"
+PSHARE_PORT="9205"
 
 SHORE_IP="localhost"
 SHORE_PSHARE="9200"
@@ -39,6 +39,7 @@ START_POS="0,0,180"
 TRANSIT_SPD="1.2"  
 MAXIMUM_SPD="2"
 MAXIMUM_DEPTH="5"
+XMODE="SEASCOUT"
 
 MTASC=""
 LOG_CLEAN="no"
@@ -138,7 +139,7 @@ for ARGI; do
         XMODE="HITL"
     elif [ "${ARGI}" = "--sim" -o "${ARGI}" = "-s" ]; then
         XMODE="SIM"
-        INDEX="2"
+        INDEX="5"
         echo "Simulation mode ON."
     else 
 	echo "$ME: Bad Arg:[$ARGI]. Exit Code 1."
@@ -207,7 +208,7 @@ fi
 
 mkdir targs &> /dev/null
 
-nsplug meta_vehicle.moos targs/targ_$VNAME.moos $NSFLAGS WARP=$TIME_WARP  \
+nsplug meta_spurdog.moos targs/targ_$VNAME.moos $NSFLAGS WARP=$TIME_WARP  \
        PSHARE_PORT=$PSHARE_PORT     VNAME=$VNAME                 \
        COLOR=$COLOR                 MAXSPD=$MAXSPD               \
        START_POS=$START_POS         SHORE_IP=$SHORE_IP           \
@@ -231,7 +232,8 @@ fi
 #-------------------------------------------------------
 
 # Check system state to make sure that the vehicle should be run.
-if [ "$XMODE" != "HITL" ]; then
+
+if [ "$XMODE" = "SEASCOUT" ]; then
     vecho "Running pre-mission checks..."
     
     # Run the pre-mission check script
@@ -244,13 +246,15 @@ if [ "$XMODE" != "HITL" ]; then
         exit 1
     else
         vecho "Pre-mission checks passed. Proceeding with launch."
+        ts=$(date '+%Y%m%d_%H%M%S')
+        echo "$ts Vehicle launched in headless mode successfully" >> ~/moos-ivp-seascout/data/$(hostname)/logs/history.log
     fi
-else
-    vecho "Hardware-in-the-loop (HITL) mode detected. Skipping pre-mission checks."
-fi
 
-ts=$(date '+%Y%m%d_%H%M%S')
-echo "$ts Vehicle launched in headless mode successfully" >> ~/moos-ivp-seascout/data/$(hostname)/logs/history.log
+elif [ "$XMODE" = "HITL" ]; then
+    vecho "Hardware-in-the-loop (HITL) mode detected. Skipping pre-mission checks."
+else 
+    vecho "Launch AUV Simulation"
+fi
 
 vecho "Launching $VNAME MOOS Community. WARP="$TIME_WARP
 pAntler targs/targ_$VNAME.moos >& /dev/null &
@@ -268,44 +272,48 @@ fi
 #---------------------------------------------------------------
 
 # If we run in headless mode, the vehicle will automatically close the mission down after several conditions
-if [ "${HEADLESS}" = "no" ]; then
-    uMAC targs/targ_$VNAME.moos
-else
-    DONE="false"
-    IN_WATER="false"
-    while [ "${DONE}" = "false" ]; do
-        echo "Mission Running..."
-        # We shut down if the autonomy missions are complete
-        if uQueryDB targs/targ_$VNAME.moos --condition="MISSION_COMPLETE == true" --wait=2 >& /dev/null; then
-            echo "Mission Complete - Quitting"
-            uPokeDB targs/targ_$VNAME.moos MOOS_MANUAL_OVERRIDE_ALL=false
-            DONE="true"
-            break
-        # We shut down if the vehicle is removed from the water, after it was set. This checks that locally we have recognized that the vehicle was in the water, and that now we have removed it from the water
-        elif [ "$IN_WATER" = "true" ] && uQueryDB targs/targ_$VNAME.moos --condition="IN_WATER == false" --wait=2 >& /dev/null; then
-            echo "Vehicle has left the water - Shutting Down"
-            uPokeDB targs/targ_$VNAME.moos MOOS_MANUAL_OVERRIDE_ALL=false
-            DONE="true"
-            break
-        else
-            # We check if the vehicle is in the water
-            if [ "$IN_WATER" = "false" ] && uQueryDB targs/targ_$VNAME.moos --condition="IN_WATER == true" --wait=2 >& /dev/null; then
-                IN_WATER="true"
+
+if [ "$XMODE" == "SEASCOUT" ]; then
+
+    if [ "${HEADLESS}" = "no" ]; then
+        uMAC targs/targ_$VNAME.moos
+    else
+        DONE="false"
+        IN_WATER="false"
+        while [ "${DONE}" = "false" ]; do
+            echo "Mission Running..."
+            # We shut down if the autonomy missions are complete
+            if uQueryDB targs/targ_$VNAME.moos --condition="MISSION_COMPLETE == true" --wait=2 >& /dev/null; then
+                echo "Mission Complete - Quitting"
+                uPokeDB targs/targ_$VNAME.moos MOOS_MANUAL_OVERRIDE_ALL=false
+                DONE="true"
+                break
+            # We shut down if the vehicle is removed from the water, after it was set. This checks that locally we have recognized that the vehicle was in the water, and that now we have removed it from the water
+            elif [ "$IN_WATER" = "true" ] && uQueryDB targs/targ_$VNAME.moos --condition="IN_WATER == false" --wait=2 >& /dev/null; then
+                echo "Vehicle has left the water - Shutting Down"
+                uPokeDB targs/targ_$VNAME.moos MOOS_MANUAL_OVERRIDE_ALL=false
+                DONE="true"
+                break
+            else
+                # We check if the vehicle is in the water
+                if [ "$IN_WATER" = "false" ] && uQueryDB targs/targ_$VNAME.moos --condition="IN_WATER == true" --wait=2 >& /dev/null; then
+                    IN_WATER="true"
+                fi
+                sleep 5
             fi
-            sleep 5
-        fi
-    done
+        done
+    fi
+
+    ts=$(date '+%Y%m%d_%H%M%S')
+    echo "$ts Vehicle is shutting down processes post-mission" >> ~/moos-ivp-seascout/data/$(hostname)/logs/history.log
+
+    test_led --set 0 255 0 0
+
+    kill -- -$$
+
+    sleep 5
+
+    test_led --set 0 255 0 0
+
+    sleep 2
 fi
-
-ts=$(date '+%Y%m%d_%H%M%S')
-echo "$ts Vehicle is shutting down processes post-mission" >> ~/moos-ivp-seascout/data/$(hostname)/logs/history.log
-
-test_led --set 0 255 0 0
-
-kill -- -$$
-
-sleep 5
-
-test_led --set 0 255 0 0
-
-sleep 2

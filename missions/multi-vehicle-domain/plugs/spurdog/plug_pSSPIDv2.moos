@@ -1,0 +1,79 @@
+//------------------------------------------
+// pSSPIDv2 config block
+
+ProcessConfig = pSSPIDv2
+{
+  AppTick   = 10
+  CommsTick = 10
+
+  // Debug settings
+  debug = true
+
+  #ifdef VNAME seascout-00
+  // Sensor configuration
+  sensor_to_cg_dist_meters = 0.33
+
+  max_rudder = 25
+  max_elevator = 75
+
+  //-------------------------------------------
+  // Yaw (Heading) Control
+  //-------------------------------------------
+  
+  max_yaw_effort = 40
+  yaw_kp = 28
+  yaw_ki = 0
+  yaw_kd = 1
+  yaw_ki_limit = 10
+  heading_tau = 3
+
+  //-------------------------------------------
+  // Depth Control
+  //-------------------------------------------
+  max_pitch = 12.0
+  depth_kp = 30
+  depth_ki = 0
+  depth_kd = 0.00
+  depth_ki_limit = 4
+  depth_tau = 2
+
+  //-------------------------------------------
+  // Pitch Control
+  //-------------------------------------------
+  
+  max_pitch_effort = 55.0
+  steady_state_pitch = -2;
+  pitch_kp = 450
+  pitch_ki = 0
+  pitch_kd = 40
+  pitch_ki_limit = 30
+  pitch_tau = 1.5
+
+  //-------------------------------------------
+  // Roll Control
+  //-------------------------------------------
+  max_fin_roll = 15
+  max_roll_effort = 24
+  roll_kp = 0
+  roll_ki = 0
+  roll_kd = 0
+  roll_ki_limit = 0
+  roll_tau = 1
+
+  //-------------------------------------------
+  // Speed Control
+  //-------------------------------------------
+  // Note: Speed PID is initialized but not used in the current code
+  // Uncomment and adjust these if implementing speed control
+  // speed_kp = 1.0
+  // speed_ki = 0.01
+  // speed_kd = 0.05
+  // speed_ki_limit = 1.0
+  // max_speed_effort = 1.0
+  #elseifdef VNAME seascout-01
+
+  #elseifdef VNAME seascout-02
+
+  #endif
+
+}

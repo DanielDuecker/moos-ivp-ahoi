@@ -112,7 +112,7 @@ do
     IX_VLAUNCH_ARGS+=" --speed=$TRANSIT_SPD             " 
     IX_VLAUNCH_ARGS+=" --color=$COLOR  --sim            " 
     IX_VLAUNCH_ARGS+=" --vname=$VNAME  --shore=$SHOREIP "
-    IX_VLAUNCH_ARGS+=" $VERBOSE $CONVOY_VERS $MEDIATED  "
+    IX_VLAUNCH_ARGS+=" $VERBOSE $MEDIATED  "
     IX_VLAUNCH_ARGS+=" $TIME_WARP "
 
     echo "Before launch"
@@ -120,6 +120,8 @@ do
     echo "After launch"
 done
 # Launch spurdog - sim mode
+
+./launch_vehicle.sh --sim --vname=spurdog $TIME_WARP $VERBOSE $JUST_MAKE
 #---------------------------------------------------------------
 #  Part 4: Launch the shoreside
 #---------------------------------------------------------------

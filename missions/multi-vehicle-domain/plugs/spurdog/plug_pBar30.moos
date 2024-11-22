@@ -1,0 +1,17 @@
+//--------------------------------------------------------
+// pBar30 config Block 
+
+ProcessConfig = pBar30
+{
+  
+  AppTick     = 4
+  CommsTick   = 4
+
+
+  density = 1000
+  salinity_ppt = 7
+  gravity = 9.81
+  in_water_thresh = 0.060
+
+  debug = true
+}

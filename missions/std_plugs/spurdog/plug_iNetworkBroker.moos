@@ -1,0 +1,25 @@
+//--------------------------------------------------------
+// iNetworkBroker config block
+ProcessConfig = iNetworkBroker
+{
+AppTick    = 10
+CommsTick  = 10
+
+// Debug settings
+debug = true
+
+// Broadcast variables from MOOSDB
+moosdb_broadcast_vars = NAV_X, NAV_Y, NAV_Z
+moosdb_broadcast_vars = NAV_HEADING, NAV_SPEED, NAV_DEPTH
+moosdb_broadcast_vars = NAV_PITCH, NAV_ROLL, GPS_HAS_LOCK
+moosdb_broadcast_vars = IN_WATER, MISSION_COMPLETE
+moosdb_broadcast_vars = DESIRED_HEADING, DESIRED_SPEED, DESIRED_DEPTH
+
+// AHRS Navigator settings
+nav_enabled = true
+nav_frequency = 80     // 80 Hz for AHRS data
+
+// DVL settings
+dvl_enabled = false
+dvl_frequency = 20     // 20 Hz for DVL data
+}

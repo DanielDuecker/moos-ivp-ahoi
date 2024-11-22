@@ -236,3 +236,21 @@ Behavior = BHV_ConstantHeading
               peakwidth = 10           // default
             summitdelta = 25           // default
  }
+
+ Behavior = BHV_MaxDepth
+ {
+   // General Behavior Parameters
+   // ---------------------------
+   name      = maxdepth
+   pwt       = 1000
+   condition = IN_WATER = true 
+condition = NVGR_ROLLING_POWER < 80
+condition = IN_WATER = true
+
+
+   // Parameters specific to this behavior
+   // ------------------------------------
+         max_depth = 2 // (meters)
+         tolerance = 0.5                // default (meters)
+   depth_slack_var = DEPTH_SLACK      // example
+ }

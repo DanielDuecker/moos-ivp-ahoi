@@ -1,0 +1,48 @@
+//--------------------------------------------------------
+// pAftCtrlV1 config Block 
+
+ProcessConfig = pAftCtrlV1
+{
+  //App parameters
+  AppTick     = 16
+  CommsTick   = 16
+  debug = true
+
+  //Aft control parameters
+  thruster_pin = 16
+  max_thrust = 30
+  min_thrust = -30
+  
+  roll_control = true
+  thruster_enabled = true 
+  thruster_alpha = 0.1
+  fin_alpha = 0.3
+
+  //ADC / VBat / Current sensing parameters
+  current_scale = 37.8788
+  current_offset = 0.3235
+  voltage_scale = 11.132
+  voltage_offset = 0.0
+
+  rgbw_color = $(RGBW_COLOR)
+  thruster_invert  = $(THRUSTER_INVERT)
+
+  rudder_offset = $(RUDDER_OFFSET)
+  rudder_invert = $(RUDDER_INVERT)
+  rudder_pin = $(RUDDER_PIN)
+
+  port_elevator_offset = $(PORT_ELEVATOR_OFFSET) //degrees 
+  port_elevator_invert = $(PORT_ELEVATOR_INVERT)
+  port_elevator_pin = $(PORT_ELEVATOR_PIN)
+
+  stbd_elevator_offset = $(STBD_ELEVATOR_OFFSET) // degrees
+  stbd_elevator_invert = $(STBD_ELEVATOR_INVERT)
+  stbd_elevator_pin = $(STBD_ELEVATOR_PIN)
+  
+  //Internal Pressure and Temperature sensing
+
+  low_pressure_flag = SS_MISSION_ABORT
+  high_pressure_flag = SS_MISSION_ABORT
+  low_pressure_value = 50
+  high_pressure_value = 80
+}

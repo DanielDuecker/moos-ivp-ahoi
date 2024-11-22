@@ -1,0 +1,27 @@
+//--------------------------------------------------------
+// iHBK_CV7 config Block 
+
+ProcessConfig = iHBK_CV7
+{
+  apptick   = 10
+  commstick = 10
+  
+  port = /dev/ttyACM0
+  baudrate = 115200
+  
+  roll_var = NAV_ROLL_HBK
+  pitch_var = NAV_PITCH_HBK
+  yaw_var = NAV_YAW_HBK
+  heading_var = NAV_HEADING_HBK
+  
+  declination = -14.0833  // in degrees, adjust as needed
+  
+  roll_offset = 0.0   // in degrees
+  pitch_offset = 0.0  // in degrees
+  yaw_offset = 0    // in degrees
+  
+  debug = false
+  verbose = false
+  logging = true
+  log_path = ./logs/$(MISSION_NAME)
+}

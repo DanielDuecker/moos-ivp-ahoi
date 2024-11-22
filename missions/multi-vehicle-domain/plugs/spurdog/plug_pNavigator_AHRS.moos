@@ -1,0 +1,32 @@
+//--------------------------------------------------------
+// pNavigator_AHRS config Block 
+
+ProcessConfig = pNavigator_AHRS
+{
+  AppTick     = 16
+  CommsTick   = 16
+
+  debug = true 
+
+  logging = true
+  log_directory = ./logs/$(MISSION_NAME)
+  sample_rate = 150
+
+  mag_ak_cal_file = /home/pi/moos-ivp-seascout/data/$(VNAME)/mag/mag_cal.dat
+
+  roll_offset = $(NAV_ROLL_OFFSET)
+  pitch_offset = $(NAV_PITCH_OFFSET)
+  yaw_offset = $(NAV_YAW_OFFSET)
+  tau = 0.075
+
+  operating_heading_offset = 4.5
+  declination_deg = -14.058
+  inclination_deg = 66.3401
+
+  gain = 0.5
+  world_frame = ned
+
+  
+  debug = true 
+
+}
