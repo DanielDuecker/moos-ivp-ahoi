@@ -190,7 +190,6 @@ Behavior = BHV_ConstantHeading
    name         = fixing_depth   // example
    pwt          = 100                // default
    #ifdef XMODE SEASCOUT
-      condition = IN_WATER=true
       condition = NVGR_ROLLING_POWER < 80
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
@@ -217,7 +216,6 @@ Behavior = BHV_ConstantHeading
    name         = fixing_speed  // example
    pwt          = 100                // default
    #ifdef XMODE SEASCOUT
-      condition = IN_WATER=true
       condition = NVGR_ROLLING_POWER < 80
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
@@ -245,8 +243,7 @@ Behavior = BHV_ConstantHeading
    name         = fixing_heading            // example
    pwt          = 100                  // default
    #ifdef XMODE SEASCOUT
-      condition = IN_WATER=true
-      condition = NVGR_ROLLING_POWER < 80
+
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
   #endif
