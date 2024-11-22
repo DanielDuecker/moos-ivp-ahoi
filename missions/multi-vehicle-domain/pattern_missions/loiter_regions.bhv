@@ -45,7 +45,7 @@ Behavior=BHV_Loiter
   perpetual  = true
   endflag    = LOITER_REGION = east
 
-         polygon = format=radial, x=80, y=-160, radius=30, pts=12, snap=1, label=LoiterPoly
+         polygon = format=radial, x=70, y=-70, radius=30, pts=12, snap=1, label=LoiterPoly
 
   #ifdef XMODE SEASCOUT
       speed = 30
@@ -81,7 +81,7 @@ Behavior=BHV_Loiter
   perpetual  = true
   endflag    = ACQUIRE_FIX = true
 
-         polygon = format=radial, x=-50, y=-140, radius=30, pts=12, snap=1, label=LoiterPoly
+         polygon = format=radial, x=-30, y=-80, radius=30, pts=12, snap=1, label=LoiterPoly
 
   #ifdef XMODE SEASCOUT
       speed = 30
