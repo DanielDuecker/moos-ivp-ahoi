@@ -9,12 +9,13 @@ ProcessConfig = iHBK_CV7
   port = /dev/ttyACM0
   baudrate = 115200
   
-  roll_var = NAV_ROLL_HBK
-  pitch_var = NAV_PITCH_HBK
-  yaw_var = NAV_YAW_HBK
-  heading_var = NAV_HEADING_HBK
+  roll_var = NAV_ROLL
+  pitch_var = NAV_PITCH
+  yaw_var = NAV_YAW
+  heading_var = NAV_HEADING
   
-  declination = -14.0833  // in degrees, adjust as needed
+  //declination = -14.0833  // in degrees, adjust as needed
+  declination = 0  // Manually setting north reference
   
   roll_offset = 0.0   // in degrees
   pitch_offset = 0.0  // in degrees
