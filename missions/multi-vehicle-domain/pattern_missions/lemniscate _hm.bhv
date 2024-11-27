@@ -19,7 +19,7 @@ Behavior=BHV_ConstantDepth
   perpetual  = true
 
      duration = no-time-limit
-        depth = 1
+        depth = 0.5
 
     basewidth = 20
     peakwidth = 3

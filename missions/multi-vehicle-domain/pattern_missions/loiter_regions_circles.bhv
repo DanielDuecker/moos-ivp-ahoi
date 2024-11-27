@@ -1,8 +1,8 @@
-//--------    Lemniscate pattern   -------------
+//--------    Circles regions   -------------
 
 initialize   DEPLOY = false
-initialize   LOITER_REGION = west
-initialize    ACQUIRE_FIX = false
+initialize    MD = loitering
+initialize    LOITER_REGION = first
 
 //----------------------------------------------
 Behavior=BHV_ConstantDepth
@@ -15,8 +15,8 @@ Behavior=BHV_ConstantDepth
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
   #endif
-  condition    = ACQUIRE_FIX = false
   perpetual  = true
+  condition    = MD = loitering
 
      duration = no-time-limit
         depth = 1
@@ -27,10 +27,10 @@ Behavior=BHV_ConstantDepth
 }
 
 //----------------------------------------------
-Behavior = BHV_Fig8
+Behavior=BHV_Loiter
 {
-  name      = BHV_Fig8
-  pwt       = 100
+  name       = first
+  pwt        = 100
 
   #ifdef XMODE SEASCOUT
       condition = IN_WATER=true
@@ -38,30 +38,139 @@ Behavior = BHV_Fig8
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
   #endif
-  condition    = ACQUIRE_FIX = false
+  condition    = MD = loitering
+  condition  = LOITER_REGION = first
 
-  endflag   = ACQUIRE_FIX = true
+  duration   = 240
+  perpetual  = true
+  endflag    = LOITER_REGION = second
 
-  perpetual = true
-  center_x = 50
-  center_y = -100
-  width = 50
-  height = 20
-  alpha = 30
-  direction = 1
-  n_points = 100
-  capture_radius = 5
-  slip_radius = 10
-  cycles=3
-  updates_var = LEMNISCATE_UPDATES
+         polygon = format=radial, x=50, y=-100, radius=40, pts=20, snap=1, label=LoiterPoly
 
   #ifdef XMODE SEASCOUT
-      desired_speed = 30
+      speed = 30
   #elseifdef XMODE SIM
-      desired_speed = 2.5
+      speed = 2.5
   #endif
-  debug = true 
+           
+  capture_radius = 5.0
+     slip_radius = 15.0
+       clockwise = true
+
+    visual_hints = vertex_size=3, edge_size=1
+    visual_hints = vertex_color=khaki, edge_color=gray50
+
 }
+
+//----------------------------------------------
+Behavior=BHV_Loiter
+{
+  name       = second
+  pwt        = 100
+
+  #ifdef XMODE SEASCOUT
+      condition = IN_WATER=true
+      condition = NVGR_ROLLING_POWER < 80
+  #elseifdef XMODE SIM
+      condition  = DEPLOY = true
+  #endif
+  condition    = MD = loitering
+  condition  = LOITER_REGION = second
+
+  duration   = 200
+  perpetual  = true
+  endflag    = LOITER_REGION = third
+
+         polygon = format=radial, x=50, y=-100, radius=30, pts=20, snap=1, label=LoiterPoly
+
+  #ifdef XMODE SEASCOUT
+      speed = 30
+  #elseifdef XMODE SIM
+      speed = 2.5
+  #endif
+           
+  capture_radius = 5.0
+     slip_radius = 15.0
+       clockwise = true
+
+    visual_hints = vertex_size=3, edge_size=1
+    visual_hints = vertex_color=khaki, edge_color=gray50
+
+}
+
+
+//----------------------------------------------
+Behavior=BHV_Loiter
+{
+  name       = third
+  pwt        = 100
+
+  #ifdef XMODE SEASCOUT
+      condition = IN_WATER=true
+      condition = NVGR_ROLLING_POWER < 80
+  #elseifdef XMODE SIM
+      condition  = DEPLOY = true
+  #endif
+  condition    = MD = loitering
+  condition  = LOITER_REGION = third
+
+  duration   = 150
+  perpetual  = true
+  endflag    = LOITER_REGION = fourth
+
+         polygon = format=radial, x=50, y=-100, radius=20, pts=15, snap=1, label=LoiterPoly
+
+  #ifdef XMODE SEASCOUT
+      speed = 30
+  #elseifdef XMODE SIM
+      speed = 2.5
+  #endif
+           
+  capture_radius = 5.0
+     slip_radius = 15.0
+       clockwise = true
+
+    visual_hints = vertex_size=3, edge_size=1
+    visual_hints = vertex_color=khaki, edge_color=gray50
+
+}
+
+//----------------------------------------------
+Behavior=BHV_Loiter
+{
+  name       = fourth
+  pwt        = 100
+
+  #ifdef XMODE SEASCOUT
+      condition = IN_WATER=true
+      condition = NVGR_ROLLING_POWER < 80
+  #elseifdef XMODE SIM
+      condition  = DEPLOY = true
+  #endif
+  condition    = MD = loitering
+  condition  = LOITER_REGION = fourth
+
+  duration   = 120
+  perpetual  = true
+  endflag    = MD = surfacing
+
+         polygon = format=radial, x=50, y=-100, radius=10, pts=15, snap=1, label=LoiterPoly
+
+  #ifdef XMODE SEASCOUT
+      speed = 30
+  #elseifdef XMODE SIM
+      speed = 2.5
+  #endif
+           
+  capture_radius = 5.0
+     slip_radius = 15.0
+       clockwise = true
+
+    visual_hints = vertex_size=3, edge_size=1
+    visual_hints = vertex_color=khaki, edge_color=gray50
+
+}
+
 
 //**********************************************
 // @(SURFACING) DURATION=6, H=210, S=30, D=0
@@ -80,7 +189,7 @@ Behavior = BHV_Fig8
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
   #endif
-  condition    = ACQUIRE_FIX = true
+  condition = MD = surfacing
 
    updates      = CONST_DEP_UPDATES  // example
 
@@ -106,7 +215,9 @@ Behavior = BHV_Fig8
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
   #endif
-  condition    = ACQUIRE_FIX = true
+  condition = MD = surfacing
+
+  endflag = MD = acquire_fix
 
    updates      = CONST_SPD_UPDATES  // example
 
@@ -114,11 +225,7 @@ Behavior = BHV_Fig8
    // ------------------------------------
             basewidth = 0.2          // default
              duration = 6            // default
-#ifdef XMODE SEASCOUT
-      speed = 30
-  #elseifdef XMODE SIM
-      speed = 2.5
-  #endif
+                speed = 30            // default
    speed_mismatch_var = SPEED_DIFF   // example
             peakwidth = 0            // default
           summitdelta = 0            // default
@@ -136,7 +243,10 @@ Behavior = BHV_ConstantHeading
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
   #endif
-  condition    = ACQUIRE_FIX = true
+
+  condition = MD = surfacing
+
+  endflag = MD = acquire_fix
 
    updates      = CONST_HDG_UPDATES    // example
 
@@ -160,12 +270,12 @@ Behavior = BHV_ConstantHeading
    name         = fixing_depth   // example
    pwt          = 100                // default
    #ifdef XMODE SEASCOUT
-      condition = IN_WATER=true
       condition = NVGR_ROLLING_POWER < 80
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
   #endif
-  condition    = ACQUIRE_FIX = true
+
+  condition = MD = acquire_fix
 
    updates      = CONST_DEP_UPDATES  // example
 
@@ -187,12 +297,12 @@ Behavior = BHV_ConstantHeading
    name         = fixing_speed  // example
    pwt          = 100                // default
    #ifdef XMODE SEASCOUT
-      condition = IN_WATER=true
       condition = NVGR_ROLLING_POWER < 80
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
   #endif
-  condition    = ACQUIRE_FIX = true
+
+  condition = MD = acquire_fix
 
    updates      = CONST_SPD_UPDATES  // example
    endflag = MISSION_COMPLETE=true
@@ -215,17 +325,15 @@ Behavior = BHV_ConstantHeading
    name         = fixing_heading            // example
    pwt          = 100                  // default
    #ifdef XMODE SEASCOUT
-      condition = IN_WATER=true
-      condition = NVGR_ROLLING_POWER < 80
+
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
   #endif
-  condition    = ACQUIRE_FIX = true
+  condition = MD = acquire_fix
 
    updates      = CONST_HDG_UPDATES    // example
    endflag = MISSION_COMPLETE=true
    endflag = VIEW_RANGE_PULSE = x=0,y=0,radius=50,duration=10,fill=0.9,label=archie_ping, edge_color=white,fill_color=white,time=2700438154.35,edge_size=1
-
 
    // Parameters specific to this behavior
    // ------------------------------------
@@ -244,8 +352,7 @@ Behavior = BHV_ConstantHeading
    name      = maxdepth
    pwt       = 1000
    condition = IN_WATER = true 
-condition = NVGR_ROLLING_POWER < 80
-condition = IN_WATER = true
+    condition = NVGR_ROLLING_POWER < 80
 
 
    // Parameters specific to this behavior
