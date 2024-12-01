@@ -45,7 +45,7 @@ Behavior=BHV_Loiter
   perpetual  = true
   endflag    = LOITER_REGION = second
 
-         polygon = format=radial, x=50, y=-100, radius=40, pts=20, snap=1, label=LoiterPoly
+         polygon = format=radial, x=70, y=-150, radius=40, pts=20, snap=1, label=LoiterPoly
 
   #ifdef XMODE SEASCOUT
       speed = 30
@@ -81,7 +81,7 @@ Behavior=BHV_Loiter
   perpetual  = true
   endflag    = LOITER_REGION = third
 
-         polygon = format=radial, x=50, y=-100, radius=30, pts=20, snap=1, label=LoiterPoly
+         polygon = format=radial, x=70, y=-150, radius=30, pts=20, snap=1, label=LoiterPoly
 
   #ifdef XMODE SEASCOUT
       speed = 30
@@ -118,7 +118,7 @@ Behavior=BHV_Loiter
   perpetual  = true
   endflag    = LOITER_REGION = fourth
 
-         polygon = format=radial, x=50, y=-100, radius=20, pts=15, snap=1, label=LoiterPoly
+         polygon = format=radial, x=70, y=-150, radius=20, pts=15, snap=1, label=LoiterPoly
 
   #ifdef XMODE SEASCOUT
       speed = 30
@@ -154,7 +154,7 @@ Behavior=BHV_Loiter
   perpetual  = true
   endflag    = MD = surfacing
 
-         polygon = format=radial, x=50, y=-100, radius=10, pts=15, snap=1, label=LoiterPoly
+         polygon = format=radial, x=70, y=-150, radius=10, pts=15, snap=1, label=LoiterPoly
 
   #ifdef XMODE SEASCOUT
       speed = 30
@@ -198,7 +198,7 @@ Behavior=BHV_Loiter
             basewidth = 100          // default
                 depth = 0            // default
    depth_mismatch_var = DEPTH_DIFF   // example
-             duration = 6            // default
+             duration = 12            // default
             peakwidth = 3            // default
           summitdelta = 50           // default
  }
@@ -224,7 +224,7 @@ Behavior=BHV_Loiter
    // Parameters specific to this behavior
    // ------------------------------------
             basewidth = 0.2          // default
-             duration = 6            // default
+             duration = 12            // default
                 speed = 30            // default
    speed_mismatch_var = SPEED_DIFF   // example
             peakwidth = 0            // default
@@ -253,7 +253,7 @@ Behavior = BHV_ConstantHeading
    // Parameters specific to this behavior
    // ------------------------------------
               basewidth = 10           // default
-               duration = 6            // default
+               duration = 12            // default
                   heading = 210            // default
    heading_mismatch_var = HDG_DIFF     // example
               peakwidth = 10           // default

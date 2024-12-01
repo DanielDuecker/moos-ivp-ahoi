@@ -59,7 +59,7 @@ Behavior = BHV_Waypoint
       capture_radius = 5.0
          slip_radius = 15.0
 	efficiency_measure = all
-		points = format=lawnmower, x=50, y=-100, height=60, width=100, lane_width=15
+		points = format=lawnmower, x=75, y=-130, height=60, width=150, lane_width=20
                order = normal
              repeat  = 1
 
