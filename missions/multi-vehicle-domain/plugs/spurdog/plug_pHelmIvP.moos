@@ -12,6 +12,8 @@ ProcessConfig = pHelmIvP
 	
 	park_on_allstop = false
   start_engaged = true 
+  ivp_behavior_dir = ~/moos-ivp-pavlab/lib
+  
 	
         ok_skew   = any
         behaviors = targs/targ_$(VNAME).bhv  

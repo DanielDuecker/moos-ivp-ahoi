@@ -6,7 +6,7 @@ ProcessConfig = pNavigator_AHRS
   AppTick     = 16
   CommsTick   = 16
 
-  debug = true 
+  debug = false 
 
   logging = true
   log_directory = ./logs/$(MISSION_NAME)
@@ -19,7 +19,12 @@ ProcessConfig = pNavigator_AHRS
   yaw_offset = $(NAV_YAW_OFFSET)
   tau = 0.075
 
-  operating_heading_offset = 4.5
+  roll_var = NAV_ROLL_NAV
+  pitch_var = NAV_PITCH_NAV
+  yaw_var = NAV_YAW_NAV
+  heading_var = NAV_HEADING_NAV
+
+  operating_heading_offset = 0
   declination_deg = -14.058
   inclination_deg = 66.3401
 

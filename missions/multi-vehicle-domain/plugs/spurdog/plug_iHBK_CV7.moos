@@ -8,17 +8,20 @@ ProcessConfig = iHBK_CV7
   
   port = /dev/ttyACM0
   baudrate = 115200
+
+  // Mounting rotations (degrees) - transform from sensor frame to vehicle frame
+  mount_roll  = $(CV7_ROLL_OFFSET)
+  mount_pitch = $(CV7_PITCH_OFFSET)
+  mount_yaw   = $(CV7_YAW_OFFSET)
+
+  roll_var = NAV_ROLL
+  pitch_var = NAV_PITCH
+  yaw_var = NAV_YAW
+  heading_var = NAV_HEADING
   
-  roll_var = NAV_ROLL_HBK
-  pitch_var = NAV_PITCH_HBK
-  yaw_var = NAV_YAW_HBK
-  heading_var = NAV_HEADING_HBK
+  declination = -14.0833  // Manually setting north reference
   
-  declination = -14.0833  // in degrees, adjust as needed
-  
-  roll_offset = 0.0   // in degrees
-  pitch_offset = 0.0  // in degrees
-  yaw_offset = 0    // in degrees
+  gravity = -9.81  // Gravity scale factor for acceleration
   
   debug = false
   verbose = false

@@ -1,0 +1,45 @@
+//--------------------------------------------------------
+// BasicDVLNav config Block
+
+ProcessConfig = pBasicDVLNav
+{
+  AppTick     = 20
+  CommsTick   = 20
+
+  debug = true
+
+  // Thread update frequencies
+  ahrs_update_frq = 40
+  dvl_update_frq  = 40
+  nav_update_frq  = 40
+
+  // Depth thresholds for state transitions
+  depth_threshold_surfacing_lower = 0.27 // 27 cm
+  depth_threshold_surfacing_upper = 0.28 // 28 cm
+  depth_threshold_diving_lower    = 0.30 // 30 cm
+  depth_threshold_diving_upper    = 0.32 // 32 cm
+
+  // GPS trust parameters
+  hdop_threshold        = 2.0
+  max_velocity_threshold = 4.0
+  mode_switch_interval   = 5.0
+  trusted_fix_period     = 5.0
+  gps_data_window_size   = 10
+
+  ahrs = cv7
+
+  // Startup wait time
+  startup_wait_time = 10
+
+  // Navigation parameters
+  confidence_threshold = 50
+
+  enable_lever_arm_correction = true
+  dvl_lever_arm_x = 0.3
+  dvl_lever_arm_y = 0.0
+  dvl_lever_arm_z = -0.04
+
+  // Logging and debug
+  logging = true
+  log_directory = ./logs/$(MISSION_NAME)
+}
