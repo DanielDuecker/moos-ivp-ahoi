@@ -11,7 +11,7 @@ Behavior=BHV_ConstantDepth
   pwt        = 100
   #ifdef XMODE SEASCOUT
       condition = IN_WATER=true
-      condition = NVGR_ROLLING_POWER < 80
+      condition = NVGR_ROLLING_POWER < 150
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
   #endif
@@ -19,7 +19,7 @@ Behavior=BHV_ConstantDepth
   perpetual  = true
 
      duration = no-time-limit
-        depth = 1
+        depth = 1.5
 
     basewidth = 20
     peakwidth = 3
@@ -34,7 +34,7 @@ Behavior = BHV_Waypoint
   
   #ifdef XMODE SEASCOUT
       condition = IN_WATER=true
-      condition = NVGR_ROLLING_POWER < 80
+      condition = NVGR_ROLLING_POWER < 150
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
   #endif
@@ -51,7 +51,7 @@ Behavior = BHV_Waypoint
          lead_damper = 1
        lead_to_start = true
                #ifdef XMODE SEASCOUT
-                  speed = 30
+                  speed = 40
               #elseifdef XMODE SIM
                   speed = 2.5
               #endif
@@ -59,7 +59,7 @@ Behavior = BHV_Waypoint
       capture_radius = 5.0
          slip_radius = 15.0
 	efficiency_measure = all
-		points = format=lawnmower, x=75, y=-130, height=120, width=200, lane_width=30
+		points = format=lawnmower, x=75, y=-200, height=120, width=200, lane_width=30
                order = normal
              repeat  = 0
 
@@ -83,7 +83,7 @@ Behavior = BHV_Waypoint
 
    #ifdef XMODE SEASCOUT
       condition = IN_WATER=true
-      condition = NVGR_ROLLING_POWER < 80
+      condition = NVGR_ROLLING_POWER < 150
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
   #endif
@@ -109,7 +109,7 @@ Behavior = BHV_Waypoint
    pwt          = 100                // default
    #ifdef XMODE SEASCOUT
       condition = IN_WATER=true
-      condition = NVGR_ROLLING_POWER < 80
+      condition = NVGR_ROLLING_POWER < 150
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
   #endif
@@ -122,7 +122,7 @@ Behavior = BHV_Waypoint
             basewidth = 0.2          // default
              duration = 6            // default
 #ifdef XMODE SEASCOUT
-      speed = 30
+      speed = 40
   #elseifdef XMODE SIM
       speed = 2.5
   #endif
@@ -139,7 +139,7 @@ Behavior = BHV_ConstantHeading
    pwt          = 100                  // default
    #ifdef XMODE SEASCOUT
       condition = IN_WATER=true
-      condition = NVGR_ROLLING_POWER < 80
+      condition = NVGR_ROLLING_POWER < 150
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
   #endif
@@ -167,7 +167,7 @@ Behavior = BHV_ConstantHeading
    name         = fixing_depth   // example
    pwt          = 100                // default
    #ifdef XMODE SEASCOUT
-      condition = NVGR_ROLLING_POWER < 80
+      condition = NVGR_ROLLING_POWER < 150
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
   #endif
@@ -193,7 +193,7 @@ Behavior = BHV_ConstantHeading
    name         = fixing_speed  // example
    pwt          = 100                // default
    #ifdef XMODE SEASCOUT
-      condition = NVGR_ROLLING_POWER < 80
+      condition = NVGR_ROLLING_POWER < 150
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
   #endif
@@ -220,7 +220,7 @@ Behavior = BHV_ConstantHeading
    name         = fixing_heading            // example
    pwt          = 100                  // default
    #ifdef XMODE SEASCOUT
-      condition = NVGR_ROLLING_POWER < 80
+      condition = NVGR_ROLLING_POWER < 150
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
   #endif
@@ -249,7 +249,7 @@ Behavior = BHV_ConstantHeading
    name      = maxdepth
    pwt       = 1000
    condition = IN_WATER = true 
-condition = NVGR_ROLLING_POWER < 80
+condition = NVGR_ROLLING_POWER < 150
 condition = IN_WATER = true
 
 

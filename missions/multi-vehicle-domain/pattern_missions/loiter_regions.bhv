@@ -11,7 +11,7 @@ Behavior=BHV_ConstantDepth
   pwt        = 100
   #ifdef XMODE SEASCOUT
       condition = IN_WATER=true
-      condition = NVGR_ROLLING_POWER < 80
+      condition = NVGR_ROLLING_POWER < 150
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
   #endif
@@ -34,7 +34,7 @@ Behavior=BHV_Loiter
 
   #ifdef XMODE SEASCOUT
       condition = IN_WATER=true
-      condition = NVGR_ROLLING_POWER < 80
+      condition = NVGR_ROLLING_POWER < 150
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
   #endif
@@ -45,7 +45,7 @@ Behavior=BHV_Loiter
   perpetual  = true
   endflag    = LOITER_REGION = east
 
-         polygon = format=radial, x=-50, y=-200, radius=30, pts=12, snap=1, label=LoiterPoly
+         polygon = format=radial, x=-70, y=-340, radius=50, pts=12, snap=1, label=LoiterPoly
 
   #ifdef XMODE SEASCOUT
       speed = 30
@@ -70,7 +70,7 @@ Behavior=BHV_Loiter
 
   #ifdef XMODE SEASCOUT
       condition = IN_WATER=true
-      condition = NVGR_ROLLING_POWER < 80
+      condition = NVGR_ROLLING_POWER < 150
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
   #endif
@@ -81,7 +81,7 @@ Behavior=BHV_Loiter
   perpetual  = true
   endflag    = ACQUIRE_FIX = true
 
-         polygon = format=radial, x=170, y=-120, radius=30, pts=12, snap=1, label=LoiterPoly
+         polygon = format=radial, x=140, y=-250, radius=50, pts=12, snap=1, label=LoiterPoly
 
   #ifdef XMODE SEASCOUT
       speed = 30
@@ -110,7 +110,7 @@ Behavior=BHV_Loiter
 
    #ifdef XMODE SEASCOUT
       condition = IN_WATER=true
-      condition = NVGR_ROLLING_POWER < 80
+      condition = NVGR_ROLLING_POWER < 150
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
   #endif
@@ -136,7 +136,7 @@ Behavior=BHV_Loiter
    pwt          = 100                // default
    #ifdef XMODE SEASCOUT
       condition = IN_WATER=true
-      condition = NVGR_ROLLING_POWER < 80
+      condition = NVGR_ROLLING_POWER < 150
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
   #endif
@@ -162,7 +162,7 @@ Behavior = BHV_ConstantHeading
    pwt          = 100                  // default
    #ifdef XMODE SEASCOUT
       condition = IN_WATER=true
-      condition = NVGR_ROLLING_POWER < 80
+      condition = NVGR_ROLLING_POWER < 150
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
   #endif
@@ -190,7 +190,7 @@ Behavior = BHV_ConstantHeading
    name         = fixing_depth   // example
    pwt          = 100                // default
    #ifdef XMODE SEASCOUT
-      condition = NVGR_ROLLING_POWER < 80
+      condition = NVGR_ROLLING_POWER < 150
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
   #endif
@@ -216,7 +216,7 @@ Behavior = BHV_ConstantHeading
    name         = fixing_speed  // example
    pwt          = 100                // default
    #ifdef XMODE SEASCOUT
-      condition = NVGR_ROLLING_POWER < 80
+      condition = NVGR_ROLLING_POWER < 150
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
   #endif
@@ -271,7 +271,7 @@ Behavior = BHV_ConstantHeading
    name      = maxdepth
    pwt       = 1000
    condition = IN_WATER = true 
-condition = NVGR_ROLLING_POWER < 80
+condition = NVGR_ROLLING_POWER < 150
 condition = IN_WATER = true
 
 

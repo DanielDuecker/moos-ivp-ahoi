@@ -19,7 +19,7 @@ Behavior=BHV_ConstantDepth
   perpetual  = true
 
      duration = no-time-limit
-        depth = 1
+        depth = 1.5
 
     basewidth = 20
     peakwidth = 3
@@ -27,11 +27,11 @@ Behavior=BHV_ConstantDepth
 }
 
 //----------------------------------------------
-Behavior = BHV_Waypoint
-{ 
-  name      = waypt_survey
+Behavior = BHV_Fig8
+{
+  name      = BHV_Fig8
   pwt       = 100
-  
+
   #ifdef XMODE SEASCOUT
       condition = IN_WATER=true
       condition = NVGR_ROLLING_POWER < 150
@@ -42,32 +42,25 @@ Behavior = BHV_Waypoint
 
   endflag   = ACQUIRE_FIX = true
 
-  updates    = WPT_UPDATE
-  perpetual  = false
+  perpetual = true
+  center_x = 75
+  center_y = -200
+  width = 90
+  height = 40
+  alpha = 30
+  direction = 1
+  n_points = 100
+  capture_radius = 5
+  slip_radius = 20
+  cycles=3
+  updates_var = LEMNISCATE_UPDATES
 
-	         speed_alt = 1.2
-       use_alt_speed = true
-                lead = 8
-         lead_damper = 1
-       lead_to_start = true
-               #ifdef XMODE SEASCOUT
-                  speed = 40
-              #elseifdef XMODE SIM
-                  speed = 2.5
-              #endif
-        capture_line = true
-      capture_radius = 5.0
-         slip_radius = 15.0
-	efficiency_measure = all
-		points = format=lawnmower, x=75, y=-150, height=120, width=200, lane_width=30
-               order = normal
-             repeat  = 0
-
-    visual_hints = nextpt_color=yellow
-    visual_hints = nextpt_vertex_size=8
-    visual_hints = nextpt_lcolor=gray70
-    visual_hints = vertex_color=dodger_blue, edge_color=white
-    visual_hints = vertex_size=5, edge_size=1
+  #ifdef XMODE SEASCOUT
+      desired_speed = 40
+  #elseifdef XMODE SIM
+      desired_speed = 2.5
+  #endif
+  debug = false 
 }
 
 //**********************************************
@@ -82,7 +75,6 @@ Behavior = BHV_Waypoint
    pwt          = 100                // default
 
    #ifdef XMODE SEASCOUT
-      condition = IN_WATER=true
       condition = NVGR_ROLLING_POWER < 150
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
@@ -108,7 +100,6 @@ Behavior = BHV_Waypoint
    name         = surfacing_spd  // example
    pwt          = 100                // default
    #ifdef XMODE SEASCOUT
-      condition = IN_WATER=true
       condition = NVGR_ROLLING_POWER < 150
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
@@ -138,7 +129,6 @@ Behavior = BHV_ConstantHeading
    name         = surfacing_hdg            // example
    pwt          = 100                  // default
    #ifdef XMODE SEASCOUT
-      condition = IN_WATER=true
       condition = NVGR_ROLLING_POWER < 150
   #elseifdef XMODE SIM
       condition  = DEPLOY = true
@@ -241,14 +231,12 @@ Behavior = BHV_ConstantHeading
             summitdelta = 25           // default
  }
 
-
  Behavior = BHV_MaxDepth
  {
    // General Behavior Parameters
    // ---------------------------
    name      = maxdepth
    pwt       = 1000
-   condition = IN_WATER = true 
 condition = NVGR_ROLLING_POWER < 150
 condition = IN_WATER = true
 
