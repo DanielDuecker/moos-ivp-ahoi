@@ -38,7 +38,6 @@ Processconfig = ANTLER
   Run = pMarinePIDV22         @ NewConsole = false
 #endif
 
-#ifndef XMODE SIM
   #ifdef VNAME seascout-00
     Run = iHBK_CV7         @ NewConsole = false
     Run = iTracker650         @ NewConsole = false
@@ -57,7 +56,6 @@ Processconfig = ANTLER
     Run = pBasicDVLNav        @ NewConsole = false
     Run = iNeoM9N_V0         @ NewConsole = false
   #endif
-#endif
 
 }
 	
@@ -85,7 +83,6 @@ Processconfig = ANTLER
   #include ../std_plugs/spurdog/plug_pMarinePIDV22.moos
 #endif
 
-#ifndef XMODE SIM
   #ifdef VNAME seascout-00
     #include ../std_plugs/spurdog/plug_iHBK_CV7.moos
     #include ../std_plugs/spurdog/plug_iTracker650.moos
@@ -99,7 +96,6 @@ Processconfig = ANTLER
     #include ../std_plugs/spurdog/plug_iTracker650.moos
     #include ../std_plugs/spurdog/plug_iNeoM9N_V0.moos
   #endif
-#endif
 
 #include ../std_plugs/spurdog/plug_pRealm.moos
 #include ../std_plugs/spurdog/plug_pHelmIvP.moos
