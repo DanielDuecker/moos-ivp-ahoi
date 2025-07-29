@@ -25,27 +25,38 @@ Processconfig = ANTLER
 #ifdef XMODE SEASCOUT
   Run = pNavigator_AHRS    @ NewConsole = false
   Run = pBar30             @ NewConsole = false
-  Run = pSSPIDv2           @ NewConsole = false
+  Run = pSSPIDv2             @ NewConsole = false
   Run = pAftCtrlV1         @ NewConsole = false
-  Run = iNeoM9N_V0         @ NewConsole = false
+  Run = iNetworkBroker         @ NewConsole = false
+  
 #elseifdef XMODE HITL
   Run = uSimMarine         @ NewConsole = false
   Run = pAftCtrlV1         @ NewConsole = false
 
 #elseifdef XMODE SIM
-  Run = uSimMarine         @ NewConsole = false
-  Run = pMarinePID      @ NewConsole = false
+  Run = uSimMarineV22      @ NewConsole = false
+  Run = pMarinePIDV22         @ NewConsole = false
 #endif
 
-#ifdef VNAME seascout-00
-  Run = iHBK_CV7           @ NewConsole = false
-  Run = iTracker650        @ NewConsole = false
-  Run = pBasicDVLNav       @ NewConsole = false
+#ifndef XMODE SIM
+  #ifdef VNAME seascout-00
+    Run = iHBK_CV7         @ NewConsole = false
+    Run = iTracker650         @ NewConsole = false
+    Run = pBasicDVLNav        @ NewConsole = false
+    Run = iUBX_GNSS           @ NewConsole = false
+    
+  #elseifdef VNAME seascout-01
+    Run = iHBK_CV7         @ NewConsole = false
+    Run = iTracker650         @ NewConsole = false
+    Run = pBasicDVLNav        @ NewConsole = false
+    Run = iNeoM9N_V0         @ NewConsole = false
 
-#elseifdef VNAME seascout-01
-  
-#elseifdef VNAME seascout-02
-  
+  #elseifdef VNAME seascout-02
+    Run = iHBK_CV7         @ NewConsole = false
+    Run = iTracker650         @ NewConsole = false
+    Run = pBasicDVLNav        @ NewConsole = false
+    Run = iNeoM9N_V0         @ NewConsole = false
+  #endif
 #endif
 
 }
@@ -62,26 +73,32 @@ Processconfig = ANTLER
   #include ../std_plugs/spurdog/plug_pNavigator_AHRS.moos
   #include ../std_plugs/spurdog/plug_pBar30.moos
   #include ../std_plugs/spurdog/plug_pAftCtrlV1.moos
-  #include ../std_plugs/spurdog/plug_pSSPIDv2.moos
-  #include ../std_plugs/spurdog/plug_iNeoM9N_V0.moos
+  #include plugs/spurdog/plug_pSSPIDv2.moos
+  #include ../std_plugs/spurdog/plug_iNetworkBroker.moos
+  #include ../std_plugs/spurdog/plug_pBasicDVLNav.moos
+
 #elseifdef XMODE HITL
   #include ../std_plugs/shared/plug_uSimMarine.moos
   #include ../std_plugs/spurdog/plug_pAftCtrlV1.moos
-  #include ../std_plugs/spurdog/plug_pNavigator_ADC.moos
 #elseifdef XMODE SIM
-  #include ../std_plugs/shared/plug_uSimMarine.moos
-  #include ../std_plugs/spurdog/plug_pMarinePID.moos
+  #include ../std_plugs/shared/plug_uSimMarineV22.moos
+  #include ../std_plugs/spurdog/plug_pMarinePIDV22.moos
 #endif
 
-#ifdef VNAME seascout-00
-  #include ../std_plugs/spurdog/plug_iHBK_CV7.moos
-  #include ../std_plugs/spurdog/plug_iTracker650.moos
-  #include ../std_plugs/spurdog/plug_pBasicDVLNav.moos
-#elseifdef VNAME seascout-01
-  
-
-#elseifdef VNAME seascout-02
-  
+#ifndef XMODE SIM
+  #ifdef VNAME seascout-00
+    #include ../std_plugs/spurdog/plug_iHBK_CV7.moos
+    #include ../std_plugs/spurdog/plug_iTracker650.moos
+    #include ../std_plugs/spurdog/plug_iUBX_GNSS.moos
+  #elseifdef VNAME seascout-01
+    #include ../std_plugs/spurdog/plug_iHBK_CV7.moos
+    #include ../std_plugs/spurdog/plug_iTracker650.moos
+    #include ../std_plugs/spurdog/plug_iNeoM9N_V0.moos
+  #elseifdef VNAME seascout-02
+    #include ../std_plugs/seascout/plug_iHBK_CV7.moos
+    #include ../std_plugs/spurdog/plug_iTracker650.moos
+    #include ../std_plugs/spurdog/plug_iNeoM9N_V0.moos
+  #endif
 #endif
 
 #include ../std_plugs/spurdog/plug_pRealm.moos
